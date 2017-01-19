@@ -1,0 +1,883 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</h:head>
+
+<ui:composition template="/template/template.xhtml">
+	<ui:define name="conteudo">
+		<h:form id="formGeralServico">
+			<p:panel header="Listagem de ordens de serviços">
+
+				<h:panelGrid columns="6" id="panelPesquisa">
+					<h:panelGrid columns="1">
+						<p:outputLabel value="Nº OS" />
+						<p:inputText id="txtServicoPesquisa" style="width: 90px;"
+							value="#{ordemServicoController.ordemServico.id}" />
+					</h:panelGrid>
+
+					<h:panelGrid columns="1">
+						<p:outputLabel value="Status" />
+						<p:selectOneMenu
+							value="#{ordemServicoController.ordemServico.statusOS}">
+							<f:selectItems var="os"
+								value="#{ordemServicoController.statusOs}"
+								itemLabel="#{os.statusOS}" itemValue="#{os}" />
+						</p:selectOneMenu>
+					</h:panelGrid>
+
+					<h:panelGrid columns="1">
+						<p:outputLabel value="." style="color: white;" />
+						<p:commandButton id="btnPesquisarOS" value="Pesquisar"
+							icon="ui-icon-search" update=":msgGlobal formGeralServico"
+							actionListener="#{ordemServicoController.pesquisarOS}" />
+					</h:panelGrid>
+					<p:focus context="panelPesquisa" />
+					<p:blockUI block="tableServico" trigger="btnPesquisarOS">
+					        Carregando! Aguarde...<br />
+						<p:graphicImage library="img" name="loading.gif" />
+					</p:blockUI>
+				</h:panelGrid>
+
+				<p:dataTable id="tableServico" var="s" paginator="true"
+					paginatorPosition="bottom"
+					emptyMessage="Nenhum registro encontrado!" rows="8"
+					value="#{ordemServicoController.ordensServicos}"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} 
+					{PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+
+					<p:column style="width:16px"
+						rendered="#{ordemServicoController.ordemServico.statusOS != 'CANCELADO'}">
+						<p:rowToggler />
+					</p:column>
+
+					<p:column headerText="Nº OS" width="40" style="text-align:center;">
+						<p:outputLabel value="#{s.id}" />
+					</p:column>
+
+					<p:column headerText="Data Entrada" style="text-align:center;"
+						width="100">
+						<p:outputLabel value="#{s.dataEntrada}">
+							<f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR"
+								timeZone="GMT-2" type="both" />
+						</p:outputLabel>
+					</p:column>
+
+					<p:column headerText="Cliente">
+						<p:outputLabel
+							value="#{s.cliente.nomeFantasia}#{s.cliente.nomeDaPessoaFisica}" />
+					</p:column>
+
+					<p:column headerText="Total" style="text-align:center;" width="50">
+						<p:outputLabel value="#{s.total}" style="color: blue;">
+							<f:convertNumber pattern="###,###.00" locale="pt_BR" />
+						</p:outputLabel>
+					</p:column>
+
+					<p:column headerText="Status" style="text-align:center;"
+						width="100">
+						<p:outputLabel value="#{s.statusOS.statusOS}" />
+					</p:column>
+
+					<p:column width="40">
+						<p:commandButton id="btnEditar" icon="ui-icon-pencil"
+							actionListener="#{ordemServicoController.setarOrdemServico(s)}"
+							update=":msgGlobal :formEditarOrdemServico">
+						</p:commandButton>
+						<p:tooltip value="Cliquei aqui para editar!" for="btnEditar"
+							position="left" />
+					</p:column>
+
+					<f:facet name="footer">
+						<p:commandButton value="Nova ordem de serviço"
+							oncomplete="PF('dialogNovaOrdemDeServico').show();"
+							icon="ui-icon-circle-plus"
+							actionListener="#{ordemServicoController.novaOrdemServico}" 
+							update=":msgGlobal :formNovaOrdemServico"/>
+					</f:facet>
+
+					<p:rowExpansion>
+						<p:commandButton value="Imprimir nota de recebimento nº #{s.id}"
+							icon="ui-icon-print" />
+						<p:commandButton value="Imprimir ordem de serviço nº #{s.id}"
+							icon="ui-icon-print" />
+					</p:rowExpansion>
+
+				</p:dataTable>
+			</p:panel>
+
+			<p:blockUI block="tableServico" trigger="tableServico">
+			        Carregando! Aguarde...<br />
+				<p:graphicImage library="img" name="loading.gif" />
+			</p:blockUI>
+
+		</h:form>
+
+		<!-- Dialog nova ordem de Serviço -->
+		<p:dialog widgetVar="dialogNovaOrdemDeServico"
+			header="Nova Ordem de Serviço" modal="true" appendTo="@(body)"
+			resizable="false" position="top" width="938">
+			<h:form id="formNovaOrdemServico">
+				<p:tabView>
+					<p:tab title="Dados Básicos">
+						<h:panelGrid columns="8">
+							<h:panelGrid columns="1">
+								<p:outputLabel value="Data Entrada" />
+								<p:calendar pattern="dd/MM/yyyy"
+									value="#{ordemServicoController.ordemServico.dataEntrada}"
+									readonly="true" showOn="button" />
+							</h:panelGrid>
+							<h:panelGrid columns="1">
+								<p:outputLabel value="Hora Entrada" />
+								<p:calendar pattern="HH:mm" timeOnly="true" style="width: 15px;"
+									showHour="true" showMinute="true" showButtonPanel="true"
+									showTodayButton="true"
+									value="#{ordemServicoController.ordemServico.horaEntrada}"
+									readonly="true" showOn="button" />
+							</h:panelGrid>
+							<h:panelGrid columns="1">
+								<p:outputLabel value="Data Saída" />
+								<p:calendar pattern="dd/MM/yyyy" disabled="true"
+									value="#{ordemServicoController.ordemServico.dataSaida}"
+									showOn="button" />
+							</h:panelGrid>
+							<h:panelGrid columns="1">
+								<p:outputLabel value="Hora Saída" />
+								<p:calendar pattern="HH:mm" timeOnly="true" style="width: 50px;"
+									disabled="true"
+									value="#{ordemServicoController.ordemServico.horaSaida}"
+									showOn="button" />
+							</h:panelGrid>
+						</h:panelGrid>
+
+						<h:panelGrid columns="5">
+							<h:panelGrid columns="1">
+								<p:outputLabel value="Status" />
+								<p:selectOneMenu
+									value="#{ordemServicoController.ordemServico.statusOS}">
+									<f:selectItems var="os"
+										value="#{ordemServicoController.statusOs}"
+										itemLabel="#{os.statusOS}" itemValue="#{os}" />
+								</p:selectOneMenu>
+							</h:panelGrid>
+							<h:panelGrid columns="1">
+								<p:outputLabel value="Cliente" />
+								<p:inputText id="txtCliente"
+									value="#{ordemServicoController.ordemServico.cliente.nomeTemporario}"
+									style="width: 350px;" />
+							</h:panelGrid>
+							<h:panelGrid columns="1">
+								<p:outputLabel value="." style="color: white;" />
+								<p:commandButton id="btnProcurarClienteDialog"
+									icon="ui-icon-search"
+									actionListener="#{ordemServicoController.obterPageCliente}">
+									<p:ajax event="dialogReturn"
+										listener="#{ordemServicoController.clienteSelecionado}"
+										process="@this" update="txtCliente" />
+								</p:commandButton>
+							</h:panelGrid>
+							<h:panelGrid columns="1">
+								<p:outputLabel value="Técnico / Responsável" />
+								<p:selectOneMenu style="width: 255px;"
+									value="#{ordemServicoController.ordemServico.funcionario}"
+									converter="omnifaces.SelectItemsConverter">
+									<f:selectItems var="fun"
+										value="#{ordemServicoController.funcionarios}"
+										itemLabel="#{fun.nome}" itemValue="#{fun}" />
+								</p:selectOneMenu>
+							</h:panelGrid>
+
+							<p:blockUI block="formNovaOrdemServico"
+								trigger="btnProcurarClienteDialog">
+								        Carregando! Aguarde...<br />
+								<p:graphicImage library="img" name="loading.gif" />
+							</p:blockUI>
+
+						</h:panelGrid>
+
+
+						<h:panelGrid columns="4">
+							<h:panelGrid columns="1">
+								<p:outputLabel value="Marca" />
+								<p:inputText
+									value="#{ordemServicoController.ordemServico.marca}"
+									style="width: 230px;" />
+							</h:panelGrid>
+							<h:panelGrid columns="1">
+								<p:outputLabel value="Nº de Série" />
+								<p:inputText
+									value="#{ordemServicoController.ordemServico.numeroSerie}" />
+							</h:panelGrid>
+							<h:panelGrid columns="1">
+								<p:outputLabel value="Modelo" />
+								<p:inputText
+									value="#{ordemServicoController.ordemServico.modelo}"
+									style="width: 250px;" />
+							</h:panelGrid>
+							<h:panelGrid columns="1">
+								<p:outputLabel value="Nº Patrimônio" />
+								<p:inputText
+									value="#{ordemServicoController.ordemServico.numeroPatrimonio}" />
+							</h:panelGrid>
+						</h:panelGrid>
+
+						<h:panelGrid columns="1">
+							<p:outputLabel value="Acessórios" />
+							<p:inputText style="width: 855px;"
+								value="#{ordemServicoController.ordemServico.acessorios}" />
+						</h:panelGrid>
+
+						<!-- <h:panelGrid columns="1">
+							<p:outputLabel value="Descrição Produto / Serviço" />
+							<p:inputTextarea style="width: 725px;" />
+						</h:panelGrid> -->
+
+						<h:panelGrid columns="1">
+							<p:outputLabel value="Defeito" />
+							<p:inputTextarea style="width: 855px;"
+								value="#{ordemServicoController.ordemServico.defeito}" />
+						</h:panelGrid>
+
+						<h:panelGrid columns="1">
+							<p:outputLabel value="Laudo Técnico" />
+							<p:inputTextarea style="width: 855px; color: blue"
+								value="#{ordemServicoController.ordemServico.laudoTecnico}" />
+						</h:panelGrid>
+					</p:tab>
+
+					<p:tab title="Serviços">
+					
+						<h:panelGrid columns="5">
+							<p:commandButton id="btnProcurarServicoDialog"
+								icon="ui-icon-search"
+								actionListener="#{ordemServicoController.obterPageServico}"
+								value="Procurar">
+								<p:ajax event="dialogReturn"
+									listener="#{ordemServicoController.servicoSelecionado}"
+									process="@this" update=":msgGlobal tableServico" />
+							</p:commandButton>
+
+							<p:blockUI block="formNovaOrdemServico"
+								trigger="btnProcurarServicoDialog">
+								        Carregando! Aguarde...<br />
+								<p:graphicImage library="img" name="loading.gif" />
+							</p:blockUI>
+
+						</h:panelGrid>
+
+						<p:dataTable emptyMessage="Nenhum serviço encontrado!"
+							id="tableServico" var="s"
+							value="#{ordemServicoController.listaServicos}" paginator="true"
+							paginatorPosition="bottom" rows="7">
+							<p:column headerText="ID" width="35">
+								<h:outputLabel value="#{s.servico.id}" />
+							</p:column>
+							<p:column headerText="Nome">
+								<h:outputLabel value="#{s.servico.nome}" />
+							</p:column>
+							<p:column headerText="Quantidade">
+								<p:spinner min="1" value="#{s.quantidade}" style="width: 200px;">
+									<p:ajax
+										listener="#{ordemServicoController.calcularValorServico(s)}"
+										update="tableServico" />
+								</p:spinner>
+							</p:column>
+							<p:column headerText="Valor" width="120">
+								<h:outputLabel value="#{s.servico.valor}" style="color: blue;">
+									<f:convertNumber pattern="###,###.00" locale="pt_BR" />
+								</h:outputLabel>
+							</p:column>
+							<p:column headerText="Subtotal" width="120">
+								<h:outputLabel id="txtTotalServico" value="#{s.subTotal}" style="color: blue;">
+									<f:convertNumber pattern="###,###.00" locale="pt_BR" />
+								</h:outputLabel>
+							</p:column>
+							<p:column width="30">
+								<p:commandButton icon="ui-icon-close" />
+							</p:column>
+							
+							<p:columnGroup type="footer">
+								<p:row>
+									<p:column colspan="4" style="text-align:right" footerText="Total:" />
+									<p:column footerText="R$: #{ordemServicoController.ordemServico.totalServico}" style="text-align:left" />
+								</p:row>
+							</p:columnGroup>
+							
+						</p:dataTable>
+					</p:tab>
+
+					<p:tab title="Produto">
+						<h:panelGrid columns="3">
+							<p:outputLabel value="Buscar produto" />
+							<p:inputText style="width: 500px;" />
+							<p:commandButton icon="ui-icon-search" />
+						</h:panelGrid>
+						<p:dataTable emptyMessage="Nenhum produto encontrado!">
+							<p:column headerText="ID">
+							</p:column>
+							<p:column headerText="Nome">
+							</p:column>
+							<p:column headerText="Qtd">
+							</p:column>
+							<p:column headerText="Valor">
+							</p:column>
+							<p:column headerText="Subtotal">
+							</p:column>
+							<p:column>
+							</p:column>
+						</p:dataTable>
+					</p:tab>
+
+					<p:tab title="Pagamento">
+						<h:panelGrid columns="4">
+							<h:panelGrid columns="1">
+								<p:outputLabel value="Forma de pagamento" />
+								<p:selectOneMenu
+									value="#{ordemServicoController.ordemServico.formaPagamento}">
+									<f:selectItems var="fp"
+										value="#{ordemServicoController.formaPagamento}"
+										itemLabel="#{fp.formaPagamento}" itemValue="#{fp}" />
+								</p:selectOneMenu>
+							</h:panelGrid>
+
+							<!-- <h:panelGrid columns="1">
+								<p:outputLabel value="." style="color: white;" />
+								<p:commandButton icon="ui-icon-plusthick" />
+							</h:panelGrid> -->
+
+							<h:panelGrid columns="1">
+								<p:outputLabel value="Pago" />
+								<p:selectOneMenu
+									value="#{ordemServicoController.ordemServico.pago}">
+									<f:selectItems var="pg" value="#{ordemServicoController.pagos}"
+										itemLabel="#{pg.pago}" itemValue="#{pg}" />
+								</p:selectOneMenu>
+							</h:panelGrid>
+
+							<h:panelGrid columns="1">
+								<p:outputLabel value="Valor pago" />
+								<p:inputNumber symbol="R$ " decimalSeparator=","
+									thousandSeparator="."
+									value="#{ordemServicoController.ordemServico.valorPago}" />
+							</h:panelGrid>
+
+							<h:panelGrid columns="1">
+								<p:outputLabel value="Garantia" />
+								<p:selectOneMenu
+									value="#{ordemServicoController.ordemServico.garantia}">
+									<f:selectItems var="g"
+										value="#{ordemServicoController.garantia}"
+										itemLabel="#{g.garantia}" itemValue="#{g}" />
+								</p:selectOneMenu>
+							</h:panelGrid>
+
+						</h:panelGrid>
+
+						<h:panelGrid columns="4">
+							<h:panelGrid columns="1">
+								<p:outputLabel value="Desconto R$" />
+								<p:inputNumber symbol="R$ " decimalSeparator=","
+									thousandSeparator="."
+									value="#{ordemServicoController.ordemServico.descontoReais}" />
+							</h:panelGrid>
+
+							<h:panelGrid columns="1">
+								<p:outputLabel value="Desconto %" />
+								<p:inputNumber symbol="% " decimalSeparator=","
+									thousandSeparator="."
+									value="#{ordemServicoController.ordemServico.descontoPorcento}" />
+							</h:panelGrid>
+
+							<h:panelGrid columns="1">
+								<p:outputLabel value="SubTotal" />
+								<p:inputNumber symbol="R$ " decimalSeparator=","
+									thousandSeparator="."
+									value="#{ordemServicoController.ordemServico.subTotal}" />
+							</h:panelGrid>
+
+							<h:panelGrid columns="1">
+								<p:outputLabel value="Total" />
+								<p:inputNumber symbol="R$ " decimalSeparator=","
+									thousandSeparator="."
+									value="#{ordemServicoController.ordemServico.total}" />
+							</h:panelGrid>
+
+						</h:panelGrid>
+					</p:tab>
+
+					<p:tab title="Informações complementares">
+
+						<h:panelGrid columns="1">
+							<p:outputLabel value="Observações" />
+							<p:inputTextarea style="width: 855px;"
+								value="#{ordemServicoController.ordemServico.observacoes}" />
+						</h:panelGrid>
+
+						<h:panelGrid columns="1"
+							rendered="#{ordemServicoController.ordemServico.statusOS == 'CANCELADO'}">
+							<p:outputLabel value="Motivo do cancelamento" />
+							<p:inputTextarea style="width: 855px;"
+								value="#{ordemServicoController.ordemServico.motivoCancelamento}" />
+						</h:panelGrid>
+
+					</p:tab>
+
+				</p:tabView>
+
+				<br></br>
+
+				<p:fieldset>
+					<h:panelGrid columns="3">
+						<p:commandButton value="Salvar" icon="ui-icon-circle-check"
+							actionListener="#{ordemServicoController.salvar}"
+							update=":msgGlobal :formGeralServico:tableServico" />
+
+						<p:commandButton value="Finalizar OS" disabled="true"
+							icon="ui-icon-folder-collapsed" />
+
+						<p:commandButton value="Cancelar" icon="ui-icon-closethick"
+							oncomplete="PF('dialogNovaOrdemDeServico').hide();" />
+					</h:panelGrid>
+				</p:fieldset>
+			</h:form>
+		</p:dialog>
+
+		<!-- Dialog editar ordem de Serviço -->
+		<p:dialog widgetVar="dialogEditarOrdemDeServico"
+			header="Editar Ordem de Serviço" modal="true" appendTo="@(body)"
+			resizable="false" position="top" width="938">
+			<h:form id="formEditarOrdemServico">
+				<p:tabView>
+					<p:tab title="Dados Básicos">
+
+						<h:panelGrid columns="2">
+							<p:outputLabel styleClass="texto_negrito" value="Nº OS: " />
+							<p:outputLabel styleClass="texto_negrito" style="color: blue;"
+								value="#{ordemServicoController.ordemServico.id}" />
+						</h:panelGrid>
+
+						<h:panelGrid columns="8">
+							<h:panelGrid columns="1">
+								<p:outputLabel value="Data Entrada" />
+								<p:calendar pattern="dd/MM/yyyy"
+									value="#{ordemServicoController.ordemServico.dataEntrada}"
+									readonly="true" showOn="button" />
+							</h:panelGrid>
+							<h:panelGrid columns="1">
+								<p:outputLabel value="Hora Entrada" />
+								<p:calendar pattern="HH:mm" timeOnly="true" style="width: 15px;"
+									showHour="true" showMinute="true" showButtonPanel="true"
+									showTodayButton="true"
+									value="#{ordemServicoController.ordemServico.horaEntrada}"
+									readonly="true" showOn="button" />
+							</h:panelGrid>
+							<h:panelGrid columns="1">
+								<p:outputLabel value="Data Saída" />
+								<p:calendar pattern="dd/MM/yyyy" disabled="true"
+									value="#{ordemServicoController.ordemServico.dataSaida}"
+									showOn="button" />
+							</h:panelGrid>
+							<h:panelGrid columns="1">
+								<p:outputLabel value="Hora Saída" />
+								<p:calendar pattern="HH:mm" timeOnly="true" style="width: 50px;"
+									disabled="true"
+									value="#{ordemServicoController.ordemServico.horaSaida}"
+									showOn="button" />
+							</h:panelGrid>
+						</h:panelGrid>
+
+						<h:panelGrid columns="5">
+							<h:panelGrid columns="1">
+								<p:outputLabel value="Status" />
+								<p:selectOneMenu
+									value="#{ordemServicoController.ordemServico.statusOS}">
+									<f:selectItems var="os"
+										value="#{ordemServicoController.statusOs}"
+										itemLabel="#{os.statusOS}" itemValue="#{os}" />
+								</p:selectOneMenu>
+							</h:panelGrid>
+							<h:panelGrid columns="1">
+								<p:outputLabel value="Cliente" />
+								<p:inputText id="txtCliente"
+									value="#{ordemServicoController.ordemServico.cliente.nomeTemporario}"
+									style="width: 350px;" />
+							</h:panelGrid>
+							<h:panelGrid columns="1">
+								<p:outputLabel value="." style="color: white;" />
+								<p:commandButton id="btnProcurarClienteDialog"
+									icon="ui-icon-search"
+									actionListener="#{ordemServicoController.obterPageCliente}"
+									disabled="#{ordemServicoController.ordemServico.statusOS == 'CANCELADO'}">
+									<p:ajax event="dialogReturn"
+										listener="#{ordemServicoController.clienteSelecionado}"
+										process="@this" update="txtCliente" />
+								</p:commandButton>
+							</h:panelGrid>
+							<h:panelGrid columns="1">
+								<p:outputLabel value="Técnico / Responsável" />
+								<p:selectOneMenu style="width: 255px;"
+									value="#{ordemServicoController.ordemServico.funcionario}"
+									converter="omnifaces.SelectItemsConverter">
+									<f:selectItems var="fun"
+										value="#{ordemServicoController.funcionarios}"
+										itemLabel="#{fun.nome}" itemValue="#{fun}" />
+								</p:selectOneMenu>
+							</h:panelGrid>
+
+							<p:blockUI block="formEditarOrdemServico"
+								trigger="btnProcurarClienteDialog">
+								        Carregando! Aguarde...<br />
+								<p:graphicImage library="img" name="loading.gif" />
+							</p:blockUI>
+
+						</h:panelGrid>
+
+
+						<h:panelGrid columns="4">
+							<h:panelGrid columns="1">
+								<p:outputLabel value="Marca" />
+								<p:inputText
+									value="#{ordemServicoController.ordemServico.marca}"
+									style="width: 230px;" />
+							</h:panelGrid>
+							<h:panelGrid columns="1">
+								<p:outputLabel value="Nº de Série" />
+								<p:inputText
+									value="#{ordemServicoController.ordemServico.numeroSerie}" />
+							</h:panelGrid>
+							<h:panelGrid columns="1">
+								<p:outputLabel value="Modelo" />
+								<p:inputText
+									value="#{ordemServicoController.ordemServico.modelo}"
+									style="width: 250px;" />
+							</h:panelGrid>
+							<h:panelGrid columns="1">
+								<p:outputLabel value="Nº Patrimônio" />
+								<p:inputText
+									value="#{ordemServicoController.ordemServico.numeroPatrimonio}" />
+							</h:panelGrid>
+						</h:panelGrid>
+
+						<h:panelGrid columns="1">
+							<p:outputLabel value="Acessórios" />
+							<p:inputText style="width: 855px;"
+								value="#{ordemServicoController.ordemServico.acessorios}" />
+						</h:panelGrid>
+
+						<!-- <h:panelGrid columns="1">
+							<p:outputLabel value="Descrição Produto / Serviço" />
+							<p:inputTextarea style="width: 725px;" />
+						</h:panelGrid> -->
+
+						<h:panelGrid columns="1">
+							<p:outputLabel value="Defeito" />
+							<p:inputTextarea style="width: 855px;"
+								value="#{ordemServicoController.ordemServico.defeito}" />
+						</h:panelGrid>
+
+						<h:panelGrid columns="1">
+							<p:outputLabel value="Laudo Técnico" />
+							<p:inputTextarea style="width: 855px; color: blue"
+								value="#{ordemServicoController.ordemServico.laudoTecnico}" />
+						</h:panelGrid>
+					</p:tab>
+
+					<p:tab title="Serviços">
+					
+						<h:panelGrid columns="5">
+							<p:commandButton id="btnProcurarServicoDialog"
+								icon="ui-icon-search"
+								actionListener="#{ordemServicoController.obterPageServico}"
+								disabled="#{ordemServicoController.ordemServico.statusOS == 'CANCELADO'}"
+								value="Procurar">
+								<p:ajax event="dialogReturn"
+									listener="#{ordemServicoController.servicoSelecionado}"
+									process="@this" update=":msgGlobal tableServico" />
+							</p:commandButton>
+
+							<p:blockUI block="formEditarOrdemServico"
+								trigger="btnProcurarServicoDialog">
+								        Carregando! Aguarde...<br />
+								<p:graphicImage library="img" name="loading.gif" />
+							</p:blockUI>
+
+						</h:panelGrid>
+
+						<p:dataTable emptyMessage="Nenhum serviço encontrado!"
+							id="tableServico" var="s"
+							value="#{ordemServicoController.listaServicos}" paginator="true"
+							paginatorPosition="bottom" rows="7">
+							<p:column headerText="ID" width="35">
+								<h:outputLabel value="#{s.servico.id}" />
+							</p:column>
+							<p:column headerText="Nome">
+								<h:outputLabel value="#{s.servico.nome}" />
+							</p:column>
+							<p:column headerText="Quantidade">
+								<p:spinner min="1" value="#{s.quantidade}" style="width: 200px;">
+									<p:ajax
+										listener="#{ordemServicoController.calcularValorServico(s)}"
+										update="tableServico" />
+								</p:spinner>
+							</p:column>
+							<p:column headerText="Valor" width="120">
+								<h:outputLabel value="#{s.servico.valor}" style="color: blue;">
+									<f:convertNumber pattern="###,###.00" locale="pt_BR" />
+								</h:outputLabel>
+							</p:column>
+							<p:column headerText="Subtotal" width="120">
+								<h:outputLabel id="txtTotalServico" value="#{s.subTotal}" style="color: blue;">
+									<f:convertNumber pattern="###,###.00" locale="pt_BR" />
+								</h:outputLabel>
+							</p:column>
+							<p:column width="30">
+								<p:commandButton icon="ui-icon-close"
+									disabled="#{ordemServicoController.ordemServico.statusOS == 'CANCELADO'}" />
+							</p:column>
+
+							<p:columnGroup type="footer">
+								<p:row>
+									<p:column colspan="4" style="text-align:right" footerText="Total:" />
+									<p:column footerText="R$: #{ordemServicoController.ordemServico.totalServico}" style="text-align:left" />
+								</p:row>
+							</p:columnGroup>
+
+						</p:dataTable>
+					</p:tab>
+
+					<p:tab title="Produto">
+						<h:panelGrid columns="3">
+							<p:outputLabel value="Buscar produto" />
+							<p:inputText style="width: 500px;" />
+							<p:commandButton icon="ui-icon-search"
+								disabled="#{ordemServicoController.ordemServico.statusOS == 'CANCELADO'}" />
+						</h:panelGrid>
+						<p:dataTable emptyMessage="Nenhum produto encontrado!"
+							disabledSelection="#{ordemServicoController.ordemServico.statusOS == 'CANCELADO'}">
+							<p:column headerText="ID">
+							</p:column>
+							<p:column headerText="Nome">
+							</p:column>
+							<p:column headerText="Qtd">
+							</p:column>
+							<p:column headerText="Valor">
+							</p:column>
+							<p:column headerText="Subtotal">
+							</p:column>
+							<p:column>
+							</p:column>
+						</p:dataTable>
+					</p:tab>
+
+					<p:tab title="Pagamento">
+						<h:panelGrid columns="4" id="panel_1_pagamento">
+							<h:panelGrid columns="1">
+								<p:outputLabel value="Forma de pagamento" />
+								<p:selectOneMenu
+									value="#{ordemServicoController.ordemServico.formaPagamento}">
+									<f:selectItems var="fp"
+										value="#{ordemServicoController.formaPagamento}"
+										itemLabel="#{fp.formaPagamento}" itemValue="#{fp}" />
+								</p:selectOneMenu>
+							</h:panelGrid>
+
+							<!-- <h:panelGrid columns="1">
+								<p:outputLabel value="." style="color: white;" />
+								<p:commandButton icon="ui-icon-plusthick" />
+							</h:panelGrid> -->
+
+							<h:panelGrid columns="1">
+								<p:outputLabel value="Pago" />
+								<p:selectOneMenu id="som_pago" value="#{ordemServicoController.ordemServico.pago}">
+									<f:selectItems var="pg" value="#{ordemServicoController.pagos}"
+										itemLabel="#{pg.pago}" itemValue="#{pg}">
+									</f:selectItems>	
+									<p:ajax event="change" update="panel_1_pagamento" process="som_pago"/>		
+								</p:selectOneMenu>
+							</h:panelGrid>
+
+							<h:panelGrid columns="1" rendered="#{ordemServicoController.ordemServico.pago == 'SIM'}">
+								<p:outputLabel value="Valor pago" />
+								<p:inputNumber symbol="R$ " decimalSeparator=","
+									thousandSeparator="."
+									value="#{ordemServicoController.ordemServico.valorPago}" />
+							</h:panelGrid>
+
+							<h:panelGrid columns="1">
+								<p:outputLabel value="Garantia" />
+								<p:selectOneMenu
+									value="#{ordemServicoController.ordemServico.garantia}">
+									<f:selectItems var="g"
+										value="#{ordemServicoController.garantia}"
+										itemLabel="#{g.garantia}" itemValue="#{g}" />
+								</p:selectOneMenu>
+							</h:panelGrid>
+
+						</h:panelGrid>
+
+						<p:fieldset>
+							<h:panelGrid columns="4" id="panel_2_pagamento">
+								<h:panelGrid columns="1">
+									<p:outputLabel value="Tipo de desconto"/>
+									<p:selectOneMenu id="som_tipo_desconto" value="#{ordemServicoController.ordemServico.tipoDesconto}">
+										<f:selectItem itemLabel="Selecione o tipo de Desconto"/>
+										<f:selectItems var="td" value="#{ordemServicoController.tiposDesconto}" itemLabel="#{td.tipoDesconto}" itemValue="#{td}"/>
+										<p:ajax event="change" update="panel_2_pagamento" process="som_tipo_desconto"/>
+									</p:selectOneMenu>								
+								</h:panelGrid>		
+								
+								<h:panelGrid columns="1" rendered="#{ordemServicoController.ordemServico.tipoDesconto == 'DESCONTO_REAIS'}">
+									<p:outputLabel value="Desconto R$"/>
+									<p:spinner stepFactor="0.1" min="0" prefix="R$: " value="#{ordemServicoController.ordemServico.descontoReais}" />
+								</h:panelGrid>
+													
+								<h:panelGrid columns="1" rendered="#{ordemServicoController.ordemServico.tipoDesconto == 'DESCONTO_PORCENTAGEM'}">
+									<p:outputLabel value="Desconto %"/>
+									<p:inputNumber symbol="R$ " decimalSeparator=","
+												   thousandSeparator="."
+												   value="#{ordemServicoController.ordemServico.descontoPorcento}" />
+								</h:panelGrid>					
+								
+								<h:panelGrid columns="1">
+									<p:outputLabel value="Total"/>
+									<p:inputNumber symbol="R$ " decimalSeparator=","
+												   thousandSeparator="."
+												   value="#{ordemServicoController.ordemServico.total}" />
+								</h:panelGrid>
+								
+							</h:panelGrid>
+						</p:fieldset>
+						
+					</p:tab>
+
+					<p:tab title="Informações complementares">
+
+						<h:panelGrid columns="1">
+							<p:outputLabel value="Observações" />
+							<p:inputTextarea style="width: 855px;"
+								value="#{ordemServicoController.ordemServico.observacoes}" />
+						</h:panelGrid>
+
+						<h:panelGrid columns="1"
+							rendered="#{ordemServicoController.ordemServico.statusOS == 'CANCELADO'}">
+							<p:outputLabel value="Motivo do cancelamento" />
+							<p:inputTextarea style="width: 855px;"
+								value="#{ordemServicoController.ordemServico.motivoCancelamento}" />
+						</h:panelGrid>
+
+					</p:tab>
+
+				</p:tabView>
+
+				<br></br>
+
+				<p:fieldset>
+					<h:panelGrid columns="5">
+						<p:commandButton value="Salvar" icon="ui-icon-circle-check"
+							actionListener="#{ordemServicoController.salvar}"
+							update=":msgGlobal :formGeralServico:tableServico"
+							disabled="#{ordemServicoController.ordemServico.statusOS == 'CANCELADO'}" />
+
+						<p:commandButton value="Finalizar OS" disabled="true"
+							icon="ui-icon-folder-collapsed" />
+
+						<p:commandButton value="Cancelar" icon="ui-icon-closethick"
+							actionListener="#{ordemServicoController.fecharDialogs}"
+							update=":msgGlobal :formGeralServico:tableServico" />
+
+						<p:outputLabel value=" OBS:" styleClass="texto_negrito"
+							rendered="#{ordemServicoController.ordemServico.statusOS == 'CANCELADO'}" />
+						<p:outputLabel value=" Ordem de serviço apenas para visualização!"
+							rendered="#{ordemServicoController.ordemServico.statusOS == 'CANCELADO'}" />
+					</h:panelGrid>
+				</p:fieldset>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog header="Motivo do Cancelamento" closable="false"
+			draggable="false" resizable="false" maximizable="false"
+			widgetVar="dialog_motivo_cancelamento" modal="true"
+			appendTo="@(body)">
+			<h:form>
+
+				<h:panelGrid columns="1">
+					<h:outputLabel
+						value="Deseja realmente cancelar essa ordem de serviço?"
+						styleClass="texto_negrito" />
+					<h:outputLabel
+						value="Uma vez cancelada, não poderá ser reaberta! A mesma ficará disponível apenas para visualização!"
+						styleClass="texto_negrito" />
+				</h:panelGrid>
+
+				<h:panelGrid columns="1">
+					<p:outputLabel value="Motivo do cancelamento" />
+					<p:inputTextarea style="width: 855px;"
+						value="#{ordemServicoController.ordemServico.motivoCancelamento}" />
+				</h:panelGrid>
+				<h:panelGrid columns="2">
+					<p:commandButton value="Salvar"
+						actionListener="#{ordemServicoController.salvarMotivoCancelamento}"
+						update=":msgGlobal" />
+					<p:commandButton value="Cancelar"
+						oncomplete="PF('dialog_motivo_cancelamento').hide();"
+						update=":formGeralServico"
+						actionListener="#{ordemServicoController.fecharDialogMotivoCancelamento}" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog header="Escolha uma das opções abaixo" closable="true"
+			draggable="false" resizable="false" maximizable="false"
+			widgetVar="dialog_opcoes" modal="true" appendTo="@(body)">
+			<h:form>
+				<p:fieldset>
+					<p:commandButton value="Imprimir nota de recebimento"
+						icon="ui-icon-print" />
+					<p:commandButton value="Imprimir ordem de serviço"
+						icon="ui-icon-print" />
+					<!-- <p:commandButton value="Enviar por email"
+						icon="ui-icon-mail-closed"
+						oncomplete="PF('dialog_envio_email').show();" /> -->
+				</p:fieldset>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog header="Envio de email" closable="true" draggable="false"
+			resizable="false" maximizable="false" widgetVar="dialog_envio_email"
+			modal="true" appendTo="@(body)" position="top">
+			<h:form>
+				<p:fieldset>
+
+					<p:panelGrid columns="2">
+						<p:outputLabel value="Para" />
+						<p:inputText style="width: 300px;" />
+
+						<p:outputLabel value="De" />
+						<p:inputText style="width: 300px;" />
+
+						<p:outputLabel value="Assunto" />
+						<p:inputText style="width: 300px;" />
+					</p:panelGrid>
+
+					<h:panelGrid columns="1">
+						<p:editor id="editor" widgetVar="editorWidget" width="400" />
+					</h:panelGrid>
+
+					<h:panelGrid columns="2">
+						<p:commandButton value="Enviar" icon="ui-icon-extlink" />
+						<p:commandButton value="Cancelar" icon="ui-icon-close"
+							oncomplete="PF('dialog_envio_email').hide();" />
+					</h:panelGrid>
+				</p:fieldset>
+			</h:form>
+		</p:dialog>
+
+	</ui:define>
+</ui:composition>
+
+</html>

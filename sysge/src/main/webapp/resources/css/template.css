@@ -1,0 +1,105 @@
+@CHARSET "UTF-8";
+
+.ui-layout-north {
+	z-index: 11 !important;
+	overflow: visible !important;
+	box-shadow: 2px 2px 3px #888888;
+	border: none !important;
+}
+
+.ui-layout-pane-north {
+	
+}
+
+.ui-menubar {
+	border: none !important;
+}
+
+.semBorda tr, .semBorda td {
+	border: none !important;
+}
+
+.ui-layout-west {
+	/* border: none !important; */
+	 box-shadow: 2px 2px 3px #888888;
+}
+
+
+.ui-layout-north .ui-layout-unit-content {
+	overflow: visible !important;
+}
+
+.ui-layout-center {
+	border: none;
+	box-shadow: -2px 2px 3px #888888;
+}
+
+.ui-layout {
+	
+}
+
+.ui-layout-unit-content {
+	font-size: 14px;
+}
+
+
+ul.ui-menu-child {
+	width: 265px !important;
+}
+
+.ui-widget, .ui-widget .ui-widget {
+	font-size: 14px !important;
+}
+
+.ui-layout-center .ui-layout-unit-content {
+	border: none !important;
+}
+
+.ui-panelgrid, .ui-panelgrid td, .ui-panelgrid tr {
+	border-style: none !important
+}
+
+.ui-widget, .ui-datatable, .ui-datatable-empty-message, span, label {
+	font-size: 14px !important;
+}
+
+/* .ui-datatable .ui-datatable-data .even-row td {
+	background-color: #EEDD82;
+}
+
+.ui-datatable .ui-datatable-data .odd-row td {
+	background-color: #FFFACD;
+} */
+/* .ui-datatable .ui-datatable-data .ui-datatable-odd td {
+	background-color: #FFFFFF;
+}
+
+.ui-datatable .ui-datatable-data .ui-datatable-even td {
+	background-color: #F2F5F9;
+} */
+
+/* .ui-dialog {
+	position: absolute;
+	top: 90px !important;
+} */
+
+.customOutPutLabel .ui-outputlabel {
+	font-size: 14px !important;
+}
+
+#facet-spacer-menubar{
+	position: relative;
+	bottom: -5px;
+	background-color: #A8A8A8;
+	margin-left: 10px;
+	margin-right: 10px
+}
+
+.facet-outputLabel-menubar{
+	position: relative;
+	left: -50px;
+}
+
+.ui-panel {
+	border-style: none !important;
+}

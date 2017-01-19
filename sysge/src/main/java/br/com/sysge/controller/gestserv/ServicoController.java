@@ -1,0 +1,91 @@
+package br.com.sysge.controller.gestserv;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import br.com.sysge.model.gestserv.Servico;
+import br.com.sysge.model.type.Situacao;
+import br.com.sysge.service.gestserv.ServicoService;
+import br.com.sysge.util.FacesUtil;
+import br.com.sysge.util.RequestContextUtil;
+
+@Named
+@ViewScoped
+public class ServicoController implements Serializable {
+
+	private static final long serialVersionUID = 4027984504929564579L;
+
+	private Servico servico;
+	
+	@Inject
+	private ServicoService servicoService;
+
+	@SuppressWarnings("unused")
+	private List<Servico> servicos;
+
+	@PostConstruct
+	public void init() {
+		this.servicos = new ArrayList<Servico>();
+	}
+
+	public void novo() {
+		this.servico = new Servico();
+	}
+
+	public void salvar() {
+		try {
+			servicoService.salvar(servico);
+			FacesUtil.mensagemInfo("Servico salvo com sucesso!");
+			fecharDialogs();
+		} catch (Exception e) {
+			FacesUtil.mensagemErro(e.getMessage());
+		}
+	}
+	
+	public void fecharDialogs(){
+		RequestContextUtil.execute("PF('dialogNovoServico').hide()");
+		RequestContextUtil.execute("PF('dialogEditarServico').hide()");
+	}
+
+	public void setarServico(Servico servico){
+		this.servico = servico;
+	}
+	
+	public Servico getServico() {
+		if (this.servico == null) {
+			novo();
+		}
+		return servico;
+	}
+
+	public void setServico(Servico servico) {
+		this.servico = servico;
+	}
+
+	public ServicoService getServicoService() {
+		return servicoService;
+	}
+
+	public void setServicoService(ServicoService servicoService) {
+		this.servicoService = servicoService;
+	}
+
+	public List<Servico> getServicos() {
+		return servicoService.findAll();
+	}
+
+	public void setServicos(List<Servico> servicos) {
+		this.servicos = servicos;
+	}
+
+	public Situacao[] getSituacoes() {
+		return Situacao.values();
+	}
+
+}

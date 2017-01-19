@@ -1,0 +1,46 @@
+@CHARSET "UTF-8";
+
+#dialog-panel-1 {
+	width: 650px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.dialog-panelgrid-1-outputLabel {
+	font-weight: bold;
+}
+
+.dialog-panelgrid-1 {
+	width: 100px;
+	font-weight: bold;
+	color: blue;
+	opacity: 100;
+}
+
+.dialog-panelgrid-1-inputtext {
+	font-weight: bold;
+	color: black !important;
+	width: 630px;
+}
+
+.alinhamento_botoes {
+	position: relative;
+	left: 75px;
+}
+
+.texto_negrito {
+	font-weight: bold;
+}
+
+.img_menu_lateral {
+	position: relative;
+	left: 25%;
+	border-radius: 50px;
+}
+
+.alinhamento_panelGrid-fileUpload {
+	position: relative;
+	top: -75px;
+	left: -25px;
+	width: 600px;
+}

@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+	
+	<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	</h:head>
+	
+	<ui:composition template="/template/template.xhtml">
+		<ui:define name="conteudo">
+			<h:form id="formGeralPerfil">
+				<p:panel header="Listagem de perfil">
+				
+				<h:panelGrid columns="5" id="panelPesquisa">
+					<p:inputText id="txtPerfilPesquisa" style="width: 300px;" value="#{perfilController.perfilAcesso.perfilAcesso}"/>
+					<p:selectOneMenu value="#{perfilController.perfilAcesso.situacao}">
+						<f:selectItems var="s" value="#{perfilController.situacoes}" itemLabel="#{s.situacao}" itemValue="#{s}"/>
+					</p:selectOneMenu>
+					<p:commandButton value="Pesquisar" icon="ui-icon-search" update="tablePerfilAcesso"/>
+					<p:tooltip value="Digite um perfil ou informe * para pesquisar todos os perfis!" 
+							   for="txtPerfilPesquisa" position="bottom"/>
+					<p:focus context="panelPesquisa"/>		   
+				</h:panelGrid>
+				
+				<p:dataTable id="tablePerfilAcesso" var="p" paginator="true"
+					paginatorPosition="bottom"
+					value="#{perfilController.perfis}"
+					emptyMessage="Nenhum registro encontrado!" rows="8"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} 
+					{PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+								
+					<p:column headerText="ID" width="30">
+						<p:outputLabel value="#{p.id}"/>
+					</p:column>	
+						
+					<p:column headerText="Perfil de acesso">
+						<p:outputLabel value="#{p.perfilAcesso}"/>
+					</p:column>		
+								
+					<p:column headerText="Tipo de acesso">
+						<p:outputLabel value="#{p.tipoAcesso.tipoAcesso}"/>
+					</p:column>	
+					
+					<p:column headerText="Situação" width="50">
+						<p:outputLabel value="#{p.situacao.situacao}"/>
+					</p:column>	
+									
+					<p:column width="40">
+						<p:commandButton id="btnEditar" icon="ui-icon-pencil" 
+										 oncomplete="PF('dialogEditarPerfil').show()"
+										 update=":msgGlobal :formEditarPerfil:accordionPanelPerfilEditar"
+										 actionListener="#{perfilController.setarPerfilAcesso(p)}">
+						</p:commandButton>
+							<p:tooltip value="Cliquei aqui para editar!" for="btnEditar" position="left"/>
+					</p:column>	
+					
+					<f:facet name="footer">
+						<p:commandButton value="Novo perfil" actionListener="#{perfilController.novoPerfil}"
+										 icon="ui-icon-circle-plus" oncomplete="PF('dialogNovoPerfil').show();" 
+										 update=":msgGlobal :formNovoPerfil"/>	
+					</f:facet>	
+											
+				</p:dataTable>
+				</p:panel>
+				
+				<p:blockUI block="tablePerfilAcesso" trigger="tablePerfilAcesso">
+			        Carregando! Aguarde...<br />
+			        <p:graphicImage library="img" name="loading.gif"/>
+			    </p:blockUI>
+				
+				</h:form>
+				
+				<!-- Dialog editar -->
+				<p:dialog id="dialogEditarPerfilAcesso" widgetVar="dialogEditarPerfil" 
+						  header="Editar Perfil" modal="true" 
+						  appendTo="@(body)" resizable="false"
+						  position="top" width="700">
+					<h:form id="formEditarPerfil">
+					
+					<p:accordionPanel id="accordionPanelPerfilEditar" cache="false" 
+						              activeIndex="#{perfilController.currentTab}">
+						<p:tab title="Dados Gerais" id="tab0">
+						
+							<h:panelGrid columns="2">
+					
+								<h:panelGrid columns="1">
+									<p:outputLabel value="Perfil de acesso"/>
+									<p:inputText value="#{perfilController.perfilAcesso.perfilAcesso}" style="width: 200px;"/>
+								</h:panelGrid>
+								
+								<h:panelGrid columns="1">
+									<h:outputLabel value="Situação"/>
+									<p:selectOneMenu value="#{perfilController.perfilAcesso.situacao}">
+										<f:selectItems value="#{perfilController.situacoes}" var="situacao" itemLabel="#{situacao.situacao}" itemValue="#{situacao}"/>
+									</p:selectOneMenu>
+								</h:panelGrid>
+								
+							</h:panelGrid>
+							
+						</p:tab>
+						
+						<p:tab title="Permissões">
+								<p:pickList id="pickList" value="#{perfilController.menus}" var="menu" 
+									    			responsive="true" showSourceFilter="true" showTargetFilter="true" 
+									    			filterMatchMode="contains" converter="primeFacesPickListConverter"
+									    			itemLabel="#{menu.menu}" itemValue="#{menu}" showCheckbox="true"
+									    			disabled="#{perfilController.perfilAcesso.admin == 'ADMIN'}">
+									    			
+									        <f:facet name="sourceCaption">Menus</f:facet>
+									        <f:facet name="targetCaption">Menus selecionados</f:facet>
+									        
+									        <p:ajax event="transfer" listener="#{perfilController.onTransfer}" />
+									 
+									        <p:column style="width:90%;">
+									            <h:outputText value="#{menu.menu}"/>
+									        </p:column>
+							        
+							    </p:pickList>
+						</p:tab>
+						
+					</p:accordionPanel>
+						<h:panelGrid id="panelBotoesEditarPerfilAcesso" columns="2">
+							<h:panelGrid columns="2">
+								<p:commandButton id="btnEditarPerfilAcesso" value="Salvar" icon="ui-icon-check" actionListener="#{perfilController.editar}" update=":msgGlobal :formEditarPerfil :formGeralPerfil:tablePerfilAcesso"/>
+								<p:commandButton id="btnEditarPerfilAcessoCancelar" value="Cancelar" icon="ui-icon-close" 
+												 oncomplete="PF('dialogEditarPerfil').hide();"/>
+							</h:panelGrid>
+						</h:panelGrid>
+						<p:blockUI block="panelBotoesEditarPerfilAcesso" trigger="btnEditarPerfilAcesso,btnEditarPerfilAcessoCancelar"/>
+					</h:form>	
+				</p:dialog>
+			
+				
+				<!-- Dialog novo usuário -->
+				<p:dialog widgetVar="dialogNovoPerfil" 
+						  header="Novo Perfil" modal="true" 
+						  appendTo="@(body)" resizable="false"
+						  position="top" width="700">
+					<h:form id="formNovoPerfil">
+					
+						<p:accordionPanel id="accordionPanelPerfil" cache="false" activeIndex="#{perfilController.currentTab}">
+							<p:tab title="Dados Gerais" id="tab0"> 
+								<h:panelGrid columns="2">
+						
+									<h:panelGrid columns="1">
+										<p:outputLabel value="Perfil de acesso"/>
+										<p:inputText value="#{perfilController.perfilAcesso.perfilAcesso}" style="width: 200px;"/>
+									</h:panelGrid>
+									
+								</h:panelGrid>
+							</p:tab>
+							<p:tab title="Permissões">
+							    <p:pickList id="pickList" value="#{perfilController.menus}" var="menu" 
+							    			responsive="true" showSourceFilter="true" showTargetFilter="true" 
+							    			filterMatchMode="contains" converter="primeFacesPickListConverter"
+							    			itemLabel="#{menu.menu}" itemValue="#{menu}" showCheckbox="true">
+							    			
+							        <f:facet name="sourceCaption">Menus</f:facet>
+							        <f:facet name="targetCaption">Menus selecionados</f:facet>
+							 
+							        <p:column style="width:90%;">
+							            <h:outputText value="#{menu.menu}"/>
+							        </p:column>
+							        
+							    </p:pickList>
+							</p:tab>
+						</p:accordionPanel>
+						<h:panelGrid id="panelBotoesNovoPerfilAcesso" columns="2">
+							<h:panelGrid columns="2">
+								<p:commandButton id="btnSalvarNovoPerfilAcesso" value="Salvar" icon="ui-icon-check" action="#{perfilController.salvar}" update=":msgGlobal :formGeralPerfil:tablePerfilAcesso"/>
+								<p:commandButton value="Cancelar" icon="ui-icon-close" oncomplete="PF('dialogNovoPerfil').hide();"/>
+							</h:panelGrid>
+						</h:panelGrid>
+						<p:blockUI block="panelBotoesNovoPerfilAcesso" trigger="btnSalvarNovoPerfilAcesso"/>
+					</h:form>	
+				</p:dialog>
+			
+		</ui:define>
+	</ui:composition>
+	
+</html>

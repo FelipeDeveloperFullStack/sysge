@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<meta http-equiv="Content-Type" content="charset=UTF-8" />
+	<title></title>
+	<h:outputStylesheet library="css" name="template.css" />
+	<h:outputStylesheet library="css" name="allstyle.css" />
+
+</h:head>
+<h:body>
+
+		<p:layout fullPage="true">
+			<p:growl id="msgGlobal" life="5000" />
+
+			<p:layoutUnit position="south" size="50">
+				<p:toolbar style="height: 26px; width: 99%;">
+					<f:facet name="right">
+						<h:form>
+							<p:outputLabel
+								value="Bem vindo: #{loginController.usuario.funcionario.nome}"
+								styleClass="facet-outputLabel-menubar" />
+							<p:commandButton value="Sair do sistema" icon="ui-icon-extlink"
+								action="#{loginController.logoutSistema}">
+								<p:confirm header="Atenção"
+									message="Deseja realmente sair do sistema?"
+									icon="ui-icon-alert" />
+							</p:commandButton>
+							<p:confirmDialog global="true" showEffect="clip"
+								hideEffect="fade">
+								<p:commandButton value="Sim" styleClass="ui-confirmdialog-yes"
+									icon="ui-icon-check" />
+								<p:commandButton value="Não" type="button"
+									styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+							</p:confirmDialog>
+						</h:form>
+					</f:facet>
+					<f:facet name="left">
+						<h:form>
+							<p:themeSwitcher id="advanced" style="width:165px" effect="fade"
+								var="t">
+								<f:selectItem itemLabel="Escolha um tema" itemValue="" />
+								<f:selectItems
+									value="[afterdark, afternoon, afterwork, aristo, black-tie, blitzer, 
+					              bluesky, bootstrap, casablanca, cupertino, cruze, dark-hive, delta, dot-luv, eggplant,
+					              excite-bike, flick, glass-x, home, hot-sneaks, humanity, le-frog, midnight, mint-choc,
+					              omega, overcast, pepper-grinder, redmond, rocket, sam, smoothness, south-street, start,
+								  sunny, swanky-purse, trontastic, ui-darkness, ui-lightness, vader]"
+									var="theme" itemLabel="" itemValue="" />
+
+								<p:column>
+									<h:outputText styleClass="ui-theme ui-theme-"
+										style="display-block" />
+								</p:column>
+
+								<p:column>
+
+								</p:column>
+							</p:themeSwitcher>
+						</h:form>
+					</f:facet>
+				</p:toolbar>
+			</p:layoutUnit>
+
+			<p:layoutUnit id="menu" position="west" size="250"
+				header="MENU DE ACESSO" collapsible="true">
+				<h:form>
+
+					<p:fieldset>
+						<h:panelGrid columns="2">
+							<p:outputLabel value="Último acesso:" />
+							<p:outputLabel value="#{loginController.usuario.ultimoAcesso}"
+								styleClass="texto_negrito">
+								<f:convertDateTime pattern="dd/MM HH:mm" locale="pt_BR"
+									timeZone="GMT-2" type="both" />
+							</p:outputLabel>
+						</h:panelGrid>
+						<h:panelGrid columns="2">
+							<p:outputLabel value="Perfil:" />
+							<p:outputLabel
+								value="#{loginController.usuario.perfilAcesso.perfilAcesso}"
+								styleClass="texto_negrito" />
+						</h:panelGrid>
+					</p:fieldset>
+
+					<p:spacer width="5" />
+
+					<p:panelMenu style="width:240px"
+						model="#{loginController.menuModel}" />
+				</h:form>
+
+			</p:layoutUnit>
+
+			<p:layoutUnit position="center">
+				<ui:insert name="conteudo" />
+			</p:layoutUnit>
+			
+			<p:layoutUnit position="east" collapsible="true" header="Chat" rendered="false">
+			
+			</p:layoutUnit>
+
+		</p:layout>
+</h:body>
+</html>
