@@ -36,7 +36,9 @@ public interface GenericDao<E, I> extends Serializable {
 	
 	List<E> findByStatusOs(StatusOS statusOs);
 	
-	List<E> findByProperty(Object object, String attributeClass);
+	List<E> findByListProperty(Object object, String attributeClass);
+	
+	E findByProperty(Object object, String attributeClass);
 	
 	List<E> findByNumeroStatusOS(long numero, StatusOS statusOS);
 	

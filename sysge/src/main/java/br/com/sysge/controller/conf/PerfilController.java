@@ -13,6 +13,7 @@ import org.primefaces.event.TransferEvent;
 import org.primefaces.model.DualListModel;
 
 import br.com.sysge.model.conf.PerfilAcesso;
+import br.com.sysge.model.conf.Usuario;
 import br.com.sysge.model.sys.PanelMenu;
 import br.com.sysge.model.type.Situacao;
 import br.com.sysge.service.conf.PerfilAcessoService;
@@ -27,6 +28,8 @@ public class PerfilController implements Serializable{
 	private static final long serialVersionUID = -8278690574259597505L;
 	
 	private PerfilAcesso perfilAcesso;
+	private boolean existeUsuario;
+	private Usuario usuario;
 	private int currentTab = 0;
 	
 	private DualListModel<PanelMenu> menus;
@@ -57,10 +60,10 @@ public class PerfilController implements Serializable{
 		return panelMenuService.setarMenuTarget(perfilAcesso);
 	}
 	
-	/*public void pesquisarPerfilAcesso(){
-		setPerfis(perfilAcessoService.pesquisarPerfilAcesso(perfilAcesso));
-		novoPerfil();
-	}*/
+	public void pesquisarPerfilAcesso(){
+		perfis = new ArrayList<PerfilAcesso>();
+		perfis = perfilAcessoService.pesquisarPerfilAcesso(perfilAcesso);
+	}
 	
 	public void novoPerfil(){
 		this.perfilAcesso = new PerfilAcesso();
@@ -69,36 +72,88 @@ public class PerfilController implements Serializable{
 	}
 	
 	public void setarPerfilAcesso(PerfilAcesso perfilAcesso){
-		this.perfilAcesso = perfilAcesso;
-		createDualListModel();
-		setarTabIndex(0);
+		try {
+			this.perfilAcesso = perfilAcesso;
+			existeUsuario = perfilAcessoService.verificarSeExistePerfilAcesso(perfilAcesso.getId());
+			createDualListModel();
+			setarTabIndex(0);
+		} catch (Exception e) {
+			e.printStackTrace();
+			FacesUtil.mensagemErro(e.getMessage());
+		}
+	}
+	
+	public void novaListaPerfilAcesso(){
+		perfis = new ArrayList<PerfilAcesso>();
 	}
 	
 	public void salvar(){
 		try {
+			verificarSeExistePerfilCadastradoComMesmaDescricao(perfilAcesso);
 			setarMenu(perfilAcesso);
+			novaListaPerfilAcesso();
 		} catch (RuntimeException e) {
 			FacesUtil.mensagemErro(e.getMessage());
-			e.printStackTrace();
 		}
 		
 	}
 	
 	public void editar(){
 		try {
-			perfilAcesso = perfilAcessoService.salvar(perfilAcesso);
-			setarMenu(perfilAcesso);
+			verificarSeExistePerfilCadastradoComMesmaDescricao(perfilAcesso);
+			if(perfilAcesso.getSituacao().equals(Situacao.INATIVO)){
+				usuario = new Usuario();
+				if(perfilAcessoService.verificarSeExistePerfilAcesso(perfilAcesso.getId())){
+					usuario = perfilAcessoService.procurarUsuarioPorPerfil(perfilAcesso.getId());
+					RequestContextUtil.execute("PF('dialog_confirmacao_perfil_inativar').show();");
+				}else{
+					editarPerfil();
+				}
+			}else{
+				editarPerfil();
+			}
 		} catch (RuntimeException e) {
 			FacesUtil.mensagemErro(e.getMessage());
-			e.printStackTrace();
 		}
+	}
+	
+	public void editarPerfil(){
+		perfilAcesso = perfilAcessoService.salvar(perfilAcesso);
+		setarMenu(perfilAcesso);
+		novaListaPerfilAcesso();
+		RequestContextUtil.execute("PF('dialog_confirmacao_perfil_inativar').hide();");
+	}
+	
+	private void verificarSeExistePerfilCadastradoComMesmaDescricao(PerfilAcesso perfilAcesso){
+		List<PerfilAcesso> perfis = perfilAcessoService.findAll();
+		for(PerfilAcesso p : perfis){
+			verificarDescricaoIgual(p, perfilAcesso);
+		}
+	}
+	
+	private void verificarDescricaoIgual(PerfilAcesso p, PerfilAcesso perfilAcesso){
+		if(perfilAcesso.getPerfilAcesso().trim().equalsIgnoreCase(p.getPerfilAcesso())){
+			if(perfilAcesso.getId() == null){
+				mostrarMensagemParaUsuario(p);
+			}else{
+				if(p.getId() != perfilAcesso.getId()){
+					mostrarMensagemParaUsuario(p);
+				}
+			}
+		}
+	}
+	
+	private void mostrarMensagemParaUsuario(PerfilAcesso p){
+		throw new RuntimeException("Existe o perfil "+p.getPerfilAcesso()+" "
+				+ "de código "+p.getId()+" já está cadastrado, "
+				+ "por favor escolha outra descrição!");
 	}
 	
 	private void setarMenu(PerfilAcesso perfilAcesso){
 		panelMenuService.setarMenu(menus, perfilAcesso);
 		FacesUtil.mensagemInfo("Perfil salvo com sucesso!");
 		fecharDialogs();
-		listarPerfil();
+		//listarPerfil();
 	}
 	
 	private void fecharDialogs(){
@@ -136,7 +191,7 @@ public class PerfilController implements Serializable{
 	}
 	
 	public List<PerfilAcesso> getPerfis() {
-		return perfilAcessoService.findAll();
+		return  perfis;
 	}
 
 	public void setPerfis(List<PerfilAcesso> perfis) {
@@ -159,6 +214,22 @@ public class PerfilController implements Serializable{
 
 	public void setCurrentTab(int currentTab) {
 		this.currentTab = currentTab;
+	}
+
+	public Usuario getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
+	}
+
+	public boolean isExisteUsuario() {
+		return existeUsuario;
+	}
+
+	public void setExisteUsuario(boolean existeUsuario) {
+		this.existeUsuario = existeUsuario;
 	}
 	
 	

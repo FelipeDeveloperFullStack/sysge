@@ -3,7 +3,9 @@ package br.com.sysge.service.conf;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.faces.context.FacesContext;
 import javax.inject.Inject;
+import javax.servlet.http.HttpSession;
 
 import br.com.sysge.infraestrutura.dao.GenericDaoImpl;
 import br.com.sysge.model.conf.Usuario;
@@ -31,6 +33,16 @@ public class UsuarioService extends GenericDaoImpl<Usuario, Long>{
 	
 	public Usuario salvar(Usuario usuario){
 		try {
+			if(usuario.getPerfilAcesso() == null){
+				throw new RuntimeException("O perfil é obrigatório para o usuário!");
+			}
+			if(usuario.getId() != null){
+				if(usuario.equals(obterSessaoUsuario())){
+					if(usuario.getSituacao() == Situacao.INATIVO){
+						throw new RuntimeException("Não é possível inativar o mesmo usuário logado no sistema!");
+					}
+				}
+			}
 			return super.save(consistirUsuario(usuario));
 		} catch (RuntimeException e) {
 			e.getStackTrace();
@@ -43,6 +55,11 @@ public class UsuarioService extends GenericDaoImpl<Usuario, Long>{
 			usuario.setSituacao(Situacao.ATIVO);
 		}
 		return usuario;
+	}
+	
+	public Usuario obterSessaoUsuario(){
+		HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
+		return (Usuario) session.getAttribute("usuario");
 	}
 	
 	public boolean isExisteUsuario(Usuario usuario){
@@ -93,6 +110,24 @@ public class UsuarioService extends GenericDaoImpl<Usuario, Long>{
 			}
 		}
 		return false;
+	}
+	
+	public Usuario procurarUsuarioPorPerfil(long idPerfilAcesso){
+		return super.findByProperty(idPerfilAcesso, "perfilAcesso.id");
+	}
+	
+	public boolean verificarSeExistePerfilAcesso(long idPerfilAcesso){
+		int cont = 0;
+		for(Usuario u : super.findAll()){
+			if(u.getPerfilAcesso().getId() == idPerfilAcesso){
+				cont += 1;
+			}
+		}
+		if(cont == 0){
+			return false;
+		}else{
+			return true;
+		}
 	}
 	
 }

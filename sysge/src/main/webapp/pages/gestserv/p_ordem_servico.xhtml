@@ -334,7 +334,7 @@
 					</p:tab>
 
 					<p:tab title="Pagamento">
-						<h:panelGrid columns="4">
+						<h:panelGrid columns="4" id="panel_1_pagamento">
 							<h:panelGrid columns="1">
 								<p:outputLabel value="Forma de pagamento" />
 								<p:selectOneMenu
@@ -351,63 +351,74 @@
 							</h:panelGrid> -->
 
 							<h:panelGrid columns="1">
-								<p:outputLabel value="Pago" />
-								<p:selectOneMenu
-									value="#{ordemServicoController.ordemServico.pago}">
-									<f:selectItems var="pg" value="#{ordemServicoController.pagos}"
-										itemLabel="#{pg.pago}" itemValue="#{pg}" />
-								</p:selectOneMenu>
+								<p:outputLabel value="Condição de pagamento" />
+								<p:inputText placeholder="Exemplo: 30 60 90"/>
 							</h:panelGrid>
 
 							<h:panelGrid columns="1">
-								<p:outputLabel value="Valor pago" />
-								<p:inputNumber symbol="R$ " decimalSeparator=","
-									thousandSeparator="."
-									value="#{ordemServicoController.ordemServico.valorPago}" />
-							</h:panelGrid>
-
-							<h:panelGrid columns="1">
-								<p:outputLabel value="Garantia" />
-								<p:selectOneMenu
-									value="#{ordemServicoController.ordemServico.garantia}">
-									<f:selectItems var="g"
-										value="#{ordemServicoController.garantia}"
-										itemLabel="#{g.garantia}" itemValue="#{g}" />
-								</p:selectOneMenu>
+								<p:outputLabel value="." style="color: white;" />
+								<p:commandButton value="Gerar parcelas" icon="ui-icon-tag"/>
 							</h:panelGrid>
 
 						</h:panelGrid>
 
-						<h:panelGrid columns="4">
-							<h:panelGrid columns="1">
-								<p:outputLabel value="Desconto R$" />
-								<p:inputNumber symbol="R$ " decimalSeparator=","
-									thousandSeparator="."
-									value="#{ordemServicoController.ordemServico.descontoReais}" />
+						<p:fieldset>
+							<h:panelGrid columns="4" id="panel_2_pagamento">
+								<h:panelGrid columns="1">
+									<p:outputLabel value="Tipo de desconto"/>
+									<p:selectOneMenu id="som_tipo_desconto" value="#{ordemServicoController.ordemServico.tipoDesconto}">
+										<f:selectItem itemLabel="Selecione o tipo de Desconto"/>
+										<f:selectItems var="td" value="#{ordemServicoController.tiposDesconto}" itemLabel="#{td.tipoDesconto}" itemValue="#{td}"/>
+										<p:ajax event="change" update="panel_2_pagamento" process="som_tipo_desconto"/>
+									</p:selectOneMenu>								
+								</h:panelGrid>		
+								
+								<h:panelGrid columns="1" rendered="#{ordemServicoController.ordemServico.tipoDesconto == 'DESCONTO_REAIS'}">
+									<p:outputLabel value="Desconto R$"/>
+									<p:spinner stepFactor="0.1" min="0" prefix="R$: " value="#{ordemServicoController.ordemServico.descontoReais}" />
+								</h:panelGrid>
+													
+								<h:panelGrid columns="1" rendered="#{ordemServicoController.ordemServico.tipoDesconto == 'DESCONTO_PORCENTAGEM'}">
+									<p:outputLabel value="Desconto %"/>
+									<p:inputNumber symbol="R$ " decimalSeparator=","
+												   thousandSeparator="."
+												   value="#{ordemServicoController.ordemServico.descontoPorcento}" />
+								</h:panelGrid>					
+								
+								<h:panelGrid columns="1">
+									<p:outputLabel value="Total"/>
+									<p:inputNumber symbol="R$ " decimalSeparator=","
+												   thousandSeparator="."
+												   value="#{ordemServicoController.ordemServico.total}" />
+								</h:panelGrid>
+								
 							</h:panelGrid>
-
-							<h:panelGrid columns="1">
-								<p:outputLabel value="Desconto %" />
-								<p:inputNumber symbol="% " decimalSeparator=","
-									thousandSeparator="."
-									value="#{ordemServicoController.ordemServico.descontoPorcento}" />
-							</h:panelGrid>
-
-							<h:panelGrid columns="1">
-								<p:outputLabel value="SubTotal" />
-								<p:inputNumber symbol="R$ " decimalSeparator=","
-									thousandSeparator="."
-									value="#{ordemServicoController.ordemServico.subTotal}" />
-							</h:panelGrid>
-
-							<h:panelGrid columns="1">
-								<p:outputLabel value="Total" />
-								<p:inputNumber symbol="R$ " decimalSeparator=","
-									thousandSeparator="."
-									value="#{ordemServicoController.ordemServico.total}" />
-							</h:panelGrid>
-
-						</h:panelGrid>
+						</p:fieldset>
+						
+						<p:dataTable var="parcela" emptyMessage="Nenhum registro encontrado!" 
+									 paginator="true" paginatorPosition="bottom">
+						
+							<p:column headerText="Número">
+							
+							</p:column>
+							<p:column headerText="Parcela">
+							
+							</p:column>
+							<p:column headerText="Desconto">
+							
+							</p:column>
+							<p:column headerText="Valor cobrado">
+							
+							</p:column>
+							<p:column headerText="Vencimento">
+							
+							</p:column>
+							<p:column>
+								<p:commandButton icon="ui-icon-tag"/>
+								<p:commandButton icon="ui-icon-bookmark"/>
+								<p:commandButton icon="ui-icon-print"/>
+							</p:column>
+						</p:dataTable>
 					</p:tab>
 
 					<p:tab title="Informações complementares">
@@ -675,6 +686,7 @@
 					</p:tab>
 
 					<p:tab title="Pagamento">
+					
 						<h:panelGrid columns="4" id="panel_1_pagamento">
 							<h:panelGrid columns="1">
 								<p:outputLabel value="Forma de pagamento" />
@@ -692,30 +704,13 @@
 							</h:panelGrid> -->
 
 							<h:panelGrid columns="1">
-								<p:outputLabel value="Pago" />
-								<p:selectOneMenu id="som_pago" value="#{ordemServicoController.ordemServico.pago}">
-									<f:selectItems var="pg" value="#{ordemServicoController.pagos}"
-										itemLabel="#{pg.pago}" itemValue="#{pg}">
-									</f:selectItems>	
-									<p:ajax event="change" update="panel_1_pagamento" process="som_pago"/>		
-								</p:selectOneMenu>
-							</h:panelGrid>
-
-							<h:panelGrid columns="1" rendered="#{ordemServicoController.ordemServico.pago == 'SIM'}">
-								<p:outputLabel value="Valor pago" />
-								<p:inputNumber symbol="R$ " decimalSeparator=","
-									thousandSeparator="."
-									value="#{ordemServicoController.ordemServico.valorPago}" />
+								<p:outputLabel value="Condição de pagamento" />
+								<p:inputText placeholder="Exemplo: 30 60 90"/>
 							</h:panelGrid>
 
 							<h:panelGrid columns="1">
-								<p:outputLabel value="Garantia" />
-								<p:selectOneMenu
-									value="#{ordemServicoController.ordemServico.garantia}">
-									<f:selectItems var="g"
-										value="#{ordemServicoController.garantia}"
-										itemLabel="#{g.garantia}" itemValue="#{g}" />
-								</p:selectOneMenu>
+								<p:outputLabel value="." style="color: white;" />
+								<p:commandButton value="Gerar parcelas" icon="ui-icon-tag"/>
 							</h:panelGrid>
 
 						</h:panelGrid>
@@ -752,6 +747,31 @@
 								
 							</h:panelGrid>
 						</p:fieldset>
+						
+						<p:dataTable var="parcela" emptyMessage="Nenhum registro encontrado!" 
+									 paginator="true" paginatorPosition="bottom">
+						
+							<p:column headerText="Número">
+							
+							</p:column>
+							<p:column headerText="Parcela">
+							
+							</p:column>
+							<p:column headerText="Desconto">
+							
+							</p:column>
+							<p:column headerText="Valor cobrado">
+							
+							</p:column>
+							<p:column headerText="Vencimento">
+							
+							</p:column>
+							<p:column>
+								<p:commandButton icon="ui-icon-tag"/>
+								<p:commandButton icon="ui-icon-bookmark"/>
+								<p:commandButton icon="ui-icon-print"/>
+							</p:column>
+						</p:dataTable>
 						
 					</p:tab>
 

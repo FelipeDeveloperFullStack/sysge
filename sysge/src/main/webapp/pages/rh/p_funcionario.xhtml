@@ -21,13 +21,17 @@
 						<f:selectItems var="s" value="#{funcionarioController.situacoes}"
 							itemLabel="#{s.situacao}" itemValue="#{s}" />
 					</p:selectOneMenu>
-					<p:commandButton value="Pesquisar" icon="ui-icon-search"
+					<p:commandButton id="btnPesquisarFun" value="Pesquisar" icon="ui-icon-search"
 						update="tablePerfilfuncionario" />
 					<p:commandButton value="Imprimir" icon="ui-icon-print" />
 					<p:tooltip
 						value="Digite um funcionário ou informe * para pesquisar todos!"
 						for="txtFuncionarioPesquisa" position="bottom" />
 					<p:focus context="panelPesquisa" />
+					<p:blockUI block="tablePerfilfuncionario" trigger="btnPesquisarFun">
+						        Carregando! Aguarde...<br />
+							<p:graphicImage library="img" name="loading.gif" />
+					</p:blockUI>
 				</h:panelGrid>
 
 				<p:dataTable id="tablePerfilfuncionario" var="fun" paginator="true"

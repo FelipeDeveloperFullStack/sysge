@@ -1,27 +1,34 @@
 package br.com.sysge.service.conf;
 
 
-import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import br.com.sysge.infraestrutura.dao.GenericDaoImpl;
 import br.com.sysge.model.conf.PerfilAcesso;
+import br.com.sysge.model.conf.Usuario;
 import br.com.sysge.model.type.Situacao;
 
 public class PerfilAcessoService extends GenericDaoImpl<PerfilAcesso, Long>{
 
 	private static final long serialVersionUID = -2246221808094794560L;
 	
+	@Inject
+	private UsuarioService usuarioService;
+	
 	public List<PerfilAcesso> pesquisarPerfilAcesso(PerfilAcesso perfilAcesso){
-		if(perfilAcesso.getPerfilAcesso() != null){
-			if(perfilAcesso.getPerfilAcesso().equals("*")){
+		try {
+			if(perfilAcesso.getPerfilAcesso().trim().isEmpty()){
 				return super.findBySituation(perfilAcesso.getSituacao());
 			}else{
 				return super.findByParametersForSituation(perfilAcesso.getPerfilAcesso(), 
-						perfilAcesso.getSituacao(), "perfilAcesso", "LIKE", "%", "%");
+						perfilAcesso.getSituacao(), "perfilAcesso", "LIKE", "%", "%"); 
 			}
+		} catch (RuntimeException e) {
+			e.getStackTrace();
+			throw new RuntimeException(e.getMessage());
 		}
-		return new ArrayList<PerfilAcesso>();
 	}
 	
 	public PerfilAcesso salvar(PerfilAcesso perfil){
@@ -41,6 +48,14 @@ public class PerfilAcessoService extends GenericDaoImpl<PerfilAcesso, Long>{
 			perfil.setSituacao(Situacao.ATIVO);
 		}
 		return perfil;
+	}
+	
+	public Usuario procurarUsuarioPorPerfil(long idPerfilAcesso){
+		return usuarioService.procurarUsuarioPorPerfil(idPerfilAcesso);
+	}
+	
+	public boolean verificarSeExistePerfilAcesso(long idPerfilAcesso){
+		return usuarioService.verificarSeExistePerfilAcesso(idPerfilAcesso);
 	}
 
 }

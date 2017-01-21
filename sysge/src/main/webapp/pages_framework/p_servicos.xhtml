@@ -25,13 +25,17 @@
 					<f:selectItems var="s" value="#{servicoController.situacoes}"
 						itemLabel="#{s.situacao}" itemValue="#{s}" />
 				</p:selectOneMenu>
-				<p:commandButton value="Pesquisar" icon="ui-icon-search"
+				<p:commandButton id="btnPesquisarServico" value="Pesquisar" icon="ui-icon-search"
 					update="formGeralServico" />
 				<p:commandButton value="Imprimir" icon="ui-icon-print" />
 				<p:tooltip
 					value="Digite o nome do serviço ou informe * para pesquisar todos!"
 					for="txtServicoPesquisa" position="bottom" />
 				<p:focus context="panelPesquisa" />
+				<p:blockUI block="tableServico" trigger="btnPesquisarServico">
+						        Carregando! Aguarde...<br />
+							<p:graphicImage library="img" name="loading.gif" />
+					</p:blockUI>
 			</h:panelGrid>
 
 			<p:dataTable id="tableServico" var="s" paginator="true"

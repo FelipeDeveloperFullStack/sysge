@@ -310,11 +310,19 @@ public class GenericDaoImpl<E, I> implements GenericDao<E, I> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<E> findByProperty(Object object, String attributeClass) {
+	public List<E> findByListProperty(Object object, String attributeClass) {
 		Query query = manager.createQuery
 			  ("SELECT p FROM "+entityClass.getSimpleName() + " p "
 			  + " WHERE p."+attributeClass+" = "+object+"");
 		return query.getResultList();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public E findByProperty(Object object, String attributeClass) {
+		Query query = manager.createQuery
+				("SELECT p FROM "+entityClass.getSimpleName() + " p "
+						+ " WHERE p."+attributeClass+" = "+object+"");
+		return (E) query.getSingleResult();
 	}
 	
 	

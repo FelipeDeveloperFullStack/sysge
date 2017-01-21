@@ -44,7 +44,7 @@ public class OrdemServicoService extends GenericDaoImpl<OrdemServico, Long> {
 	}
 	
 	public List<ServicoOrdemServico> procurarServicosOS(long idOS){
-		return servicoOrdemServicoService.findByProperty(idOS, "ordemServico.id");
+		return servicoOrdemServicoService.findByListProperty(idOS, "ordemServico.id");
 	}
 	
 	public List<OrdemServico> pesquisarPorNumeroEStatusOS(OrdemServico ordemServico){

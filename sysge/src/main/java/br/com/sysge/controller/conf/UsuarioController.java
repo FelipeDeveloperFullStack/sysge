@@ -16,6 +16,7 @@ import br.com.sysge.model.conf.PerfilAcesso;
 import br.com.sysge.model.conf.Usuario;
 import br.com.sysge.model.rh.Funcionario;
 import br.com.sysge.model.type.Situacao;
+import br.com.sysge.model.type.TipoAcesso;
 import br.com.sysge.service.conf.PerfilAcessoService;
 import br.com.sysge.service.conf.UsuarioService;
 import br.com.sysge.service.rh.FuncionarioService;
@@ -51,7 +52,7 @@ public class UsuarioController implements Serializable{
 	
 	@PostConstruct
 	public void init(){
-		usuarios = new ArrayList<Usuario>();
+		novaListaUsuario();
 		funcionarios = new ArrayList<Funcionario>();
 		perfisAcesso = new ArrayList<PerfilAcesso>();
 		usuario = new Usuario();
@@ -81,12 +82,14 @@ public class UsuarioController implements Serializable{
 	
 	public void salvarUsuario(){
 		try {
+			
 			if(!usuarioService.isExisteUsuario(usuario)){
 				setBotaoDisable(true);
 				RequestContextUtil.update(":formNovoUsuario");
 				usuarioService.salvar(usuario);
 				fecharDialog();
 				FacesUtil.mensagemInfo("Usuário salvo com sucesso!");
+				novaListaUsuario();
 			}else{
 				FacesUtil.mensagemWarn("Já existe um usuário cadastrado com o mesmo 'nome de usuário', "
 						+ "por favor escolha um outro 'nome de usuário'.");
@@ -95,6 +98,16 @@ public class UsuarioController implements Serializable{
 			setBotaoDisable(false);
 			FacesUtil.mensagemErro(e.getMessage());
 		}
+	}
+	
+	public void pesquisar(){
+		novaListaUsuario();
+		usuarios = usuarioService.findByParametersForSituation(usuario.getPerfilAcesso().getPerfilAcesso(), usuario.getSituacao(), "perfilAcesso.perfilAcesso", "=", "", "");
+		System.out.println(usuarios);
+	}
+	
+	public void novaListaUsuario(){
+		usuarios = new ArrayList<Usuario>();
 	}
 	
 	public void fecharDialog(){
@@ -109,7 +122,7 @@ public class UsuarioController implements Serializable{
 	}
 	
 	public List<Usuario> getUsuarios(){
-		return usuarioService.findAll();
+		return usuarios;
 	}
 
 	public Usuario getUsuario() {
@@ -141,7 +154,8 @@ public class UsuarioController implements Serializable{
 	}
 
 	public List<PerfilAcesso> getPerfisAcesso() {
-		return perfilAcessoService.findBySituation(Situacao.ATIVO);
+		return perfilAcessoService.findByParametersForSituation
+				(TipoAcesso.NENHUM_MENU_SELECIONADO, Situacao.ATIVO, "tipoAcesso", "<>", "", "");
 	}
 
 	public void setPerfisAcesso(List<PerfilAcesso> perfisAcesso) {

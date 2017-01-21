@@ -10,6 +10,7 @@ import org.primefaces.model.DualListModel;
 import br.com.sysge.infraestrutura.dao.GenericDaoImpl;
 import br.com.sysge.model.conf.PerfilAcesso;
 import br.com.sysge.model.sys.PanelMenu;
+import br.com.sysge.model.type.MenuPerfilAcesso;
 import br.com.sysge.model.type.MenuSistema;
 import br.com.sysge.model.type.TipoAcesso;
 import br.com.sysge.service.conf.PerfilAcessoService;
@@ -27,14 +28,14 @@ public class PanelMenuService extends GenericDaoImpl<PanelMenu, Long>{
 				return getListMenuSource(perfilAcesso);
 			}else{
 				if(menus == null){
-					return setarPanelMenu(new ArrayList<PanelMenu>());
+					return setarMenuPerfilAcesso(new ArrayList<PanelMenu>());
 				}else{
 					if(!menus.getTarget().isEmpty()){
 						if(menus.getTarget().size() == MenuSistema.values().length){
 							return new ArrayList<PanelMenu>();
 						}
 					}else{
-						return setarPanelMenu(new ArrayList<PanelMenu>());
+						return setarMenuPerfilAcesso(new ArrayList<PanelMenu>());
 					}
 				}
 			}
@@ -81,7 +82,7 @@ public class PanelMenuService extends GenericDaoImpl<PanelMenu, Long>{
 			perfilAcesso.setTipoAcesso(TipoAcesso.NENHUM_MENU_SELECIONADO);
 			perfilAcessoService.salvar(perfilAcesso);
 		}else{
-			if(getListMenuTarget(perfilAcesso).size() != MenuSistema.values().length){
+			if(getListMenuTarget(perfilAcesso).size() != MenuPerfilAcesso.values().length){
 				perfilAcesso.setTipoAcesso(TipoAcesso.ACESSO_PERSONALIZADO);
 				perfilAcessoService.salvar(perfilAcesso);
 			}else{
@@ -165,13 +166,23 @@ public class PanelMenuService extends GenericDaoImpl<PanelMenu, Long>{
 		super.save(pm);
 	}
 	
-	private List<PanelMenu> setarPanelMenu(List<PanelMenu> menus){
+	/*private List<PanelMenu> setarPanelMenu(List<PanelMenu> menus){
 		 for(MenuSistema m : MenuSistema.values()){
 			 PanelMenu menu = new PanelMenu();
 			 menu.setMenu(m.getMenu());
 			 menus.add(menu);
 		 }
 		 return menus;
+	}*/
+	
+	private List<PanelMenu> setarMenuPerfilAcesso(List<PanelMenu> menus){
+		for(MenuPerfilAcesso m : MenuPerfilAcesso.values()){
+			PanelMenu menu = new PanelMenu();
+			menu.setMenu(m.getMenu());
+			menus.add(menu);
+		}
+		return menus;
 	}
+	
 	
 }

@@ -19,10 +19,14 @@
 					<p:selectOneMenu value="#{perfilController.perfilAcesso.situacao}">
 						<f:selectItems var="s" value="#{perfilController.situacoes}" itemLabel="#{s.situacao}" itemValue="#{s}"/>
 					</p:selectOneMenu>
-					<p:commandButton value="Pesquisar" icon="ui-icon-search" update="tablePerfilAcesso"/>
+					<p:commandButton id="btnPesquisarPerfil" value="Pesquisar" icon="ui-icon-search" update="tablePerfilAcesso" actionListener="#{perfilController.pesquisarPerfilAcesso}"/>
 					<p:tooltip value="Digite um perfil ou informe * para pesquisar todos os perfis!" 
 							   for="txtPerfilPesquisa" position="bottom"/>
-					<p:focus context="panelPesquisa"/>		   
+					<p:focus context="panelPesquisa"/>		
+					<p:blockUI block="tablePerfilAcesso" trigger="btnPesquisarPerfil">
+						        Carregando! Aguarde...<br />
+							<p:graphicImage library="img" name="loading.gif" />
+					</p:blockUI>   
 				</h:panelGrid>
 				
 				<p:dataTable id="tablePerfilAcesso" var="p" paginator="true"
@@ -51,7 +55,7 @@
 					<p:column width="40">
 						<p:commandButton id="btnEditar" icon="ui-icon-pencil" 
 										 oncomplete="PF('dialogEditarPerfil').show()"
-										 update=":msgGlobal :formEditarPerfil:accordionPanelPerfilEditar"
+										 update=":msgGlobal :formEditarPerfil"
 										 actionListener="#{perfilController.setarPerfilAcesso(p)}">
 						</p:commandButton>
 							<p:tooltip value="Cliquei aqui para editar!" for="btnEditar" position="left"/>
@@ -112,7 +116,7 @@
 									        <f:facet name="sourceCaption">Menus</f:facet>
 									        <f:facet name="targetCaption">Menus selecionados</f:facet>
 									        
-									        <p:ajax event="transfer" listener="#{perfilController.onTransfer}" />
+									       <!--  <p:ajax event="transfer" listener="#{perfilController.onTransfer}" /> -->
 									 
 									        <p:column style="width:90%;">
 									            <h:outputText value="#{menu.menu}"/>
@@ -120,17 +124,39 @@
 							        
 							    </p:pickList>
 						</p:tab>
-						
 					</p:accordionPanel>
+					
 						<h:panelGrid id="panelBotoesEditarPerfilAcesso" columns="2">
-							<h:panelGrid columns="2">
-								<p:commandButton id="btnEditarPerfilAcesso" value="Salvar" icon="ui-icon-check" actionListener="#{perfilController.editar}" update=":msgGlobal :formEditarPerfil :formGeralPerfil:tablePerfilAcesso"/>
+							<h:panelGrid columns="3">
+								<p:commandButton id="btnEditarPerfilAcesso" value="Salvar" icon="ui-icon-check" actionListener="#{perfilController.editar}" update=":msgGlobal :formEditarPerfil :formGeralPerfil:tablePerfilAcesso :form_confirmacao_inativacao_por_situacao"/>
 								<p:commandButton id="btnEditarPerfilAcessoCancelar" value="Cancelar" icon="ui-icon-close" 
-												 oncomplete="PF('dialogEditarPerfil').hide();"/>
+												 oncomplete="PF('dialogEditarPerfil').hide();" actionListener="#{perfilController.novaListaPerfilAcesso}"
+												 update=":formGeralPerfil:tablePerfilAcesso"/>
+								<p:outputLabel rendered="#{perfilController.existeUsuario eq false}" styleClass="texto_negrito" value="Não existe nenhum usuário cadastrado para esse perfil!"/>				 
 							</h:panelGrid>
 						</h:panelGrid>
 						<p:blockUI block="panelBotoesEditarPerfilAcesso" trigger="btnEditarPerfilAcesso,btnEditarPerfilAcessoCancelar"/>
 					</h:form>	
+				</p:dialog>
+				
+				<p:dialog header="Atenção" modal="true" 
+						  appendTo="@(body)" resizable="false"
+						  widgetVar="dialog_confirmacao_perfil_inativar"
+						  closable="true">
+					<h:form id="form_confirmacao_inativacao_por_situacao">
+						<h:panelGrid columns="3">
+							<h:outputLabel styleClass="texto_negrito" value="Esse perfil está associado ao usuário"/> 
+							<h:outputLabel styleClass="texto_negrito" style="color: blue;" value="#{perfilController.usuario.funcionario.nome}"/>										        		
+							<h:outputLabel styleClass="texto_negrito" value="' deseja realmente inativar o perfil?"/>										        		
+						</h:panelGrid>
+						<h:panelGrid columns="1">
+							<h:outputLabel styleClass="texto_negrito" value="Ao inativar o mesmo, o sistema não permitirá realizar o login."/>
+						</h:panelGrid>
+						<h:panelGrid columns="2">
+							<p:commandButton value="Confirmar" icon="ui-icon-check" actionListener="#{perfilController.editarPerfil}" update=":msgGlobal :formGeralPerfil:tablePerfilAcesso"/>
+							<p:commandButton value="Cancelar" icon="ui-icon-close" oncomplete="PF('dialog_confirmacao_perfil_inativar').hide();"/>
+						</h:panelGrid>
+					</h:form>
 				</p:dialog>
 			
 				
