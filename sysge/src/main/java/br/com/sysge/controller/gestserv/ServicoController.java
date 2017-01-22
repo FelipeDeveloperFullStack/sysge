@@ -26,11 +26,14 @@ public class ServicoController implements Serializable {
 	@Inject
 	private ServicoService servicoService;
 
-	@SuppressWarnings("unused")
 	private List<Servico> servicos;
 
 	@PostConstruct
 	public void init() {
+		novaListaServicos();
+	}
+	
+	public void novaListaServicos(){
 		this.servicos = new ArrayList<Servico>();
 	}
 
@@ -43,9 +46,15 @@ public class ServicoController implements Serializable {
 			servicoService.salvar(servico);
 			FacesUtil.mensagemInfo("Servico salvo com sucesso!");
 			fecharDialogs();
+			novaListaServicos();
 		} catch (Exception e) {
 			FacesUtil.mensagemErro(e.getMessage());
 		}
+	}
+	
+	public void pesquisar(){
+		novaListaServicos();
+		servicos = servicoService.pesquisarServico(servico);
 	}
 	
 	public void fecharDialogs(){
@@ -77,7 +86,7 @@ public class ServicoController implements Serializable {
 	}
 
 	public List<Servico> getServicos() {
-		return servicoService.findAll();
+		return servicos;
 	}
 
 	public void setServicos(List<Servico> servicos) {

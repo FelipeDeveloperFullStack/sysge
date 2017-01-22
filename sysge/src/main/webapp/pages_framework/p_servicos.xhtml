@@ -26,7 +26,7 @@
 						itemLabel="#{s.situacao}" itemValue="#{s}" />
 				</p:selectOneMenu>
 				<p:commandButton id="btnPesquisarServico" value="Pesquisar" icon="ui-icon-search"
-					update="formGeralServico" />
+					update="formGeralServico" actionListener="#{servicoController.pesquisar}"/>
 				<p:commandButton value="Imprimir" icon="ui-icon-print" />
 				<p:tooltip
 					value="Digite o nome do serviço ou informe * para pesquisar todos!"
@@ -44,7 +44,7 @@
 				paginatorTemplate="{CurrentPageReport} {FirstPageLink} 
 					{PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
 
-				<p:column headerText="ID" width="30">
+				<p:column headerText="ID" width="30" style="text-align:center;">
 					<p:outputLabel value="#{s.id}" />
 				</p:column>
 
@@ -52,13 +52,13 @@
 					<p:outputLabel value="#{s.nome}" />
 				</p:column>
 
-				<p:column headerText="Valor" width="75">
+				<p:column headerText="Valor" width="75" style="text-align:center;">
 					<p:outputLabel value="#{s.valor}" style="color: blue;">
 						<f:convertNumber pattern="###,###.00" locale="pt_BR" />
 					</p:outputLabel>
 				</p:column>
 
-				<p:column headerText="Situação" width="50">
+				<p:column headerText="Situação" width="50" style="text-align:center;">
 					<p:outputLabel value="#{s.situacao.situacao}" />
 				</p:column>
 				

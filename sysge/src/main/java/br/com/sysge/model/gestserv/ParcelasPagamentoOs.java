@@ -92,13 +92,6 @@ public class ParcelasPagamentoOs extends GenericDomain{
 		this.pago = pago;
 	}
 
-	public FormaPagamento getFormaPagamento() {
-		return formaPagamento;
-	}
-
-	public void setFormaPagamento(FormaPagamento formaPagamento) {
-		this.formaPagamento = formaPagamento;
-	}
 
 	public String getQuantidadeParcelas() {
 		return quantidadeParcelas;
@@ -106,6 +99,22 @@ public class ParcelasPagamentoOs extends GenericDomain{
 
 	public void setQuantidadeParcelas(String quantidadeParcelas) {
 		this.quantidadeParcelas = quantidadeParcelas;
+	}
+
+	public OrdemServico getOrdemServico() {
+		return ordemServico;
+	}
+
+	public void setOrdemServico(OrdemServico ordemServico) {
+		this.ordemServico = ordemServico;
+	}
+
+	public FormaPagamento getFormaPagamento() {
+		return formaPagamento;
+	}
+
+	public void setFormaPagamento(FormaPagamento formaPagamento) {
+		this.formaPagamento = formaPagamento;
 	}
 	
 	

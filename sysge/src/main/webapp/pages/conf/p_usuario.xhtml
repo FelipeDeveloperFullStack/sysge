@@ -59,19 +59,19 @@
 					paginatorTemplate="{CurrentPageReport} {FirstPageLink} 
 					{PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
 
-					<p:column headerText="Funcionário" width="250">
+					<p:column headerText="Funcionário" width="250" style="text-align:center;">
 						<p:outputLabel value="#{usuario.funcionario.nome}" />
 					</p:column>
 
-					<p:column headerText="Perfil de acesso">
+					<p:column headerText="Perfil de acesso" style="text-align:center;">
 						<p:outputLabel value="#{usuario.perfilAcesso.perfilAcesso}" />
 					</p:column>
 
-					<p:column headerText="Nome de usuário">
+					<p:column headerText="Nome de usuário" style="text-align:center;">
 						<p:outputLabel value="#{usuario.nomeUsuario}" />
 					</p:column>
 
-					<p:column headerText="Situação" width="50">
+					<p:column headerText="Situação" width="50" style="text-align:center;">
 						<p:outputLabel value="#{usuario.situacao.situacao}" />
 					</p:column>
 

@@ -19,7 +19,7 @@
 					<p:selectOneMenu value="#{servicoController.servico.situacao}">
 						<f:selectItems var="s" value="#{servicoController.situacoes}" itemLabel="#{s.situacao}" itemValue="#{s}"/>
 					</p:selectOneMenu>
-					<p:commandButton id="btnPesquisarServico" value="Pesquisar" icon="ui-icon-search" update="formGeralServico"/>
+					<p:commandButton id="btnPesquisarServico" value="Pesquisar" icon="ui-icon-search" update="formGeralServico" actionListener="#{servicoController.pesquisar}"/>
 					<p:commandButton value="Imprimir" icon="ui-icon-print"/>
 					<p:tooltip value="Digite o nome do serviço ou informe * para pesquisar todos!" 
 							   for="txtServicoPesquisa" position="bottom"/>
@@ -37,7 +37,7 @@
 					paginatorTemplate="{CurrentPageReport} {FirstPageLink} 
 					{PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
 								
-					<p:column headerText="ID" width="30">
+					<p:column headerText="ID" width="30" style="text-align:center;">
 						<p:outputLabel value="#{s.id}"/>
 					</p:column>	
 						
@@ -45,13 +45,13 @@
 						<p:outputLabel value="#{s.nome}"/>
 					</p:column>		
 								
-					<p:column headerText="Valor" width="75">
+					<p:column headerText="Valor" width="75" style="text-align:center;">
 						<p:outputLabel value="#{s.valor}" style="color: blue;">
 							<f:convertNumber pattern="###,###.00" locale="pt_BR" />
 						</p:outputLabel>
 					</p:column>	
 					
-					<p:column headerText="Situação" width="50">
+					<p:column headerText="Situação" width="50" style="text-align:center;">
 						<p:outputLabel value="#{s.situacao.situacao}"/>
 					</p:column>	
 									
@@ -80,7 +80,7 @@
 				
 				</h:form>
 				
-				<!-- Dialog editar -->
+				<!-- Dialog editar serviços -->
 				<p:dialog id="dialogEditarServicoAcesso" widgetVar="dialogEditarServico" 
 						  header="Editar Serviço" modal="true" 
 						  appendTo="@(body)" resizable="false"
@@ -120,7 +120,9 @@
 												 actionListener="#{servicoController.salvar}"
 												 update=":msgGlobal :formEditarServico :formGeralServico:tableServico"/>
 								<p:commandButton id="btnEditarServicoCancelar" value="Cancelar" icon="ui-icon-close" 
-												 oncomplete="PF('dialogEditarServico').hide();"/>
+												 oncomplete="PF('dialogEditarServico').hide();"
+												 actionListener="#{servicoController.novaListaServicos}"
+												 update=":formGeralServico:tableServico"/>
 							</h:panelGrid>
 						</h:panelGrid>
 						<p:blockUI block="panelBotoesEditarServico" trigger="btnEditarServico,btnEditarServicoCancelar"/>
@@ -128,7 +130,7 @@
 				</p:dialog>
 			
 				
-				<!-- Dialog novo usuário -->
+				<!-- Dialog novo serviço-->
 				<p:dialog widgetVar="dialogNovoServico" 
 						  header="Novo Serviço" modal="true" 
 						  appendTo="@(body)" resizable="false"
@@ -161,7 +163,8 @@
 								<p:commandButton id="btnSalvarNovoServico" value="Salvar" icon="ui-icon-check" 
 												 actionListener="#{servicoController.salvar}" 
 												 update=":msgGlobal :formGeralServico:tableServico"/>
-								<p:commandButton value="Cancelar" icon="ui-icon-close" oncomplete="PF('dialogNovoServico').hide();"/>
+								<p:commandButton value="Cancelar" icon="ui-icon-close" oncomplete="PF('dialogNovoServico').hide();"
+												 actionListener="#{servicoController.novaListaServicos}" update=":formGeralServico:tableServico"/>
 							</h:panelGrid>
 						</h:panelGrid>
 						<p:blockUI block="panelBotoesNovoServico" trigger="btnSalvarNovoServico"/>

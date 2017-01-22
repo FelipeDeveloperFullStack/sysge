@@ -41,7 +41,7 @@
 					paginatorTemplate="{CurrentPageReport} {FirstPageLink} 
 					{PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
 
-					<p:column headerText="ID" width="30">
+					<p:column headerText="ID" width="30" style="text-align:center;">
 						<p:outputLabel value="#{fun.id}" />
 					</p:column>
 
@@ -49,11 +49,11 @@
 						<p:outputLabel value="#{fun.nome}" />
 					</p:column>
 
-					<p:column headerText="Telefone Celular" width="115">
+					<p:column headerText="Telefone Celular" width="115" style="text-align:center;">
 						<p:outputLabel value="#{fun.telefoneCelular}" />
 					</p:column>
 
-					<p:column headerText="Situação" width="50">
+					<p:column headerText="Situação" width="50" style="text-align:center;">
 						<p:outputLabel value="#{fun.situacao.situacao}" />
 					</p:column>
 

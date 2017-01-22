@@ -19,7 +19,7 @@ public enum MenuSistema {
 			LANCAMENTO_CAIXA("Lançamento de caixa"),
 		BANCO("Banco"),
 			LANCAMENTO_BANCO("Lançamento de banco"),
-		FORMA_PAGAMENTO("Forma de pagamento"),	
+		CONDICAO_PAGAMENTO("Condição de pagamento"),	
 		CONTAS_A_PAGAR("Contas a pagar"),	
 		CONTAS_A_RECEBER("Contas a receber"),	
 		RELATORIOS("Relatórios"),

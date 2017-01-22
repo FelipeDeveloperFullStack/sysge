@@ -1,6 +1,5 @@
 package br.com.sysge.service.gestserv;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import br.com.sysge.infraestrutura.dao.GenericDaoImpl;
@@ -34,15 +33,12 @@ public class ServicoService extends GenericDaoImpl<Servico, Long>{
 	}
 	
 	public List<Servico> pesquisarServico(Servico servico){
-		if(servico.getNome() != null){
-			if(servico.getNome().trim().equals("*")){
-				return super.findBySituation(servico.getSituacao());
-			}else{
-				return super.findByParametersForSituation(servico.getNome(), 
-						servico.getSituacao(), "nome", "LIKE", "%", "%");
-			}
+		if(servico.getNome().trim().isEmpty()){
+			return super.findBySituation(servico.getSituacao());
+		}else{
+			return super.findByParametersForSituation(servico.getNome(), 
+					servico.getSituacao(), "nome", "LIKE", "%", "%");
 		}
-		return new ArrayList<Servico>();
 	}
 
 }
