@@ -33,7 +33,7 @@
 				<p:dataTable id="tableServico" var="c" paginator="true"
 					paginatorPosition="bottom"
 					value="#{condicaoPagamentoController.condicoesPagamento}"
-					emptyMessage="Nenhum registro encontrado!" rows="8"
+					emptyMessage="Nenhum registro encontrado!" rows="12"
 					paginatorTemplate="{CurrentPageReport} {FirstPageLink} 
 					{PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
 								
@@ -55,11 +55,17 @@
 									
 					<p:column width="40">
 						<p:commandButton id="btnEditar" icon="ui-icon-pencil" 
-										 oncomplete="PF('dialogEditarServico').show()"
-										 actionListener="#{condicaoPagamentoController.setarCondicaoPagamento(c)}"
-										 update=":msgGlobal">
+										 actionListener="#{condicaoPagamentoController.editarCondicaoPagamento(c)}"
+										 update=":msgGlobal tableServico">
+							<p:confirm header="Confirmação" message="Deseja realmente editar a situação da condição de pagamento #{c.descricao}?" icon="ui-icon-alert" />
 						</p:commandButton>
-							<p:tooltip value="Cliquei aqui para editar!" for="btnEditar" position="left"/>
+						
+						<p:confirmDialog showEffect="fade" hideEffect="fade">
+					        <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					        <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+					    </p:confirmDialog>
+						
+							<p:tooltip value="Cliquei aqui para ativo ou inativar a condição de pagamento!" for="btnEditar" position="left"/>
 					</p:column>	
 					
 					<f:facet name="footer">
@@ -78,15 +84,6 @@
 				
 				</h:form>
 				
-				<!-- Dialog editar Condição de Pagamento-->
-				<p:dialog id="dialogEditarServicoAcesso" widgetVar="dialogEditarServico" 
-						  header="Editar Condição de pagamento" modal="true" 
-						  appendTo="@(body)" resizable="false"
-						  position="top" width="430">
-					
-							
-				</p:dialog>
-			
 				
 				<!-- Dialog Nova Condição de Pagamento -->
 				<p:dialog widgetVar="dialogNovoServico" 

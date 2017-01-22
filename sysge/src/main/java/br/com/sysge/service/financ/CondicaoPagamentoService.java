@@ -62,5 +62,30 @@ public class CondicaoPagamentoService extends GenericDaoImpl<CondicaoPagamento, 
 		return descricao;
 
 	}
+	
+	public void verificarSeExisteCondicaoPagamentoCadastradoComMesmaDescricao(CondicaoPagamento condicaoPagamento){
+		List<CondicaoPagamento> condicoesPagamento = super.findAll();
+		for(CondicaoPagamento c : condicoesPagamento){
+			verificarDescricaoIgual(c, condicaoPagamento);
+		}
+	}
+	
+	private void verificarDescricaoIgual(CondicaoPagamento c, CondicaoPagamento condicaoPagamento){
+		if(condicaoPagamento.getDescricao().trim().equalsIgnoreCase(c.getDescricao())){
+			if(condicaoPagamento.getId() == null){
+				mostrarMensagemParaUsuario(c);
+			}else{
+				if(c.getId() != condicaoPagamento.getId()){
+					mostrarMensagemParaUsuario(c);
+				}
+			}
+		}
+	}
+	
+	private void mostrarMensagemParaUsuario(CondicaoPagamento c){
+		throw new RuntimeException("Existe a condição de pagamento "+c.getDescricao()+" "
+				+ "de código "+c.getId()+" já está cadastrado, "
+				+ "por favor escolha outra descrição!");
+	}
 
 }

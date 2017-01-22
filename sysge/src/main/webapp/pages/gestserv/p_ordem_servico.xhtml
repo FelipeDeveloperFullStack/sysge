@@ -123,7 +123,7 @@
 			header="Nova Ordem de Serviço" modal="true" appendTo="@(body)"
 			resizable="false" position="top" width="938">
 			<h:form id="formNovaOrdemServico">
-				<p:tabView>
+				<p:tabView id="tabViewNovaOS">
 					<p:tab title="Dados Básicos">
 						<h:panelGrid columns="8">
 							<h:panelGrid columns="1">
@@ -259,7 +259,7 @@
 								value="Procurar">
 								<p:ajax event="dialogReturn"
 									listener="#{ordemServicoController.servicoSelecionado}"
-									process="@this" update=":msgGlobal tableServico" />
+									process="@this" update=":msgGlobal tableServico :formNovaOrdemServico:tabViewNovaOS" />
 							</p:commandButton>
 
 							<p:blockUI block="formNovaOrdemServico"
@@ -284,7 +284,7 @@
 								<p:spinner min="1" value="#{s.quantidade}" style="width: 200px;">
 									<p:ajax
 										listener="#{ordemServicoController.calcularValorServico(s)}"
-										update="tableServico" />
+										update="tableServico :formNovaOrdemServico:tabViewNovaOS:panel_2_pagamento" />
 								</p:spinner>
 							</p:column>
 							<p:column headerText="Valor" width="120">
@@ -333,7 +333,7 @@
 						</p:dataTable>
 					</p:tab>
 
-					<p:tab title="Pagamento">
+					<p:tab title="Pagamento" id="idPagamento">
 						<h:panelGrid columns="4" id="panel_1_pagamento">
 							<h:panelGrid columns="1">
 								<p:outputLabel value="Forma de pagamento" />
@@ -362,7 +362,7 @@
 
 						</h:panelGrid>
 
-						<p:fieldset>
+						<p:fieldset id="fieldsetPagamento">
 							<h:panelGrid columns="4" id="panel_2_pagamento">
 								<h:panelGrid columns="1">
 									<p:outputLabel value="Tipo de desconto"/>
@@ -389,7 +389,9 @@
 									<p:outputLabel value="Total"/>
 									<p:inputNumber symbol="R$ " decimalSeparator=","
 												   thousandSeparator="."
-												   value="#{ordemServicoController.ordemServico.total}" />
+												   value="#{ordemServicoController.ordemServico.total}" 
+												   id="txtValorTotalPagamento"
+												   readonly="true"/>
 								</h:panelGrid>
 								
 							</h:panelGrid>
@@ -705,7 +707,9 @@
 
 							<h:panelGrid columns="1">
 								<p:outputLabel value="Condição de pagamento" />
-								<p:inputText placeholder="Exemplo: 30 60 90"/>
+								<p:selectOneMenu converter="omnifaces.SelectItemsConverter" value="#{ordemServicoController.ordemServico}">
+								
+								</p:selectOneMenu>
 							</h:panelGrid>
 
 							<h:panelGrid columns="1">

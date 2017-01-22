@@ -49,9 +49,13 @@ public class Usuario extends GenericDomain{
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date ultimoAcesso;
 	
-	@Column(name = "usu_ultimo_acesso_temporaria")
+	@Column(name = "usu_data_inicial")
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date ultimoAcessoTemporaria;
+	private Date dataInicial;
+	
+	@Column(name = "usu_data_final")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date dataFinal;
 
 	public Funcionario getFuncionario() {
 		if(funcionario == null){
@@ -115,12 +119,22 @@ public class Usuario extends GenericDomain{
 		this.ultimoAcesso = ultimoAcesso;
 	}
 
-	public Date getUltimoAcessoTemporaria() {
-		return ultimoAcessoTemporaria;
+	public Date getDataInicial() {
+		return dataInicial;
 	}
 
-	public void setUltimoAcessoTemporaria(Date ultimoAcessoTemporaria) {
-		this.ultimoAcessoTemporaria = ultimoAcessoTemporaria;
+	public void setDataInicial(Date dataInicial) {
+		this.dataInicial = dataInicial;
 	}
+
+	public Date getDataFinal() {
+		return dataFinal;
+	}
+
+	public void setDataFinal(Date dataFinal) {
+		this.dataFinal = dataFinal;
+	}
+
+	
 	
 }

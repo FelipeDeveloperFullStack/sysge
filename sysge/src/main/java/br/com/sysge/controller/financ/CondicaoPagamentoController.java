@@ -54,6 +54,7 @@ public class CondicaoPagamentoController implements Serializable{
 	public void salvar() {
 		try {
 			condicaoPagamento.setDescricao(descricao);
+			verificarSeExisteCondicaoPagamentoCadastradoComMesmaDescricao(condicaoPagamento);
 	        condicaoPagamentoService.salvar(condicaoPagamento);
 			FacesUtil.mensagemInfo("Condição de pagamento salvo com sucesso!");
 			fecharDialogs();
@@ -63,12 +64,22 @@ public class CondicaoPagamentoController implements Serializable{
 		}
 	}
 	
+	private void verificarSeExisteCondicaoPagamentoCadastradoComMesmaDescricao(CondicaoPagamento condicaoPagamento){
+		condicaoPagamentoService.verificarSeExisteCondicaoPagamentoCadastradoComMesmaDescricao(condicaoPagamento);
+	}
+	
 	public void calcularCondicaoPagamento(){
 		descricao = condicaoPagamentoService.calcularCondicaoPagamento(condicaoPagamento, descricao);
 	}
 	
-	public void setarCondicaoPagamento(CondicaoPagamento condicaoPagamento){
-		this.condicaoPagamento = condicaoPagamento;
+	public void editarCondicaoPagamento(CondicaoPagamento condicaoPagamento){
+		if(condicaoPagamento.getSituacao() == Situacao.ATIVO){
+			condicaoPagamento.setSituacao(Situacao.INATIVO);
+		}else{
+			condicaoPagamento.setSituacao(Situacao.ATIVO);
+		}
+		condicaoPagamentoService.salvar(condicaoPagamento);
+		novaListaFormaPagamento();
 	}
 	
 	public void fecharDialogs(){

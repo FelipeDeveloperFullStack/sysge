@@ -125,28 +125,7 @@ public class PerfilController implements Serializable{
 	}
 	
 	private void verificarSeExistePerfilCadastradoComMesmaDescricao(PerfilAcesso perfilAcesso){
-		List<PerfilAcesso> perfis = perfilAcessoService.findAll();
-		for(PerfilAcesso p : perfis){
-			verificarDescricaoIgual(p, perfilAcesso);
-		}
-	}
-	
-	private void verificarDescricaoIgual(PerfilAcesso p, PerfilAcesso perfilAcesso){
-		if(perfilAcesso.getPerfilAcesso().trim().equalsIgnoreCase(p.getPerfilAcesso())){
-			if(perfilAcesso.getId() == null){
-				mostrarMensagemParaUsuario(p);
-			}else{
-				if(p.getId() != perfilAcesso.getId()){
-					mostrarMensagemParaUsuario(p);
-				}
-			}
-		}
-	}
-	
-	private void mostrarMensagemParaUsuario(PerfilAcesso p){
-		throw new RuntimeException("Existe o perfil "+p.getPerfilAcesso()+" "
-				+ "de código "+p.getId()+" já está cadastrado, "
-				+ "por favor escolha outra descrição!");
+		perfilAcessoService.verificarSeExistePerfilCadastradoComMesmaDescricao(perfilAcesso);
 	}
 	
 	private void setarMenu(PerfilAcesso perfilAcesso){

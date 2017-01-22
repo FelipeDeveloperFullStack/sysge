@@ -43,11 +43,12 @@ public class ServicoController implements Serializable {
 
 	public void salvar() {
 		try {
+			verificarSeExisteServicoCadastradoComMesmaDescricao(servico);
 			servicoService.salvar(servico);
 			FacesUtil.mensagemInfo("Servico salvo com sucesso!");
 			fecharDialogs();
 			novaListaServicos();
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			FacesUtil.mensagemErro(e.getMessage());
 		}
 	}
@@ -55,6 +56,10 @@ public class ServicoController implements Serializable {
 	public void pesquisar(){
 		novaListaServicos();
 		servicos = servicoService.pesquisarServico(servico);
+	}
+	
+	public void verificarSeExisteServicoCadastradoComMesmaDescricao(Servico servico){
+		servicoService.verificarSeExisteServicoCadastradoComMesmaDescricao(servico);
 	}
 	
 	public void fecharDialogs(){

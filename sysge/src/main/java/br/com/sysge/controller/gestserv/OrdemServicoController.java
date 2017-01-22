@@ -134,6 +134,7 @@ public class OrdemServicoController implements Serializable {
 		servicoOrdemServico.setServico(servico);
 		servicoOrdemServico.setSubTotal(servico.getValor());
 		servicoOrdemServico.setValor(servico.getValor());
+		ordemServico.setTotal(ordemServico.getTotalServico());
 		this.listaServicos.add(servicoOrdemServico);
 		servico = new Servico();
 	}
@@ -147,6 +148,7 @@ public class OrdemServicoController implements Serializable {
 				so.setValor(servicoOrdemServico.getValor());
 				so.setSubTotal(valorServico);
 			}
+			ordemServico.setTotal(ordemServico.getTotalServico().add(so.getSubTotal()));
 			ordemServico.setTotalServico(ordemServico.getTotalServico().add(so.getSubTotal()));
 		}
 	}

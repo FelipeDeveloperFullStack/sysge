@@ -169,6 +169,8 @@ public class LoginController implements Serializable {
 
 	private void iniciarSessaoUsuario(Usuario usuario) {
 		HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true);
+		usuario.setDataInicial(Calendar.getInstance().getTime());
+		usuarioService.salvar(usuario);
 		session.setAttribute("usuario", usuario);
 	}
 
@@ -182,6 +184,9 @@ public class LoginController implements Serializable {
 	}
 
 	public String logoutSistema() {
+		usuario.setDataFinal(Calendar.getInstance().getTime());
+		usuario.setUltimoAcesso(usuario.getDataInicial());
+		usuarioService.salvar(usuario);
 		usuario = null;
 		finalizarSessaoUsuario();
 		return PAGE_LOGIN + FACES_REDIRECT;
