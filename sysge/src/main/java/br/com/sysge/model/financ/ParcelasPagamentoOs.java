@@ -1,4 +1,4 @@
-package br.com.sysge.model.gestserv;
+package br.com.sysge.model.financ;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -13,6 +13,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import br.com.sysge.infraestrutura.dao.GenericDomain;
+import br.com.sysge.model.gestserv.OrdemServico;
 import br.com.sysge.model.type.FormaPagamento;
 import br.com.sysge.model.type.Pago;
 

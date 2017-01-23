@@ -1,4 +1,4 @@
-package br.com.sysge.model.gestserv;
+package br.com.sysge.model.financ;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;

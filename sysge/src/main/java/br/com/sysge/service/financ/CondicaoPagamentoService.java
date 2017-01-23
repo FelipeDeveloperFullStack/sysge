@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.com.sysge.infraestrutura.dao.GenericDaoImpl;
-import br.com.sysge.model.gestserv.CondicaoPagamento;
+import br.com.sysge.model.financ.CondicaoPagamento;
 import br.com.sysge.model.type.Situacao;
 
 public class CondicaoPagamentoService extends GenericDaoImpl<CondicaoPagamento, Long> {

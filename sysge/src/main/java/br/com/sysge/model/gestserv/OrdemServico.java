@@ -15,6 +15,7 @@ import javax.persistence.TemporalType;
 
 import br.com.sysge.infraestrutura.dao.GenericDomain;
 import br.com.sysge.model.estoque.Produto;
+import br.com.sysge.model.financ.CondicaoPagamento;
 import br.com.sysge.model.global.Cliente;
 import br.com.sysge.model.rh.Funcionario;
 import br.com.sysge.model.type.FormaPagamento;
@@ -74,6 +75,9 @@ public class OrdemServico extends GenericDomain {
 
 	@Enumerated(EnumType.STRING)
 	private FormaPagamento formaPagamento;
+	
+	@OneToOne(fetch = FetchType.EAGER)
+	private CondicaoPagamento condicaoPagamento;
 
 	@Enumerated(EnumType.STRING)
 	private Pago pago;
@@ -352,6 +356,17 @@ public class OrdemServico extends GenericDomain {
 
 	public void setGerouReceitaFinanceiro(boolean gerouReceitaFinanceiro) {
 		this.gerouReceitaFinanceiro = gerouReceitaFinanceiro;
+	}
+
+	public CondicaoPagamento getCondicaoPagamento() {
+		if(condicaoPagamento == null){
+			condicaoPagamento = new CondicaoPagamento();
+		}
+		return condicaoPagamento;
+	}
+
+	public void setCondicaoPagamento(CondicaoPagamento condicaoPagamento) {
+		this.condicaoPagamento = condicaoPagamento;
 	}
 	
 	

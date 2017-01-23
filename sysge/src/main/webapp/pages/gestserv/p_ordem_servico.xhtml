@@ -185,7 +185,8 @@
 								<p:outputLabel value="Técnico / Responsável" />
 								<p:selectOneMenu style="width: 255px;"
 									value="#{ordemServicoController.ordemServico.funcionario}"
-									converter="omnifaces.SelectItemsConverter">
+									converter="omnifaces.SelectItemsConverter" 
+									filter="true" filterMatchMode="startsWith">
 									<f:selectItems var="fun"
 										value="#{ordemServicoController.funcionarios}"
 										itemLabel="#{fun.nome}" itemValue="#{fun}" />
@@ -334,35 +335,8 @@
 					</p:tab>
 
 					<p:tab title="Pagamento" id="idPagamento">
-						<h:panelGrid columns="4" id="panel_1_pagamento">
-							<h:panelGrid columns="1">
-								<p:outputLabel value="Forma de pagamento" />
-								<p:selectOneMenu
-									value="#{ordemServicoController.ordemServico.formaPagamento}">
-									<f:selectItems var="fp"
-										value="#{ordemServicoController.formaPagamento}"
-										itemLabel="#{fp.formaPagamento}" itemValue="#{fp}" />
-								</p:selectOneMenu>
-							</h:panelGrid>
-
-							<!-- <h:panelGrid columns="1">
-								<p:outputLabel value="." style="color: white;" />
-								<p:commandButton icon="ui-icon-plusthick" />
-							</h:panelGrid> -->
-
-							<h:panelGrid columns="1">
-								<p:outputLabel value="Condição de pagamento" />
-								<p:inputText placeholder="Exemplo: 30 60 90"/>
-							</h:panelGrid>
-
-							<h:panelGrid columns="1">
-								<p:outputLabel value="." style="color: white;" />
-								<p:commandButton value="Gerar parcelas" icon="ui-icon-tag"/>
-							</h:panelGrid>
-
-						</h:panelGrid>
-
-						<p:fieldset id="fieldsetPagamento">
+					
+					<p:fieldset id="fieldsetPagamento">
 							<h:panelGrid columns="4" id="panel_2_pagamento">
 								<h:panelGrid columns="1">
 									<p:outputLabel value="Tipo de desconto"/>
@@ -375,14 +349,17 @@
 								
 								<h:panelGrid columns="1" rendered="#{ordemServicoController.ordemServico.tipoDesconto == 'DESCONTO_REAIS'}">
 									<p:outputLabel value="Desconto R$"/>
-									<p:spinner stepFactor="0.1" min="0" prefix="R$: " value="#{ordemServicoController.ordemServico.descontoReais}" />
+									<p:spinner stepFactor="0.1" min="0" prefix="R$: " max="#{ordemServicoController.ordemServico.total}" 
+											   value="#{ordemServicoController.ordemServico.descontoReais}">
+										<p:ajax listener="#{ordemServicoController.calcularDescontoReais}" process="@this" update="txtValorTotalPagamento"/>									
+									</p:spinner>		   
 								</h:panelGrid>
 													
 								<h:panelGrid columns="1" rendered="#{ordemServicoController.ordemServico.tipoDesconto == 'DESCONTO_PORCENTAGEM'}">
 									<p:outputLabel value="Desconto %"/>
-									<p:inputNumber symbol="R$ " decimalSeparator=","
-												   thousandSeparator="."
-												   value="#{ordemServicoController.ordemServico.descontoPorcento}" />
+									<p:spinner min="0" prefix="% " max="100" value="#{ordemServicoController.ordemServico.descontoPorcento}">
+										<p:ajax listener="#{ordemServicoController.calcularDescontoPorcentagem}" process="@this" update="txtValorTotalPagamento"/>
+									</p:spinner>
 								</h:panelGrid>					
 								
 								<h:panelGrid columns="1">
@@ -396,26 +373,62 @@
 								
 							</h:panelGrid>
 						</p:fieldset>
+					
+						<h:panelGrid columns="4" id="panel_1_pagamento">
+							<h:panelGrid columns="1">
+								<p:outputLabel value="Forma de pagamento" />
+								<p:selectOneMenu
+									value="#{ordemServicoController.ordemServico.formaPagamento}">
+									<f:selectItems var="fp"
+										value="#{ordemServicoController.formaPagamento}"
+										itemLabel="#{fp.formaPagamento}" itemValue="#{fp}" />
+								</p:selectOneMenu>
+							</h:panelGrid>
+
+							<h:panelGrid columns="1">
+								<p:outputLabel value="Condição de pagamento" />
+								<p:selectOneMenu converter="omnifaces.SelectItemsConverter" value="#{ordemServicoController.ordemServico.condicaoPagamento}" 
+												 filter="true" filterMatchMode="startsWith">
+									<f:selectItems var="c" value="#{ordemServicoController.condicoesPagamento}" itemLabel="#{c.descricao}" itemValue="#{c}"/>
+								</p:selectOneMenu>
+							</h:panelGrid>
+
+							<h:panelGrid columns="1">
+								<p:outputLabel value="." style="color: white;" />
+								<p:commandButton value="Gerar parcelas" icon="ui-icon-tag" actionListener="#{ordemServicoController.gerarParcelas}"
+												 update=":msgGlobal tableParcelas"/>
+							</h:panelGrid>
+
+						</h:panelGrid>
 						
-						<p:dataTable var="parcela" emptyMessage="Nenhum registro encontrado!" 
-									 paginator="true" paginatorPosition="bottom">
+						<p:dataTable var="p" emptyMessage="Nenhum registro encontrado!" 
+									 paginator="true" paginatorPosition="bottom" 
+									 value="#{ordemServicoController.parcelas}"
+									 rows="4" id="tableParcelas">
 						
-							<p:column headerText="Número">
-							
+							<p:column headerText="Nº" width="20" style="text-align:center;">
+								<h:outputLabel value="#{p.numero}º"/>
 							</p:column>
-							<p:column headerText="Parcela">
-							
+							<p:column headerText="Parcela" style="text-align:center;" width="100">
+								<h:outputLabel value="#{p.valorParcela}">
+									<f:convertNumber pattern="###,###.00" locale="pt_BR"/>
+								</h:outputLabel>
 							</p:column>
-							<p:column headerText="Desconto">
-							
+							<p:column headerText="Desconto" style="text-align:center;" width="200">
+								<p:spinner min="0" max="#{p.valorParcela}"  value="#{p.valorDesconto}" prefix="R$: "/>
 							</p:column>
-							<p:column headerText="Valor cobrado">
-							
+							<p:column headerText="Valor cobrado" style="text-align:center;" width="100">
+								<h:outputLabel value="#{p.valorCobrado}">
+									<f:convertNumber pattern="###,###.00" locale="pt_BR" />
+								</h:outputLabel>
 							</p:column>
-							<p:column headerText="Vencimento">
-							
+							<p:column headerText="Vencimento" style="text-align:center;">
+								<h:outputLabel value="#{p.dataVencimento}">
+									<f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR"
+								timeZone="GMT-2" type="both" />
+								</h:outputLabel>
 							</p:column>
-							<p:column>
+							<p:column style="text-align:center;">
 								<p:commandButton icon="ui-icon-tag"/>
 								<p:commandButton icon="ui-icon-bookmark"/>
 								<p:commandButton icon="ui-icon-print"/>
@@ -465,7 +478,7 @@
 			header="Editar Ordem de Serviço" modal="true" appendTo="@(body)"
 			resizable="false" position="top" width="938">
 			<h:form id="formEditarOrdemServico">
-				<p:tabView>
+				<p:tabView id="tabViewEditarOS">
 					<p:tab title="Dados Básicos">
 
 						<h:panelGrid columns="2">
@@ -535,7 +548,8 @@
 								<p:outputLabel value="Técnico / Responsável" />
 								<p:selectOneMenu style="width: 255px;"
 									value="#{ordemServicoController.ordemServico.funcionario}"
-									converter="omnifaces.SelectItemsConverter">
+									converter="omnifaces.SelectItemsConverter"
+									filter="true" filterMatchMode="startsWith">
 									<f:selectItems var="fun"
 										value="#{ordemServicoController.funcionarios}"
 										itemLabel="#{fun.nome}" itemValue="#{fun}" />
@@ -610,7 +624,7 @@
 								value="Procurar">
 								<p:ajax event="dialogReturn"
 									listener="#{ordemServicoController.servicoSelecionado}"
-									process="@this" update=":msgGlobal tableServico" />
+									process="@this" update=":msgGlobal tableServico :formEditarOrdemServico:tabViewEditarOS" />
 							</p:commandButton>
 
 							<p:blockUI block="formEditarOrdemServico"
@@ -635,7 +649,7 @@
 								<p:spinner min="1" value="#{s.quantidade}" style="width: 200px;">
 									<p:ajax
 										listener="#{ordemServicoController.calcularValorServico(s)}"
-										update="tableServico" />
+										update="tableServico :formEditarOrdemServico:tabViewEditarOS:panel_2_pagamento" />
 								</p:spinner>
 							</p:column>
 							<p:column headerText="Valor" width="120">
@@ -689,37 +703,7 @@
 
 					<p:tab title="Pagamento">
 					
-						<h:panelGrid columns="4" id="panel_1_pagamento">
-							<h:panelGrid columns="1">
-								<p:outputLabel value="Forma de pagamento" />
-								<p:selectOneMenu
-									value="#{ordemServicoController.ordemServico.formaPagamento}">
-									<f:selectItems var="fp"
-										value="#{ordemServicoController.formaPagamento}"
-										itemLabel="#{fp.formaPagamento}" itemValue="#{fp}" />
-								</p:selectOneMenu>
-							</h:panelGrid>
-
-							<!-- <h:panelGrid columns="1">
-								<p:outputLabel value="." style="color: white;" />
-								<p:commandButton icon="ui-icon-plusthick" />
-							</h:panelGrid> -->
-
-							<h:panelGrid columns="1">
-								<p:outputLabel value="Condição de pagamento" />
-								<p:selectOneMenu converter="omnifaces.SelectItemsConverter" value="#{ordemServicoController.ordemServico}">
-								
-								</p:selectOneMenu>
-							</h:panelGrid>
-
-							<h:panelGrid columns="1">
-								<p:outputLabel value="." style="color: white;" />
-								<p:commandButton value="Gerar parcelas" icon="ui-icon-tag"/>
-							</h:panelGrid>
-
-						</h:panelGrid>
-
-						<p:fieldset>
+					<p:fieldset>
 							<h:panelGrid columns="4" id="panel_2_pagamento">
 								<h:panelGrid columns="1">
 									<p:outputLabel value="Tipo de desconto"/>
@@ -732,45 +716,85 @@
 								
 								<h:panelGrid columns="1" rendered="#{ordemServicoController.ordemServico.tipoDesconto == 'DESCONTO_REAIS'}">
 									<p:outputLabel value="Desconto R$"/>
-									<p:spinner stepFactor="0.1" min="0" prefix="R$: " value="#{ordemServicoController.ordemServico.descontoReais}" />
+									<p:spinner stepFactor="0.1" min="0" prefix="R$: " max="#{ordemServicoController.ordemServico.total}" 
+											   value="#{ordemServicoController.ordemServico.descontoReais}">
+										<p:ajax listener="#{ordemServicoController.calcularDescontoReais}" process="@this" update="txtValorTotalPagamento"/>									
+									</p:spinner>		   
 								</h:panelGrid>
 													
 								<h:panelGrid columns="1" rendered="#{ordemServicoController.ordemServico.tipoDesconto == 'DESCONTO_PORCENTAGEM'}">
 									<p:outputLabel value="Desconto %"/>
-									<p:inputNumber symbol="R$ " decimalSeparator=","
-												   thousandSeparator="."
-												   value="#{ordemServicoController.ordemServico.descontoPorcento}" />
-								</h:panelGrid>					
+									<p:spinner min="0" prefix="% " max="100" value="#{ordemServicoController.ordemServico.descontoPorcento}">
+										<p:ajax listener="#{ordemServicoController.calcularDescontoPorcentagem}" process="@this" update="txtValorTotalPagamento"/>
+									</p:spinner>
+								</h:panelGrid>
 								
 								<h:panelGrid columns="1">
 									<p:outputLabel value="Total"/>
 									<p:inputNumber symbol="R$ " decimalSeparator=","
 												   thousandSeparator="."
-												   value="#{ordemServicoController.ordemServico.total}" />
+												   value="#{ordemServicoController.ordemServico.total}" 
+												   id="txtValorTotalPagamento"/>
 								</h:panelGrid>
 								
 							</h:panelGrid>
 						</p:fieldset>
+					
+						<h:panelGrid columns="4" id="panel_1_pagamento">
+							<h:panelGrid columns="1">
+								<p:outputLabel value="Forma de pagamento" />
+								<p:selectOneMenu
+									value="#{ordemServicoController.ordemServico.formaPagamento}">
+									<f:selectItems var="fp"
+										value="#{ordemServicoController.formaPagamento}"
+										itemLabel="#{fp.formaPagamento}" itemValue="#{fp}" />
+								</p:selectOneMenu>
+							</h:panelGrid>
+
+							<h:panelGrid columns="1">
+								<p:outputLabel value="Condição de pagamento" />
+								<p:selectOneMenu converter="omnifaces.SelectItemsConverter" value="#{ordemServicoController.ordemServico.condicaoPagamento}"
+												filter="true" filterMatchMode="startsWith">
+									<f:selectItems var="c" value="#{ordemServicoController.condicoesPagamento}" itemLabel="#{c.descricao}" itemValue="#{c}"/>
+								</p:selectOneMenu>
+							</h:panelGrid>
+
+							<h:panelGrid columns="1">
+								<p:outputLabel value="." style="color: white;" />
+								<p:commandButton value="Gerar parcelas" icon="ui-icon-tag" actionListener="#{ordemServicoController.gerarParcelas}"
+												 update=":msgGlobal tableParcelas"/>
+							</h:panelGrid>
+
+						</h:panelGrid>
 						
-						<p:dataTable var="parcela" emptyMessage="Nenhum registro encontrado!" 
-									 paginator="true" paginatorPosition="bottom">
+						<p:dataTable var="p" emptyMessage="Nenhum registro encontrado!" 
+									 paginator="true" paginatorPosition="bottom" 
+									 value="#{ordemServicoController.parcelas}"
+									 rows="4" id="tableParcelas">
 						
-							<p:column headerText="Número">
-							
+							<p:column headerText="Nº" width="20" style="text-align:center;">
+								<h:outputLabel value="#{p.numero}º"/>
 							</p:column>
-							<p:column headerText="Parcela">
-							
+							<p:column headerText="Parcela" style="text-align:center;" width="100">
+								<h:outputLabel value="#{p.valorParcela}">
+									<f:convertNumber pattern="###,###.00" locale="pt_BR"/>
+								</h:outputLabel>
 							</p:column>
-							<p:column headerText="Desconto">
-							
+							<p:column headerText="Desconto" style="text-align:center;" width="200">
+								<p:spinner min="0" max="#{p.valorParcela}"  value="#{p.valorDesconto}" prefix="R$: "/>
 							</p:column>
-							<p:column headerText="Valor cobrado">
-							
+							<p:column headerText="Valor cobrado" style="text-align:center;" width="100">
+								<h:outputLabel value="#{p.valorCobrado}">
+									<f:convertNumber pattern="###,###.00" locale="pt_BR" />
+								</h:outputLabel>
 							</p:column>
-							<p:column headerText="Vencimento">
-							
+							<p:column headerText="Vencimento" style="text-align:center;">
+								<h:outputLabel value="#{p.dataVencimento}">
+									<f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR"
+								timeZone="GMT-2" type="both" />
+								</h:outputLabel>
 							</p:column>
-							<p:column>
+							<p:column style="text-align:center;">
 								<p:commandButton icon="ui-icon-tag"/>
 								<p:commandButton icon="ui-icon-bookmark"/>
 								<p:commandButton icon="ui-icon-print"/>

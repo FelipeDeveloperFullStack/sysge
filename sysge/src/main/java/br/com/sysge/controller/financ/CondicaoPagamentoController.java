@@ -9,7 +9,7 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import br.com.sysge.model.gestserv.CondicaoPagamento;
+import br.com.sysge.model.financ.CondicaoPagamento;
 import br.com.sysge.model.type.Situacao;
 import br.com.sysge.service.financ.CondicaoPagamentoService;
 import br.com.sysge.util.FacesUtil;

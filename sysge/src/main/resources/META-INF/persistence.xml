@@ -27,8 +27,8 @@
 		<class>br.com.sysge.model.estoque.Produto</class>
 		<class>br.com.sysge.model.gestserv.ServicoOrdemServico</class>
 		<class>br.com.sysge.model.gestserv.ServicoOrdemServicoId</class>
-		<class>br.com.sysge.model.gestserv.ParcelasPagamentoOs</class>
-		<class>br.com.sysge.model.gestserv.CondicaoPagamento</class>
+		<class>br.com.sysge.model.financ.ParcelasPagamentoOs</class>
+		<class>br.com.sysge.model.financ.CondicaoPagamento</class>
 		
 		<properties>
 		

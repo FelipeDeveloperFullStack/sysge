@@ -14,6 +14,8 @@ import org.primefaces.event.SelectEvent;
 
 import br.com.sysge.controller.sys.TemplateViewPage;
 import br.com.sysge.model.estoque.Produto;
+import br.com.sysge.model.financ.CondicaoPagamento;
+import br.com.sysge.model.financ.ParcelasPagamentoOs;
 import br.com.sysge.model.gestserv.OrdemServico;
 import br.com.sysge.model.gestserv.Servico;
 import br.com.sysge.model.gestserv.ServicoOrdemServico;
@@ -25,6 +27,8 @@ import br.com.sysge.model.type.Pago;
 import br.com.sysge.model.type.Situacao;
 import br.com.sysge.model.type.StatusOS;
 import br.com.sysge.model.type.TipoDesconto;
+import br.com.sysge.service.financ.CondicaoPagamentoService;
+import br.com.sysge.service.financ.ParcelasPagamentoOsService;
 import br.com.sysge.service.gestserv.OrdemServicoService;
 import br.com.sysge.service.gestserv.ServicoOrdemServicoService;
 import br.com.sysge.service.global.ClienteService;
@@ -40,9 +44,16 @@ public class OrdemServicoController implements Serializable {
 
 	private OrdemServico ordemServico;
 	
+	private ParcelasPagamentoOs parcelasPagamentoOs;
+	
 	private Servico servico;
 	
 	private List<OrdemServico> ordensServicos;
+	
+	private List<ParcelasPagamentoOs> parcelas;
+	
+	@SuppressWarnings("unused")
+	private List<CondicaoPagamento> condicoesPagamento;
 	
 	@SuppressWarnings("unused")
 	private List<OrdemServico> ordensServicosAbertas;
@@ -72,6 +83,12 @@ public class OrdemServicoController implements Serializable {
 	
 	@Inject
 	private ServicoOrdemServicoService servicoOrdemServicoService;
+	
+	@Inject
+	private ParcelasPagamentoOsService parcelasPagamentoOsService;
+	
+	@Inject
+	private CondicaoPagamentoService condicaoPagamentoService;
 	
 	private static final String PAGE_CLIENTE = "/pages_framework/p_cliente.xhtml";
 	private static final String PAGE_SERVICO = "/pages_framework/p_servicos.xhtml";
@@ -114,9 +131,29 @@ public class OrdemServicoController implements Serializable {
 		}
 	}
 	
+	public void gerarParcelas(){
+		try {
+			parcelas = parcelasPagamentoOsService.gerarParcelas(ordemServico, parcelas, parcelasPagamentoOs);
+		} catch (RuntimeException e) {
+			FacesUtil.mensagemWarn(e.getMessage());
+		}
+	}
+	
+	public void calcularDescontoReais(){
+		ordemServico.setDescontoPorcento(BigDecimal.ZERO);
+		ordemServico.setTotal(ordemServico.getTotalServico().subtract(ordemServico.getDescontoReais()));
+	}
+	
+	public void calcularDescontoPorcentagem(){
+		ordemServico.setDescontoReais(BigDecimal.ZERO);
+		BigDecimal porcentagem = ordemServico.getTotalServico()
+								 .divide(new BigDecimal("100"))
+								 .multiply(ordemServico.getDescontoPorcento());
+		ordemServico.setTotal(ordemServico.getTotalServico().subtract(porcentagem));
+		
+	}
+	
 	private void somarTotalServico(BigDecimal valorServico){
-		//totalServico = ordemServico.getTotalServico();
-		//totalServico = totalServico.add(valorServico);
 		ordemServico.setTotalServico(ordemServico.getTotalServico().add(valorServico));
 	}
 	
@@ -158,6 +195,7 @@ public class OrdemServicoController implements Serializable {
 		this.ordemServico.setCliente(clienteService.verificarTipoPessoa(ordemServico.getCliente()));
 		this.ordemServico = ordemServico;
 		this.listaServicos = ordemServicoService.procurarServicosOS(ordemServico.getId());
+		this.parcelas = parcelasPagamentoOsService.procurarParcelasPorOS(ordemServico.getId());
 		RequestContextUtil.execute("PF('dialogEditarOrdemDeServico').show();");
 		ordensServicos = new ArrayList<OrdemServico>();
 	}
@@ -172,6 +210,7 @@ public class OrdemServicoController implements Serializable {
 		this.clientes = new ArrayList<Cliente>();
 		this.listaServicos = new ArrayList<ServicoOrdemServico>();
 		this.ordensServicosAbertas = new ArrayList<OrdemServico>();
+		this.parcelas = new ArrayList<ParcelasPagamentoOs>();
 	}
 	
 	public void salvar(){
@@ -191,12 +230,12 @@ public class OrdemServicoController implements Serializable {
 	
 	private void salvarOS(){
 		if(ordemServico.getId() == null){
-			ordemServico.setTotal(ordemServico.getTotalServico().add(ordemServico.getTotalProduto()));
 			ordemServico = ordemServicoService.salvar(ordemServico);
+			parcelasPagamentoOsService.salvar(ordemServico, parcelas);
 			ordemServicoService.consistirServico(listaServicos, ordemServico);
 		}else{
-			ordemServico.setTotal(ordemServico.getTotalServico().add(ordemServico.getTotalProduto()));
 			ordemServico = ordemServicoService.salvar(ordemServico);
+			parcelasPagamentoOsService.salvar(ordemServico, parcelas);
 			ordemServicoService.consistirServico(listaServicos, ordemServico);
 		}
 		
@@ -322,5 +361,23 @@ public class OrdemServicoController implements Serializable {
 	public void setOrdensServicosAbertas(List<OrdemServico> ordensServicosAbertas) {
 		this.ordensServicosAbertas = ordensServicosAbertas;
 	}
+
+	public List<CondicaoPagamento> getCondicoesPagamento() {
+		return condicaoPagamentoService.findBySituation(Situacao.ATIVO);
+	}
+
+	public void setCondicoesPagamento(List<CondicaoPagamento> condicoesPagamento) {
+		this.condicoesPagamento = condicoesPagamento;
+	}
+
+	public List<ParcelasPagamentoOs> getParcelas() {
+		return parcelas;
+	}
+
+	public void setParcelas(List<ParcelasPagamentoOs> parcelas) {
+		this.parcelas = parcelas;
+	}
+	
+	
 
 }
