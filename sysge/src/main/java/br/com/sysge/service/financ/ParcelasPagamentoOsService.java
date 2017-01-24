@@ -16,8 +16,13 @@ public class ParcelasPagamentoOsService extends GenericDaoImpl<ParcelasPagamento
 	
 	private static final String A_VISTA = "À Vista";
 	
-	
 	public void salvar(OrdemServico ordemServico, List<ParcelasPagamentoOs> parcelas){
+		List<ParcelasPagamentoOs> listaParcelas = procurarParcelasPorOS(ordemServico.getId());
+		if(!listaParcelas.isEmpty()){
+			for(ParcelasPagamentoOs p : listaParcelas){
+				super.removeByObject(p);
+			}
+		}
 		for(ParcelasPagamentoOs p : parcelas){
 			p.setOrdemServico(ordemServico);
 			super.save(p);

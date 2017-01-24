@@ -41,14 +41,16 @@ public class LoginController implements Serializable {
 	private DefaultSubMenu menuCompras;
 	private DefaultSubMenu menuEstoque;
 	private DefaultSubMenu menuGestaoServico;
-	private DefaultSubMenu subMenuCadastroSG;
-	private DefaultSubMenu subMenuCadastroRH;
 	private DefaultSubMenu menuRh;
 	private DefaultSubMenu menuFinanceiro;
-	private DefaultSubMenu subMenuCaixa;
 	private DefaultSubMenu menuGlobal;
-	private DefaultSubMenu subMenuCadastroGl;
 	private DefaultSubMenu menuConfiguracao;
+	
+	private DefaultSubMenu subMenuCaixa;
+	private DefaultSubMenu subMenuCadastroGl;
+	private DefaultSubMenu subMenuCadastroSG;
+	private DefaultSubMenu subMenuCadastroRH;
+	private DefaultSubMenu subMenuCadastroEstoque;
 
 	private DefaultMenuItem menuItemLancamentoCaixa;
 	private DefaultMenuItem menuItemUsuario;
@@ -59,6 +61,7 @@ public class LoginController implements Serializable {
 	private DefaultMenuItem menuItemCliente;
 	private DefaultMenuItem menuItemBackup;
 	private DefaultMenuItem menuItemFormaPagamento;
+	private DefaultMenuItem menuItemProduto;
 
 	@Inject
 	private PanelMenuService panelMenuService;
@@ -83,6 +86,8 @@ public class LoginController implements Serializable {
 	private static final String PAGE_USUARIO = "/pages/conf/p_usuario.xhtml" + FACES_REDIRECT;
 	private static final String PAGE_PERFIL_ACESSO = "/pages/conf/p_perfil_acesso.xhtml" + FACES_REDIRECT;
 	private static final String PAGE_BACKUP = "/pages/conf/p_backup.xhtml" + FACES_REDIRECT;
+	
+	private static final String PAGE_PRODUTO = "/pages/estoque/p_produto.xhtml" + FACES_REDIRECT;
 
 	// RH
 	private static final String PAGE_FUNCIONARIO = "/pages/rh/p_funcionario.xhtml" + FACES_REDIRECT;
@@ -106,14 +111,16 @@ public class LoginController implements Serializable {
 		menuCompras = null;
 		menuEstoque = null;
 		menuGestaoServico = null;
-		subMenuCadastroSG = null;
-		subMenuCadastroRH = null;
 		menuRh = null;
 		menuFinanceiro = null;
-		subMenuCaixa = null;
 		menuGlobal = null;
-		subMenuCadastroGl = null;
 		menuConfiguracao = null;
+		
+		subMenuCadastroSG = null;
+		subMenuCadastroRH = null;
+		subMenuCaixa = null;
+		subMenuCadastroGl = null;
+		subMenuCadastroEstoque = null;
 
 		menuItemLancamentoCaixa = null;
 		menuItemUsuario = null;
@@ -124,6 +131,7 @@ public class LoginController implements Serializable {
 		menuItemCliente = null;
 		menuItemOrdemServico = null;
 		menuItemFormaPagamento = null;
+		menuItemProduto = null;
 	}
 
 	public String autenticarLogin() {
@@ -184,6 +192,7 @@ public class LoginController implements Serializable {
 	}
 
 	public String logoutSistema() {
+		usuario = usuarioService.findById(usuario.getId());
 		usuario.setDataFinal(Calendar.getInstance().getTime());
 		usuario.setUltimoAcesso(usuario.getDataInicial());
 		usuarioService.salvar(usuario);
@@ -204,9 +213,9 @@ public class LoginController implements Serializable {
 			if (menu.getMenu().equals(MenuSistema.COMPRAS.getMenu())) {
 				menuCompras = new DefaultSubMenu(MenuSistema.COMPRAS.getMenu());
 			}
-			if (menu.getMenu().equals(MenuSistema.ESTOQUE.getMenu())) {
+			/*if (menu.getMenu().equals(MenuSistema.ESTOQUE.getMenu())) {
 				menuEstoque = new DefaultSubMenu(MenuSistema.ESTOQUE.getMenu());
-			}
+			}*/
 			/*
 			 * if(menu.getMenu().equals(MenuSistema.GESTAO_SERVICO.getMenu())){
 			 * menuGestaoServico = new
@@ -221,6 +230,11 @@ public class LoginController implements Serializable {
 				menuItemServico = new DefaultMenuItem(MenuSistema.SERVICO.getMenu());
 				menuItemServico.setOutcome(PAGE_SERVICO);
 				menuItemServico.setIcon(ICON_MENU);
+			}
+			if (menu.getMenu().equals(MenuSistema.PRODUTO.getMenu())) {
+				menuItemProduto = new DefaultMenuItem(MenuSistema.PRODUTO.getMenu());
+				menuItemProduto.setOutcome(PAGE_PRODUTO);
+				menuItemProduto.setIcon(ICON_MENU);
 			}
 			if (menu.getMenu().equals(MenuSistema.ORDEM_DE_SERVICO.getMenu())) {
 				menuItemOrdemServico = new DefaultMenuItem(MenuSistema.ORDEM_DE_SERVICO.getMenu());
@@ -288,8 +302,12 @@ public class LoginController implements Serializable {
 		if (menuCompras != null) {
 			menuModel.addElement(menuCompras);
 		}
-		if (menuEstoque != null) {
+		if (menuItemProduto != null) {
+			menuEstoque = new DefaultSubMenu(MenuSistema.ESTOQUE.getMenu());
 			menuModel.addElement(menuEstoque);
+			subMenuCadastroEstoque =  new DefaultSubMenu(MenuSistema.CADASTRO_ESTQ.getMenu());
+			menuEstoque.addElement(subMenuCadastroEstoque);
+			subMenuCadastroEstoque.addElement(menuItemProduto);
 		}
 
 		if (menuItemServico != null || menuItemOrdemServico != null) {

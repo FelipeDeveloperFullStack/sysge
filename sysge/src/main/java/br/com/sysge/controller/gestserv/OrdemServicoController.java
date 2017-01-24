@@ -131,6 +131,14 @@ public class OrdemServicoController implements Serializable {
 		}
 	}
 	
+	public void calcularDescontoParcela(ParcelasPagamentoOs parcelasPagamentoOs){
+		for(ParcelasPagamentoOs p : parcelas){
+			if(parcelasPagamentoOs.getId() == p.getId()){
+				p.setValorCobrado(parcelasPagamentoOs.getValorParcela().subtract(parcelasPagamentoOs.getValorDesconto()));
+			}
+		}
+	}
+	
 	public void gerarParcelas(){
 		try {
 			parcelas = parcelasPagamentoOsService.gerarParcelas(ordemServico, parcelas, parcelasPagamentoOs);

@@ -103,7 +103,7 @@
 
 		<!-- Dialog editar -->
 		<p:dialog widgetVar="dialogEditarUsuario" header="Editar Usuário"
-			modal="true" appendTo="@(body)" resizable="false" position="top">
+			modal="true" appendTo="@(body)" resizable="false" position="top" closable="false">
 			<h:form id="formEditarUsuario">
 
 				<p:tabView id="tabViewEditarUsuario">
@@ -202,7 +202,7 @@
 		<!-- Dialog novo usuário -->
 		<p:dialog widgetVar="dialogNovoUsuario" header="Novo Usuário"
 			modal="true" appendTo="@(body)" resizable="false" position="top"
-			minimizable="true">
+			closable="false">
 			<h:form id="formNovoUsuario">
 
 				<p:tabView id="tabViewNovoUsuario">

@@ -17,7 +17,7 @@
 				<p:panel id="osAbertas" header="Ordem de serviços 'Abertas' ou 'Em Andamento'">
 					<p:dataTable emptyMessage="Nenhuma ordem de serviço encontrada!" 
 								 var="os" value="#{ordemServicoController.ordensServicosAbertas}"
-								 paginator="true" paginatorPosition="bottom" rows="5">
+								 paginator="true" paginatorPosition="bottom" rows="4">
 								 
 						<p:column headerText="Nº OS" width="40" style="text-align:center;">
 							<p:outputLabel value="#{os.id}"/>

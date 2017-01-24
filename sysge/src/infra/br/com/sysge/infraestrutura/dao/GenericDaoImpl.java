@@ -39,7 +39,7 @@ public class GenericDaoImpl<E, I> implements GenericDao<E, I> {
 	private CriteriaQuery<E> criteria;
 
 	@Inject
-	@PersistenceContext
+	//@PersistenceContext
 	private EntityManager manager;
 	
 	private EntityTransaction tx;

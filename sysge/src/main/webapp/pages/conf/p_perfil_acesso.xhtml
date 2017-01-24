@@ -81,7 +81,7 @@
 				<p:dialog id="dialogEditarPerfilAcesso" widgetVar="dialogEditarPerfil" 
 						  header="Editar Perfil" modal="true" 
 						  appendTo="@(body)" resizable="false"
-						  position="top" width="700">
+						  position="top" width="700" closable="false">
 					<h:form id="formEditarPerfil">
 					
 					<p:accordionPanel id="accordionPanelPerfilEditar" cache="false" 
@@ -164,7 +164,7 @@
 				<p:dialog widgetVar="dialogNovoPerfil" 
 						  header="Novo Perfil" modal="true" 
 						  appendTo="@(body)" resizable="false"
-						  position="top" width="700">
+						  position="top" width="700" closable="false">
 					<h:form id="formNovoPerfil">
 					
 						<p:accordionPanel id="accordionPanelPerfil" cache="false" activeIndex="#{perfilController.currentTab}">

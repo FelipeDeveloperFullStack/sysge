@@ -5,7 +5,7 @@ public enum MenuPerfilAcesso {
 	//COMPRAS("Compras"), 
 	//ESTOQUE("Estoque"),
 		//CADASTRO_ESTQ("Cadastros"),
-			//PRODUTO("Produto"),
+			PRODUTO("Produto"),
 	//GESTAO_SERVICO("Gestão de Serviço"),
 		//CADASTROS_GS("Cadastros"),
 			SERVICO("Serviços"),

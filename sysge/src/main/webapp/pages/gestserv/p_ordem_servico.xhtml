@@ -121,37 +121,41 @@
 		<!-- Dialog nova ordem de Serviço -->
 		<p:dialog widgetVar="dialogNovaOrdemDeServico"
 			header="Nova Ordem de Serviço" modal="true" appendTo="@(body)"
-			resizable="false" position="top" width="938">
+			resizable="false" position="top" width="938" closable="false">
 			<h:form id="formNovaOrdemServico">
 				<p:tabView id="tabViewNovaOS">
 					<p:tab title="Dados Básicos">
+					
 						<h:panelGrid columns="8">
 							<h:panelGrid columns="1">
 								<p:outputLabel value="Data Entrada" />
-								<p:calendar pattern="dd/MM/yyyy"
-									value="#{ordemServicoController.ordemServico.dataEntrada}"
-									readonly="true" showOn="button" />
+								<p:inputText value="#{ordemServicoController.ordemServico.dataEntrada}"
+									readonly="true" style="width: 200px;">
+									<f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR"
+										timeZone="GMT-2" type="both" />
+								</p:inputText>	
 							</h:panelGrid>
 							<h:panelGrid columns="1">
 								<p:outputLabel value="Hora Entrada" />
-								<p:calendar pattern="HH:mm" timeOnly="true" style="width: 15px;"
-									showHour="true" showMinute="true" showButtonPanel="true"
-									showTodayButton="true"
-									value="#{ordemServicoController.ordemServico.horaEntrada}"
-									readonly="true" showOn="button" />
+								<p:inputText value="#{ordemServicoController.ordemServico.horaEntrada}"
+									readonly="true" style="width: 205px;">
+									<f:convertDateTime pattern="HH:mm" locale="pt_BR"
+										timeZone="GMT-2" type="both" />
+								</p:inputText>	
 							</h:panelGrid>
 							<h:panelGrid columns="1">
 								<p:outputLabel value="Data Saída" />
-								<p:calendar pattern="dd/MM/yyyy" disabled="true"
-									value="#{ordemServicoController.ordemServico.dataSaida}"
-									showOn="button" />
+								<p:inputText value="#{ordemServicoController.ordemServico.dataSaida}" readonly="true" style="width: 200px;">
+									<f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR"
+										timeZone="GMT-2" type="both" />
+								</p:inputText>	
 							</h:panelGrid>
 							<h:panelGrid columns="1">
 								<p:outputLabel value="Hora Saída" />
-								<p:calendar pattern="HH:mm" timeOnly="true" style="width: 50px;"
-									disabled="true"
-									value="#{ordemServicoController.ordemServico.horaSaida}"
-									showOn="button" />
+								<p:inputText value="#{ordemServicoController.ordemServico.horaSaida}" style="width: 210px;">
+										<f:convertDateTime pattern="HH:mm" locale="pt_BR"
+										timeZone="GMT-2" type="both" />
+								</p:inputText>	
 							</h:panelGrid>
 						</h:panelGrid>
 
@@ -285,7 +289,7 @@
 								<p:spinner min="1" value="#{s.quantidade}" style="width: 200px;">
 									<p:ajax
 										listener="#{ordemServicoController.calcularValorServico(s)}"
-										update="tableServico :formNovaOrdemServico:tabViewNovaOS:panel_2_pagamento" />
+										update="tableServico" />
 								</p:spinner>
 							</p:column>
 							<p:column headerText="Valor" width="120">
@@ -334,108 +338,6 @@
 						</p:dataTable>
 					</p:tab>
 
-					<p:tab title="Pagamento" id="idPagamento">
-					
-					<p:fieldset id="fieldsetPagamento">
-							<h:panelGrid columns="4" id="panel_2_pagamento">
-								<h:panelGrid columns="1">
-									<p:outputLabel value="Tipo de desconto"/>
-									<p:selectOneMenu id="som_tipo_desconto" value="#{ordemServicoController.ordemServico.tipoDesconto}">
-										<f:selectItem itemLabel="Selecione o tipo de Desconto"/>
-										<f:selectItems var="td" value="#{ordemServicoController.tiposDesconto}" itemLabel="#{td.tipoDesconto}" itemValue="#{td}"/>
-										<p:ajax event="change" update="panel_2_pagamento" process="som_tipo_desconto"/>
-									</p:selectOneMenu>								
-								</h:panelGrid>		
-								
-								<h:panelGrid columns="1" rendered="#{ordemServicoController.ordemServico.tipoDesconto == 'DESCONTO_REAIS'}">
-									<p:outputLabel value="Desconto R$"/>
-									<p:spinner stepFactor="0.1" min="0" prefix="R$: " max="#{ordemServicoController.ordemServico.total}" 
-											   value="#{ordemServicoController.ordemServico.descontoReais}">
-										<p:ajax listener="#{ordemServicoController.calcularDescontoReais}" process="@this" update="txtValorTotalPagamento"/>									
-									</p:spinner>		   
-								</h:panelGrid>
-													
-								<h:panelGrid columns="1" rendered="#{ordemServicoController.ordemServico.tipoDesconto == 'DESCONTO_PORCENTAGEM'}">
-									<p:outputLabel value="Desconto %"/>
-									<p:spinner min="0" prefix="% " max="100" value="#{ordemServicoController.ordemServico.descontoPorcento}">
-										<p:ajax listener="#{ordemServicoController.calcularDescontoPorcentagem}" process="@this" update="txtValorTotalPagamento"/>
-									</p:spinner>
-								</h:panelGrid>					
-								
-								<h:panelGrid columns="1">
-									<p:outputLabel value="Total"/>
-									<p:inputNumber symbol="R$ " decimalSeparator=","
-												   thousandSeparator="."
-												   value="#{ordemServicoController.ordemServico.total}" 
-												   id="txtValorTotalPagamento"
-												   readonly="true"/>
-								</h:panelGrid>
-								
-							</h:panelGrid>
-						</p:fieldset>
-					
-						<h:panelGrid columns="4" id="panel_1_pagamento">
-							<h:panelGrid columns="1">
-								<p:outputLabel value="Forma de pagamento" />
-								<p:selectOneMenu
-									value="#{ordemServicoController.ordemServico.formaPagamento}">
-									<f:selectItems var="fp"
-										value="#{ordemServicoController.formaPagamento}"
-										itemLabel="#{fp.formaPagamento}" itemValue="#{fp}" />
-								</p:selectOneMenu>
-							</h:panelGrid>
-
-							<h:panelGrid columns="1">
-								<p:outputLabel value="Condição de pagamento" />
-								<p:selectOneMenu converter="omnifaces.SelectItemsConverter" value="#{ordemServicoController.ordemServico.condicaoPagamento}" 
-												 filter="true" filterMatchMode="startsWith">
-									<f:selectItems var="c" value="#{ordemServicoController.condicoesPagamento}" itemLabel="#{c.descricao}" itemValue="#{c}"/>
-								</p:selectOneMenu>
-							</h:panelGrid>
-
-							<h:panelGrid columns="1">
-								<p:outputLabel value="." style="color: white;" />
-								<p:commandButton value="Gerar parcelas" icon="ui-icon-tag" actionListener="#{ordemServicoController.gerarParcelas}"
-												 update=":msgGlobal tableParcelas"/>
-							</h:panelGrid>
-
-						</h:panelGrid>
-						
-						<p:dataTable var="p" emptyMessage="Nenhum registro encontrado!" 
-									 paginator="true" paginatorPosition="bottom" 
-									 value="#{ordemServicoController.parcelas}"
-									 rows="4" id="tableParcelas">
-						
-							<p:column headerText="Nº" width="20" style="text-align:center;">
-								<h:outputLabel value="#{p.numero}º"/>
-							</p:column>
-							<p:column headerText="Parcela" style="text-align:center;" width="100">
-								<h:outputLabel value="#{p.valorParcela}">
-									<f:convertNumber pattern="###,###.00" locale="pt_BR"/>
-								</h:outputLabel>
-							</p:column>
-							<p:column headerText="Desconto" style="text-align:center;" width="200">
-								<p:spinner min="0" max="#{p.valorParcela}"  value="#{p.valorDesconto}" prefix="R$: "/>
-							</p:column>
-							<p:column headerText="Valor cobrado" style="text-align:center;" width="100">
-								<h:outputLabel value="#{p.valorCobrado}">
-									<f:convertNumber pattern="###,###.00" locale="pt_BR" />
-								</h:outputLabel>
-							</p:column>
-							<p:column headerText="Vencimento" style="text-align:center;">
-								<h:outputLabel value="#{p.dataVencimento}">
-									<f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR"
-								timeZone="GMT-2" type="both" />
-								</h:outputLabel>
-							</p:column>
-							<p:column style="text-align:center;">
-								<p:commandButton icon="ui-icon-tag"/>
-								<p:commandButton icon="ui-icon-bookmark"/>
-								<p:commandButton icon="ui-icon-print"/>
-							</p:column>
-						</p:dataTable>
-					</p:tab>
-
 					<p:tab title="Informações complementares">
 
 						<h:panelGrid columns="1">
@@ -463,9 +365,6 @@
 							actionListener="#{ordemServicoController.salvar}"
 							update=":msgGlobal :formGeralServico:tableServico" />
 
-						<p:commandButton value="Finalizar OS" disabled="true"
-							icon="ui-icon-folder-collapsed" />
-
 						<p:commandButton value="Cancelar" icon="ui-icon-closethick"
 							oncomplete="PF('dialogNovaOrdemDeServico').hide();" />
 					</h:panelGrid>
@@ -476,7 +375,7 @@
 		<!-- Dialog editar ordem de Serviço -->
 		<p:dialog widgetVar="dialogEditarOrdemDeServico"
 			header="Editar Ordem de Serviço" modal="true" appendTo="@(body)"
-			resizable="false" position="top" width="938">
+			resizable="false" position="top" width="938" closable="false">
 			<h:form id="formEditarOrdemServico">
 				<p:tabView id="tabViewEditarOS">
 					<p:tab title="Dados Básicos">
@@ -490,30 +389,33 @@
 						<h:panelGrid columns="8">
 							<h:panelGrid columns="1">
 								<p:outputLabel value="Data Entrada" />
-								<p:calendar pattern="dd/MM/yyyy"
-									value="#{ordemServicoController.ordemServico.dataEntrada}"
-									readonly="true" showOn="button" />
+								<p:inputText value="#{ordemServicoController.ordemServico.dataEntrada}"
+									readonly="true" style="width: 200px;">
+									<f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR"
+										timeZone="GMT-2" type="both" />
+								</p:inputText>	
 							</h:panelGrid>
 							<h:panelGrid columns="1">
 								<p:outputLabel value="Hora Entrada" />
-								<p:calendar pattern="HH:mm" timeOnly="true" style="width: 15px;"
-									showHour="true" showMinute="true" showButtonPanel="true"
-									showTodayButton="true"
-									value="#{ordemServicoController.ordemServico.horaEntrada}"
-									readonly="true" showOn="button" />
+								<p:inputText value="#{ordemServicoController.ordemServico.horaEntrada}"
+									readonly="true" style="width: 205px;">
+									<f:convertDateTime pattern="HH:mm" locale="pt_BR"
+										timeZone="GMT-2" type="both" />
+								</p:inputText>	
 							</h:panelGrid>
 							<h:panelGrid columns="1">
 								<p:outputLabel value="Data Saída" />
-								<p:calendar pattern="dd/MM/yyyy" disabled="true"
-									value="#{ordemServicoController.ordemServico.dataSaida}"
-									showOn="button" />
+								<p:inputText value="#{ordemServicoController.ordemServico.dataSaida}" readonly="true" style="width: 200px;">
+									<f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR"
+										timeZone="GMT-2" type="both" />
+								</p:inputText>	
 							</h:panelGrid>
 							<h:panelGrid columns="1">
 								<p:outputLabel value="Hora Saída" />
-								<p:calendar pattern="HH:mm" timeOnly="true" style="width: 50px;"
-									disabled="true"
-									value="#{ordemServicoController.ordemServico.horaSaida}"
-									showOn="button" />
+								<p:inputText value="#{ordemServicoController.ordemServico.horaSaida}" style="width: 210px;">
+										<f:convertDateTime pattern="HH:mm" locale="pt_BR"
+										timeZone="GMT-2" type="both" />
+								</p:inputText>	
 							</h:panelGrid>
 						</h:panelGrid>
 
@@ -781,10 +683,12 @@
 								</h:outputLabel>
 							</p:column>
 							<p:column headerText="Desconto" style="text-align:center;" width="200">
-								<p:spinner min="0" max="#{p.valorParcela}"  value="#{p.valorDesconto}" prefix="R$: "/>
+								<p:spinner min="0" max="#{p.valorParcela}" value="#{p.valorDesconto}" prefix="R$: ">
+									<p:ajax listener="#{ordemServicoController.calcularDescontoParcela(p)}" process="@this" update="txtValorCobradoParcela"/>
+								</p:spinner>
 							</p:column>
 							<p:column headerText="Valor cobrado" style="text-align:center;" width="100">
-								<h:outputLabel value="#{p.valorCobrado}">
+								<h:outputLabel id="txtValorCobradoParcela" value="#{p.valorCobrado}">
 									<f:convertNumber pattern="###,###.00" locale="pt_BR" />
 								</h:outputLabel>
 							</p:column>
@@ -830,9 +734,6 @@
 							actionListener="#{ordemServicoController.salvar}"
 							update=":msgGlobal :formGeralServico:tableServico"
 							disabled="#{ordemServicoController.ordemServico.statusOS == 'CANCELADO'}" />
-
-						<p:commandButton value="Finalizar OS" disabled="true"
-							icon="ui-icon-folder-collapsed" />
 
 						<p:commandButton value="Cancelar" icon="ui-icon-closethick"
 							actionListener="#{ordemServicoController.fecharDialogs}"
