@@ -19,7 +19,9 @@
 					<p:selectOneMenu value="#{condicaoPagamentoController.condicaoPagamento.situacao}">
 						<f:selectItems var="s" value="#{condicaoPagamentoController.situacoes}" itemLabel="#{s.situacao}" itemValue="#{s}"/>
 					</p:selectOneMenu>
-					<p:commandButton id="btnPesquisarCond" value="Pesquisar" icon="ui-icon-search" update="formGeralServico" actionListener="#{condicaoPagamentoController.pesquisar}"/>
+					<p:commandButton id="btnPesquisarCond" value="Pesquisar" icon="ui-icon-search" 
+									 update=":msgGlobal tableServico" 
+									 actionListener="#{condicaoPagamentoController.pesquisar}"/>
 					<p:commandButton value="Imprimir" icon="ui-icon-print"/>
 					<p:focus context="panelPesquisa"/>	
 					
@@ -125,8 +127,8 @@
 						<h:panelGrid id="panelBotoesNovoServico" columns="2">
 							<h:panelGrid columns="2">
 								<p:commandButton id="btnSalvarNovoServico" value="Salvar" icon="ui-icon-check" 
-												 actionListener="#{condicaoPagamentoController.salvar}" 
-												 update=":msgGlobal :formGeralServico:tableServico"/>
+												 update=":msgGlobal :formGeralServico:tableServico"
+												 actionListener="#{condicaoPagamentoController.salvar}"/> 
 								<p:commandButton value="Cancelar" icon="ui-icon-close" oncomplete="PF('dialogNovoServico').hide();" 
 											     actionListener="#{condicaoPagamentoController.novaListaFormaPagamento}" 
 											     update=":msgGlobal :formGeralServico:tableServico"/>

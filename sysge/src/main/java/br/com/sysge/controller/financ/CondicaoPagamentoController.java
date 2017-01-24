@@ -47,8 +47,8 @@ public class CondicaoPagamentoController implements Serializable{
 	}
 	
 	public void pesquisar(){
-		novaListaFormaPagamento();
-		condicoesPagamento = condicaoPagamentoService.pesquisarCondicaoPagamento(condicaoPagamento);
+		this.condicoesPagamento = new ArrayList<CondicaoPagamento>();
+		this.condicoesPagamento = condicaoPagamentoService.pesquisarCondicaoPagamento(condicaoPagamento);
 	}
 
 	public void salvar() {
@@ -57,8 +57,8 @@ public class CondicaoPagamentoController implements Serializable{
 			verificarSeExisteCondicaoPagamentoCadastradoComMesmaDescricao(condicaoPagamento);
 	        condicaoPagamentoService.salvar(condicaoPagamento);
 			FacesUtil.mensagemInfo("Condição de pagamento salvo com sucesso!");
-			fecharDialogs();
 			novaListaFormaPagamento();
+			fecharDialogs();
 		} catch (Exception e) {
 			FacesUtil.mensagemErro(e.getMessage());
 		}
@@ -83,8 +83,7 @@ public class CondicaoPagamentoController implements Serializable{
 	}
 	
 	public void fecharDialogs(){
-		RequestContextUtil.execute("PF('dialogNovoServico').hide()");
-		RequestContextUtil.execute("PF('dialogEditarServico').hide()");
+		RequestContextUtil.execute("PF('dialogNovoServico').hide();");
 	}
 
 

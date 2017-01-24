@@ -6,6 +6,11 @@
 	margin-right: auto;
 }
 
+.cor_vemelho {
+	background: none repeat scroll 0 0 #EEE9CF;
+    font-weight: bold;
+}
+
 .dialog-panelgrid-1-outputLabel {
 	font-weight: bold;
 }
