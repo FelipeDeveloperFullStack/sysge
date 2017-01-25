@@ -60,9 +60,9 @@
 						<p:outputLabel value="#{s.id}" />
 					</p:column>
 
-					<p:column headerText="Data Entrada" style="text-align:center;"
+					<p:column headerText="#{ordemServicoController.ordemServico.statusOS == 'CANCELADO' ? 'Data Saída' : 'Data Entrada'}" style="text-align:center;"
 						width="100">
-						<p:outputLabel value="#{s.dataEntrada}">
+						<p:outputLabel value="#{ordemServicoController.ordemServico.statusOS == 'CANCELADO' ? s.dataSaida : s.dataEntrada}">
 							<f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR"
 								timeZone="GMT-2" type="both" />
 						</p:outputLabel>
@@ -140,20 +140,6 @@
 								<p:inputText value="#{ordemServicoController.ordemServico.horaEntrada}"
 									readonly="true" style="width: 205px;">
 									<f:convertDateTime pattern="HH:mm" locale="pt_BR"
-										timeZone="GMT-2" type="both" />
-								</p:inputText>	
-							</h:panelGrid>
-							<h:panelGrid columns="1">
-								<p:outputLabel value="Data Saída" />
-								<p:inputText value="#{ordemServicoController.ordemServico.dataSaida}" readonly="true" style="width: 200px;">
-									<f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR"
-										timeZone="GMT-2" type="both" />
-								</p:inputText>	
-							</h:panelGrid>
-							<h:panelGrid columns="1">
-								<p:outputLabel value="Hora Saída" />
-								<p:inputText value="#{ordemServicoController.ordemServico.horaSaida}" style="width: 210px;">
-										<f:convertDateTime pattern="HH:mm" locale="pt_BR"
 										timeZone="GMT-2" type="both" />
 								</p:inputText>	
 							</h:panelGrid>
@@ -437,7 +423,7 @@
 								<p:inputText value="#{ordemServicoController.ordemServico.horaEntrada}"
 									readonly="true" style="width: 205px;">
 									<f:convertDateTime pattern="HH:mm" locale="pt_BR"
-										timeZone="GMT-2" type="both" />
+										timeZone="GMT-3" type="both" />
 								</p:inputText>	
 							</h:panelGrid>
 							<h:panelGrid columns="1">
@@ -449,9 +435,9 @@
 							</h:panelGrid>
 							<h:panelGrid columns="1">
 								<p:outputLabel value="Hora Saída" />
-								<p:inputText value="#{ordemServicoController.ordemServico.horaSaida}" style="width: 210px;">
+								<p:inputText value="#{ordemServicoController.ordemServico.horaSaida}" style="width: 210px;" readonly="true">
 										<f:convertDateTime pattern="HH:mm" locale="pt_BR"
-										timeZone="GMT-2" type="both" />
+										timeZone="GMT-3" type="both" />
 								</p:inputText>	
 							</h:panelGrid>
 						</h:panelGrid>
@@ -617,11 +603,22 @@
 					</p:tab>
 
 					<p:tab title="Produto">
-						<h:panelGrid columns="3">
-							<p:outputLabel value="Buscar produto" />
-							<p:inputText style="width: 500px;" />
-							<p:commandButton icon="ui-icon-search"
-								disabled="#{ordemServicoController.ordemServico.statusOS == 'CANCELADO'}" />
+						<h:panelGrid columns="5">
+							<p:commandButton id="btnProcurarProdutoDialog"
+								icon="ui-icon-search"
+								actionListener="#{ordemServicoController.obterPageProduto}"
+								value="Procurar" disabled="#{ordemServicoController.ordemServico.statusOS == 'CANCELADO'}" >
+								<p:ajax event="dialogReturn"
+									listener="#{ordemServicoController.produtoSelecionado}"
+									process="@this" update=":msgGlobal tableProduto :formEditarOrdemServico:tabViewEditarOS" />
+							</p:commandButton>
+
+							<p:blockUI block="formNovaOrdemServico"
+								trigger="btnProcurarProdutoDialog">
+								        Carregando! Aguarde...<br />
+								<p:graphicImage library="img" name="loading.gif" />
+							</p:blockUI>
+
 						</h:panelGrid>
 						
 						<p:dataTable emptyMessage="Nenhum produto encontrado!" id="tableProduto" 
@@ -639,7 +636,7 @@
 								<p:spinner min="1" value="#{p.quantidade}" style="width: 200px;">
 									<p:ajax
 										listener="#{ordemServicoController.calcularValorProduto(p)}"
-										update="tableProduto" />
+										update="tableProduto :formEditarOrdemServico:tabViewEditarOS:panel_2_pagamento" />
 								</p:spinner>
 							</p:column>
 							<p:column headerText="Valor" width="120" style="text-align:center;">
@@ -653,7 +650,7 @@
 								</h:outputLabel>
 							</p:column>
 							<p:column width="30">
-								<p:commandButton icon="ui-icon-close" />
+								<p:commandButton icon="ui-icon-close" disabled="#{ordemServicoController.ordemServico.statusOS == 'CANCELADO'}"/>
 							</p:column>
 							
 							<p:columnGroup type="footer">
@@ -727,7 +724,8 @@
 							<h:panelGrid columns="1">
 								<p:outputLabel value="." style="color: white;" />
 								<p:commandButton value="Gerar parcelas" icon="ui-icon-tag" actionListener="#{ordemServicoController.gerarParcelas}"
-												 update=":msgGlobal tableParcelas"/>
+												 update=":msgGlobal tableParcelas"
+												 disabled="#{ordemServicoController.ordemServico.statusOS == 'CANCELADO'}"/>
 							</h:panelGrid>
 
 						</h:panelGrid>
@@ -762,9 +760,9 @@
 								</h:outputLabel>
 							</p:column>
 							<p:column style="text-align:center;">
-								<p:commandButton icon="ui-icon-tag"/>
-								<p:commandButton icon="ui-icon-bookmark"/>
-								<p:commandButton icon="ui-icon-print"/>
+								<p:commandButton icon="ui-icon-tag" disabled="#{ordemServicoController.ordemServico.statusOS == 'CANCELADO'}"/>
+								<p:commandButton icon="ui-icon-bookmark" disabled="#{ordemServicoController.ordemServico.statusOS == 'CANCELADO'}"/>
+								<p:commandButton icon="ui-icon-print" disabled="#{ordemServicoController.ordemServico.statusOS == 'CANCELADO'}"/>
 							</p:column>
 						</p:dataTable>
 						

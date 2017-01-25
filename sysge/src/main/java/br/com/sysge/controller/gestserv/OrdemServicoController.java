@@ -3,6 +3,7 @@ package br.com.sysge.controller.gestserv;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -178,15 +179,15 @@ public class OrdemServicoController implements Serializable {
 	
 	public void calcularDescontoReais(){
 		ordemServico.setDescontoPorcento(BigDecimal.ZERO);
-		ordemServico.setTotal(ordemServico.getTotalServico().subtract(ordemServico.getDescontoReais()));
+		ordemServico.setTotal((ordemServico.getTotalServico().add(ordemServico.getTotalProduto())).subtract(ordemServico.getDescontoReais()));
 	}
 	
 	public void calcularDescontoPorcentagem(){
 		ordemServico.setDescontoReais(BigDecimal.ZERO);
-		BigDecimal porcentagem = ordemServico.getTotalServico()
+		BigDecimal porcentagem = (ordemServico.getTotalServico().add(ordemServico.getTotalProduto()))
 								 .divide(new BigDecimal("100"))
 								 .multiply(ordemServico.getDescontoPorcento());
-		ordemServico.setTotal(ordemServico.getTotalServico().subtract(porcentagem));
+		ordemServico.setTotal((ordemServico.getTotalServico().add(ordemServico.getTotalProduto())).subtract(porcentagem));
 		
 	}
 	
@@ -211,7 +212,7 @@ public class OrdemServicoController implements Serializable {
 		servicoOrdemServico.setServico(servico);
 		servicoOrdemServico.setSubTotal(servico.getValor());
 		servicoOrdemServico.setValor(servico.getValor());
-		ordemServico.setTotal(ordemServico.getTotalServico());
+		ordemServico.setTotal(ordemServico.getTotalServico().add(ordemServico.getTotalProduto()));
 		this.listaServicos.add(servicoOrdemServico);
 		servico = new Servico();
 	}
@@ -221,7 +222,7 @@ public class OrdemServicoController implements Serializable {
 		produtoOrdemServico.setProduto(produto);
 		produtoOrdemServico.setSubTotal(produto.getValorVenda());
 		produtoOrdemServico.setValor(produto.getValorVenda());
-		ordemServico.setTotal(ordemServico.getTotalProduto());
+		ordemServico.setTotal(ordemServico.getTotalProduto().add(ordemServico.getTotalServico()));
 		this.listaProdutos.add(produtoOrdemServico);
 		produto = new Produto();
 	}
@@ -235,7 +236,8 @@ public class OrdemServicoController implements Serializable {
 				so.setValor(servicoOrdemServico.getValor());
 				so.setSubTotal(valorServico);
 			}
-			ordemServico.setTotal(ordemServico.getTotalServico().add(so.getSubTotal()));
+			ordemServico.setTotal((ordemServico.getTotalServico().add(ordemServico.getTotalProduto())).add(so.getSubTotal()));
+			
 			ordemServico.setTotalServico(ordemServico.getTotalServico().add(so.getSubTotal()));
 		}
 	}
@@ -249,7 +251,8 @@ public class OrdemServicoController implements Serializable {
 				po.setValor(produtoOrdemServico.getValor());
 				po.setSubTotal(valorProduto);
 			}
-			ordemServico.setTotal(ordemServico.getTotalProduto().add(po.getSubTotal()));
+			ordemServico.setTotal((ordemServico.getTotalServico().add(ordemServico.getTotalProduto())).add(po.getSubTotal()));
+			
 			ordemServico.setTotalProduto(ordemServico.getTotalProduto().add(po.getSubTotal()));
 		}
 	}
@@ -314,6 +317,8 @@ public class OrdemServicoController implements Serializable {
 		if(ordemServico.getMotivoCancelamento().trim().isEmpty()){
 			FacesUtil.mensagemWarn("O motivo de cancelamento é obrigatório!");
 		}else{
+			ordemServico.setDataSaida(Calendar.getInstance().getTime());
+			ordemServico.setHoraSaida(Calendar.getInstance().getTime());
 			salvarOS();
 			RequestContextUtil.execute("PF('dialog_motivo_cancelamento').hide();");
 			fecharDialogs();
