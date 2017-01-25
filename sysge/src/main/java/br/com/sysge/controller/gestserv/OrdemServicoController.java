@@ -259,6 +259,7 @@ public class OrdemServicoController implements Serializable {
 		this.ordemServico.setCliente(clienteService.verificarTipoPessoa(ordemServico.getCliente()));
 		this.ordemServico = ordemServico;
 		this.listaServicos = ordemServicoService.procurarServicosOS(ordemServico.getId());
+		this.listaProdutos = ordemServicoService.procurarProdutosOS(ordemServico.getId());
 		this.parcelas = parcelasPagamentoOsService.procurarParcelasPorOS(ordemServico.getId());
 		RequestContextUtil.execute("PF('dialogEditarOrdemDeServico').show();");
 		ordensServicos = new ArrayList<OrdemServico>();
@@ -298,10 +299,12 @@ public class OrdemServicoController implements Serializable {
 			ordemServico = ordemServicoService.salvar(ordemServico);
 			parcelasPagamentoOsService.salvar(ordemServico, parcelas);
 			ordemServicoService.consistirServico(listaServicos, ordemServico);
+			ordemServicoService.consistirProduto(listaProdutos, ordemServico);
 		}else{
 			ordemServico = ordemServicoService.salvar(ordemServico);
 			parcelasPagamentoOsService.salvar(ordemServico, parcelas);
 			ordemServicoService.consistirServico(listaServicos, ordemServico);
+			ordemServicoService.consistirProduto(listaProdutos, ordemServico);
 		}
 		
 		FacesUtil.mensagemInfo("Ordem de servico de nº "+ordemServico.getId() + " salvo com sucesso!");

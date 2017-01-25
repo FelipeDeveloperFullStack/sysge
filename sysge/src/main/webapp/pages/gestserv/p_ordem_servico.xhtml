@@ -623,21 +623,47 @@
 							<p:commandButton icon="ui-icon-search"
 								disabled="#{ordemServicoController.ordemServico.statusOS == 'CANCELADO'}" />
 						</h:panelGrid>
-						<p:dataTable emptyMessage="Nenhum produto encontrado!"
+						
+						<p:dataTable emptyMessage="Nenhum produto encontrado!" id="tableProduto" 
+							var="p"	value="#{ordemServicoController.listaProdutos}" paginator="true"
+							paginatorPosition="bottom" rows="7"
 							disabledSelection="#{ordemServicoController.ordemServico.statusOS == 'CANCELADO'}">
-							<p:column headerText="ID">
+							
+							<p:column headerText="ID" width="35" style="text-align:center;">
+								<h:outputLabel value="#{p.produto.id}" />
 							</p:column>
-							<p:column headerText="Nome">
+							<p:column headerText="Descrição">
+								<h:outputLabel value="#{p.produto.descricaoProduto}" />
 							</p:column>
-							<p:column headerText="Qtd">
+							<p:column headerText="Quantidade">
+								<p:spinner min="1" value="#{p.quantidade}" style="width: 200px;">
+									<p:ajax
+										listener="#{ordemServicoController.calcularValorProduto(p)}"
+										update="tableProduto" />
+								</p:spinner>
 							</p:column>
-							<p:column headerText="Valor">
+							<p:column headerText="Valor" width="120" style="text-align:center;">
+								<h:outputLabel value="#{p.produto.valorVenda}" style="color: blue;">
+									<f:convertNumber pattern="###,###.00" locale="pt_BR" />
+								</h:outputLabel>
 							</p:column>
-							<p:column headerText="Subtotal">
+							<p:column headerText="Subtotal" width="120" style="text-align:center;">
+								<h:outputLabel id="txtTotalServico" value="#{p.subTotal}" style="color: blue;">
+									<f:convertNumber pattern="###,###.00" locale="pt_BR" />
+								</h:outputLabel>
 							</p:column>
-							<p:column>
+							<p:column width="30">
+								<p:commandButton icon="ui-icon-close" />
 							</p:column>
+							
+							<p:columnGroup type="footer">
+								<p:row>
+									<p:column colspan="4" style="text-align:right" footerText="Total:" />
+									<p:column footerText="R$: #{ordemServicoController.ordemServico.totalProduto}" style="text-align:left" />
+								</p:row>
+							</p:columnGroup>
 						</p:dataTable>
+						
 					</p:tab>
 
 					<p:tab title="Pagamento">

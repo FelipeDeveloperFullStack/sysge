@@ -14,7 +14,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import br.com.sysge.infraestrutura.dao.GenericDomain;
-import br.com.sysge.model.estoque.Produto;
 import br.com.sysge.model.financ.CondicaoPagamento;
 import br.com.sysge.model.global.Cliente;
 import br.com.sysge.model.rh.Funcionario;
@@ -66,12 +65,6 @@ public class OrdemServico extends GenericDomain {
 	private String defeito;
 
 	private String laudoTecnico;
-
-	/*@OneToMany(mappedBy = "ordemServico", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	private List<ServicoOrdemServico> servicos;*/
-
-	@OneToOne(fetch = FetchType.EAGER)
-	private Produto produto;
 
 	@Enumerated(EnumType.STRING)
 	private FormaPagamento formaPagamento;
@@ -222,28 +215,6 @@ public class OrdemServico extends GenericDomain {
 
 	public void setLaudoTecnico(String laudoTecnico) {
 		this.laudoTecnico = laudoTecnico;
-	}
-
-	/*public List<ServicoOrdemServico> getServicos() {
-		if(servicos == null){
-			servicos = new ArrayList<ServicoOrdemServico>();
-		}
-		return servicos;
-	}
-
-	public void setServicos(List<ServicoOrdemServico> servicos) {
-		this.servicos = servicos;
-	}*/
-
-	public Produto getProduto() {
-		if(produto == null) {
-			produto = new Produto();
-		}
-		return produto;
-	}
-
-	public void setProduto(Produto produto) {
-		this.produto = produto;
 	}
 
 	public FormaPagamento getFormaPagamento() {

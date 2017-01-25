@@ -7,7 +7,9 @@ import javax.inject.Inject;
 
 import br.com.sysge.infraestrutura.dao.GenericDaoImpl;
 import br.com.sysge.model.gestserv.OrdemServico;
+import br.com.sysge.model.gestserv.ProdutoOrdemServico;
 import br.com.sysge.model.gestserv.ServicoOrdemServico;
+import br.com.sysge.service.estoque.ProdutoService;
 
 public class OrdemServicoService extends GenericDaoImpl<OrdemServico, Long> {
 
@@ -17,8 +19,14 @@ public class OrdemServicoService extends GenericDaoImpl<OrdemServico, Long> {
 	private ServicoOrdemServicoService servicoOrdemServicoService;
 	
 	@Inject
+	private ProdutoOrdemServicoService produtoOrdemServicoService;
+	
+	@Inject
 	private ServicoService servicoService;
 
+	@Inject
+	private ProdutoService produtoService;
+	
 	public OrdemServico salvar(OrdemServico ordemServico) {
 		try {
 			if (ordemServico.getFuncionario().getNome().isEmpty()) {
@@ -41,10 +49,25 @@ public class OrdemServicoService extends GenericDaoImpl<OrdemServico, Long> {
 				servicoOrdemServicoService.save(sos);
 			}
 		}
+	
+	}
+	
+	public void consistirProduto(List<ProdutoOrdemServico> listaProdutos, OrdemServico ordemServico){
+		if (!listaProdutos.isEmpty()) {
+			for (ProdutoOrdemServico pos : listaProdutos) {
+				pos.setOrdemServico(ordemServico);
+				pos.setProduto(produtoService.salvar(pos.getProduto()));
+				produtoOrdemServicoService.save(pos);
+			}
+		}
 	}
 	
 	public List<ServicoOrdemServico> procurarServicosOS(long idOS){
 		return servicoOrdemServicoService.findByListProperty(idOS, "ordemServico.id");
+	}
+	
+	public List<ProdutoOrdemServico> procurarProdutosOS(long idOS){
+		return produtoOrdemServicoService.findByListProperty(idOS, "ordemServico.id");
 	}
 	
 	public List<OrdemServico> pesquisarPorNumeroEStatusOS(OrdemServico ordemServico){
