@@ -8,17 +8,17 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import br.com.sysge.infraestrutura.dao.GenericDomain;
+import br.com.sysge.model.estoque.Produto;
 
 
 @Entity
-//@IdClass(ServicoOrdemServicoId.class)
-@Table(name = "tbl_servico_os")
-public class ServicoOrdemServico extends GenericDomain{
+@Table(name = "tbl_produto_os")
+public class ProdutoOrdemServico extends GenericDomain{
 	
 	private static final long serialVersionUID = 1626357136962819168L;
 
 	@OneToOne(fetch  =FetchType.EAGER)
-	private Servico servico;
+	private Produto produto;
 	
 	@OneToOne(fetch  =FetchType.EAGER)
 	private OrdemServico ordemServico;
@@ -29,19 +29,27 @@ public class ServicoOrdemServico extends GenericDomain{
 	
 	private BigDecimal subTotal = BigDecimal.ZERO;
 
-	public Servico getServico() {
-		return servico;
+	public Produto getProduto() {
+		return produto;
 	}
 
-	public void setServico(Servico servico) {
-		this.servico = servico;
+	public void setProduto(Produto produto) {
+		this.produto = produto;
 	}
 
-	public long getQuantidade() {
+	public OrdemServico getOrdemServico() {
+		return ordemServico;
+	}
+
+	public void setOrdemServico(OrdemServico ordemServico) {
+		this.ordemServico = ordemServico;
+	}
+
+	public Long getQuantidade() {
 		return quantidade;
 	}
 
-	public void setQuantidade(long quantidade) {
+	public void setQuantidade(Long quantidade) {
 		this.quantidade = quantidade;
 	}
 
@@ -59,14 +67,6 @@ public class ServicoOrdemServico extends GenericDomain{
 
 	public void setSubTotal(BigDecimal subTotal) {
 		this.subTotal = subTotal;
-	}
-
-	public OrdemServico getOrdemServico() {
-		return ordemServico;
-	}
-
-	public void setOrdemServico(OrdemServico ordemServico) {
-		this.ordemServico = ordemServico;
 	}
 	
 	

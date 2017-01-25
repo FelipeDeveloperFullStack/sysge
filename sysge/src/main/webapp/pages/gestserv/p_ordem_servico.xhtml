@@ -279,7 +279,8 @@
 							id="tableServico" var="s"
 							value="#{ordemServicoController.listaServicos}" paginator="true"
 							paginatorPosition="bottom" rows="7">
-							<p:column headerText="ID" width="35">
+							
+							<p:column headerText="ID" width="35" style="text-align:center;">
 								<h:outputLabel value="#{s.servico.id}" />
 							</p:column>
 							<p:column headerText="Nome">
@@ -292,12 +293,12 @@
 										update="tableServico" />
 								</p:spinner>
 							</p:column>
-							<p:column headerText="Valor" width="120">
+							<p:column headerText="Valor" width="120" style="text-align:center;">
 								<h:outputLabel value="#{s.servico.valor}" style="color: blue;">
 									<f:convertNumber pattern="###,###.00" locale="pt_BR" />
 								</h:outputLabel>
 							</p:column>
-							<p:column headerText="Subtotal" width="120">
+							<p:column headerText="Subtotal" width="120" style="text-align:center;">
 								<h:outputLabel id="txtTotalServico" value="#{s.subTotal}" style="color: blue;">
 									<f:convertNumber pattern="###,###.00" locale="pt_BR" />
 								</h:outputLabel>
@@ -317,24 +318,60 @@
 					</p:tab>
 
 					<p:tab title="Produto">
-						<h:panelGrid columns="3">
-							<p:outputLabel value="Buscar produto" />
-							<p:inputText style="width: 500px;" />
-							<p:commandButton icon="ui-icon-search" />
+						<h:panelGrid columns="5">
+							<p:commandButton id="btnProcurarProdutoDialog"
+								icon="ui-icon-search"
+								actionListener="#{ordemServicoController.obterPageProduto}"
+								value="Procurar">
+								<p:ajax event="dialogReturn"
+									listener="#{ordemServicoController.produtoSelecionado}"
+									process="@this" update=":msgGlobal tableProduto :formNovaOrdemServico:tabViewNovaOS" />
+							</p:commandButton>
+
+							<p:blockUI block="formNovaOrdemServico"
+								trigger="btnProcurarProdutoDialog">
+								        Carregando! Aguarde...<br />
+								<p:graphicImage library="img" name="loading.gif" />
+							</p:blockUI>
+
 						</h:panelGrid>
-						<p:dataTable emptyMessage="Nenhum produto encontrado!">
-							<p:column headerText="ID">
+						<p:dataTable emptyMessage="Nenhum produto encontrado!" id="tableProduto" 
+							var="p"	value="#{ordemServicoController.listaProdutos}" paginator="true"
+							paginatorPosition="bottom" rows="7">
+							
+							<p:column headerText="ID" width="35" style="text-align:center;">
+								<h:outputLabel value="#{p.produto.id}" />
 							</p:column>
-							<p:column headerText="Nome">
+							<p:column headerText="Descrição">
+								<h:outputLabel value="#{p.produto.descricaoProduto}" />
 							</p:column>
-							<p:column headerText="Qtd">
+							<p:column headerText="Quantidade">
+								<p:spinner min="1" value="#{p.quantidade}" style="width: 200px;">
+									<p:ajax
+										listener="#{ordemServicoController.calcularValorProduto(p)}"
+										update="tableProduto" />
+								</p:spinner>
 							</p:column>
-							<p:column headerText="Valor">
+							<p:column headerText="Valor" width="120" style="text-align:center;">
+								<h:outputLabel value="#{p.produto.valorVenda}" style="color: blue;">
+									<f:convertNumber pattern="###,###.00" locale="pt_BR" />
+								</h:outputLabel>
 							</p:column>
-							<p:column headerText="Subtotal">
+							<p:column headerText="Subtotal" width="120" style="text-align:center;">
+								<h:outputLabel id="txtTotalServico" value="#{p.subTotal}" style="color: blue;">
+									<f:convertNumber pattern="###,###.00" locale="pt_BR" />
+								</h:outputLabel>
 							</p:column>
-							<p:column>
+							<p:column width="30">
+								<p:commandButton icon="ui-icon-close" />
 							</p:column>
+							
+							<p:columnGroup type="footer">
+								<p:row>
+									<p:column colspan="4" style="text-align:right" footerText="Total:" />
+									<p:column footerText="R$: #{ordemServicoController.ordemServico.totalProduto}" style="text-align:left" />
+								</p:row>
+							</p:columnGroup>
 						</p:dataTable>
 					</p:tab>
 

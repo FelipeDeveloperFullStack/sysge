@@ -17,6 +17,7 @@ import br.com.sysge.model.estoque.Produto;
 import br.com.sysge.model.financ.CondicaoPagamento;
 import br.com.sysge.model.financ.ParcelasPagamentoOs;
 import br.com.sysge.model.gestserv.OrdemServico;
+import br.com.sysge.model.gestserv.ProdutoOrdemServico;
 import br.com.sysge.model.gestserv.Servico;
 import br.com.sysge.model.gestserv.ServicoOrdemServico;
 import br.com.sysge.model.global.Cliente;
@@ -30,6 +31,7 @@ import br.com.sysge.model.type.TipoDesconto;
 import br.com.sysge.service.financ.CondicaoPagamentoService;
 import br.com.sysge.service.financ.ParcelasPagamentoOsService;
 import br.com.sysge.service.gestserv.OrdemServicoService;
+import br.com.sysge.service.gestserv.ProdutoOrdemServicoService;
 import br.com.sysge.service.gestserv.ServicoOrdemServicoService;
 import br.com.sysge.service.global.ClienteService;
 import br.com.sysge.service.rh.FuncionarioService;
@@ -47,6 +49,8 @@ public class OrdemServicoController implements Serializable {
 	private ParcelasPagamentoOs parcelasPagamentoOs;
 	
 	private Servico servico;
+	
+	private Produto produto;;
 	
 	private List<OrdemServico> ordensServicos;
 	
@@ -69,6 +73,8 @@ public class OrdemServicoController implements Serializable {
 	
 	private List<ServicoOrdemServico> listaServicos;
 	
+	private List<ProdutoOrdemServico> listaProdutos;
+	
 	@Inject
 	private FuncionarioService funcionarioService;
 	
@@ -85,6 +91,9 @@ public class OrdemServicoController implements Serializable {
 	private ServicoOrdemServicoService servicoOrdemServicoService;
 	
 	@Inject
+	private ProdutoOrdemServicoService produtoOrdemServicoService;
+	
+	@Inject
 	private ParcelasPagamentoOsService parcelasPagamentoOsService;
 	
 	@Inject
@@ -92,6 +101,7 @@ public class OrdemServicoController implements Serializable {
 	
 	private static final String PAGE_CLIENTE = "/pages_framework/p_cliente.xhtml";
 	private static final String PAGE_SERVICO = "/pages_framework/p_servicos.xhtml";
+	private static final String PAGE_PRODUTO = "/pages_framework/p_produto.xhtml";
 	
 	@PostConstruct
 	public void init() {
@@ -130,6 +140,25 @@ public class OrdemServicoController implements Serializable {
 			adicionarServico();
 		}
 	}
+	public void obterPageProduto(){
+		templateViewPage.openDialog(PAGE_PRODUTO, 
+				"idTitleProduto", 800L, 450L, true);
+	}
+	
+	public void fecharDialogProduto(Produto produto){
+		templateViewPage.closeDialog(produto);
+	}
+	
+	public void produtoSelecionado(SelectEvent event){
+		this.produto = (Produto) event.getObject();
+		if(produtoOrdemServicoService.verificarSeExisteProdutoNaTabela(listaProdutos, produto)){
+			FacesUtil.mensagemWarn("Já existe um produto '"+this.produto.getDescricaoProduto() +
+					"' na lista, por favor escolha outro produto!");
+		}else{
+			somarTotalProduto(this.produto.getValorVenda());
+			adicionarProduto();
+		}
+	}
 	
 	public void calcularDescontoParcela(ParcelasPagamentoOs parcelasPagamentoOs){
 		for(ParcelasPagamentoOs p : parcelas){
@@ -164,6 +193,9 @@ public class OrdemServicoController implements Serializable {
 	private void somarTotalServico(BigDecimal valorServico){
 		ordemServico.setTotalServico(ordemServico.getTotalServico().add(valorServico));
 	}
+	private void somarTotalProduto(BigDecimal valorProduto){
+		ordemServico.setTotalProduto(ordemServico.getTotalProduto().add(valorProduto));
+	}
 	
 	public void pesquisarOS(){
 		try {
@@ -184,6 +216,16 @@ public class OrdemServicoController implements Serializable {
 		servico = new Servico();
 	}
 	
+	public void adicionarProduto(){
+		ProdutoOrdemServico produtoOrdemServico = new ProdutoOrdemServico();
+		produtoOrdemServico.setProduto(produto);
+		produtoOrdemServico.setSubTotal(produto.getValorVenda());
+		produtoOrdemServico.setValor(produto.getValorVenda());
+		ordemServico.setTotal(ordemServico.getTotalProduto());
+		this.listaProdutos.add(produtoOrdemServico);
+		produto = new Produto();
+	}
+	
 	public void calcularValorServico(ServicoOrdemServico servicoOrdemServico){
 		ordemServico.setTotalServico(BigDecimal.ZERO);
 		for(ServicoOrdemServico so : listaServicos){
@@ -195,6 +237,20 @@ public class OrdemServicoController implements Serializable {
 			}
 			ordemServico.setTotal(ordemServico.getTotalServico().add(so.getSubTotal()));
 			ordemServico.setTotalServico(ordemServico.getTotalServico().add(so.getSubTotal()));
+		}
+	}
+	
+	public void calcularValorProduto(ProdutoOrdemServico produtoOrdemServico){
+		ordemServico.setTotalProduto(BigDecimal.ZERO);
+		for(ProdutoOrdemServico po : listaProdutos){
+			if(po.getProduto().getId() == produtoOrdemServico.getProduto().getId()){
+				BigDecimal valorProduto = produtoOrdemServico.getProduto().getValorVenda().
+									      multiply(BigDecimal.valueOf(produtoOrdemServico.getQuantidade()));
+				po.setValor(produtoOrdemServico.getValor());
+				po.setSubTotal(valorProduto);
+			}
+			ordemServico.setTotal(ordemServico.getTotalProduto().add(po.getSubTotal()));
+			ordemServico.setTotalProduto(ordemServico.getTotalProduto().add(po.getSubTotal()));
 		}
 	}
 	
@@ -217,6 +273,7 @@ public class OrdemServicoController implements Serializable {
 		this.funcionarios = new ArrayList<Funcionario>();
 		this.clientes = new ArrayList<Cliente>();
 		this.listaServicos = new ArrayList<ServicoOrdemServico>();
+		this.listaProdutos = new ArrayList<ProdutoOrdemServico>();
 		this.ordensServicosAbertas = new ArrayList<OrdemServico>();
 		this.parcelas = new ArrayList<ParcelasPagamentoOs>();
 	}
@@ -385,7 +442,24 @@ public class OrdemServicoController implements Serializable {
 	public void setParcelas(List<ParcelasPagamentoOs> parcelas) {
 		this.parcelas = parcelas;
 	}
-	
-	
+
+	public Produto getProduto() {
+		if(produto == null){
+			produto = new Produto();
+		}
+		return produto;
+	}
+
+	public void setProduto(Produto produto) {
+		this.produto = produto;
+	}
+
+	public List<ProdutoOrdemServico> getListaProdutos() {
+		return listaProdutos;
+	}
+
+	public void setListaProdutos(List<ProdutoOrdemServico> listaProdutos) {
+		this.listaProdutos = listaProdutos;
+	}
 
 }

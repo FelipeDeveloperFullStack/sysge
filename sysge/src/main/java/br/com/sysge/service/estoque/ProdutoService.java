@@ -53,4 +53,6 @@ public class ProdutoService extends GenericDaoImpl<Produto, Long>{
 		}
 		return listaProdutos;
 	}
+	
+	
 }

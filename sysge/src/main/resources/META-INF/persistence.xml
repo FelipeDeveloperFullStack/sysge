@@ -29,6 +29,7 @@
 		<class>br.com.sysge.model.gestserv.ServicoOrdemServicoId</class>
 		<class>br.com.sysge.model.financ.ParcelasPagamentoOs</class>
 		<class>br.com.sysge.model.financ.CondicaoPagamento</class>
+		<class>br.com.sysge.model.gestserv.ProdutoOrdemServico</class>
 		
 		<properties>
 		
