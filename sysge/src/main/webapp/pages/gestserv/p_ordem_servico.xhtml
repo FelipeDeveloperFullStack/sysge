@@ -760,9 +760,13 @@
 								</h:outputLabel>
 							</p:column>
 							<p:column style="text-align:center;">
-								<p:commandButton icon="ui-icon-tag" disabled="#{ordemServicoController.ordemServico.statusOS == 'CANCELADO'}"/>
-								<p:commandButton icon="ui-icon-bookmark" disabled="#{ordemServicoController.ordemServico.statusOS == 'CANCELADO'}"/>
-								<p:commandButton icon="ui-icon-print" disabled="#{ordemServicoController.ordemServico.statusOS == 'CANCELADO'}"/>
+								<p:commandButton id="btn_pago" icon="ui-icon-check" disabled="#{ordemServicoController.ordemServico.statusOS == 'CANCELADO'}"/>
+								<p:commandButton id="btn_boleto" icon="ui-icon-bookmark" disabled="#{ordemServicoController.ordemServico.statusOS == 'CANCELADO'}"/>
+								<p:commandButton id="btn_comprovante" icon="ui-icon-print" disabled="#{ordemServicoController.ordemServico.statusOS == 'CANCELADO'}"/>
+								
+								<p:tooltip for="btn_pago" position="left" value="Pago ?"/>
+								<p:tooltip for="btn_boleto" position="left" value="Gerar boleto"/>
+								<p:tooltip for="btn_comprovante" position="left" value="Gerar recibo de pagamento"/>
 							</p:column>
 						</p:dataTable>
 						
@@ -800,10 +804,16 @@
 							actionListener="#{ordemServicoController.fecharDialogs}"
 							update=":msgGlobal :formGeralServico:tableServico" />
 
+						<p:commandButton value="Enviar por E-mail" icon="ui-icon-mail-closed" 
+										 oncomplete="PF('dialog_envio_email').show();"
+										 disabled="#{ordemServicoController.ordemServico.statusOS == 'CANCELADO'}" />	
+						
 						<p:outputLabel value=" OBS:" styleClass="texto_negrito"
 							rendered="#{ordemServicoController.ordemServico.statusOS == 'CANCELADO'}" />
+							
 						<p:outputLabel value=" Ordem de serviço apenas para visualização!"
 							rendered="#{ordemServicoController.ordemServico.statusOS == 'CANCELADO'}" />
+							
 					</h:panelGrid>
 				</p:fieldset>
 			</h:form>
@@ -857,32 +867,46 @@
 			</h:form>
 		</p:dialog>
 
-		<p:dialog header="Envio de email" closable="true" draggable="false"
+		<p:dialog header="Envio de email" closable="true" draggable="true"
 			resizable="false" maximizable="false" widgetVar="dialog_envio_email"
 			modal="true" appendTo="@(body)" position="top">
 			<h:form>
 				<p:fieldset>
 
-					<p:panelGrid columns="2">
-						<p:outputLabel value="Para" />
-						<p:inputText style="width: 300px;" />
+					<p:panelGrid columns="1">
+						<h:panelGrid columns="1">
+							<p:outputLabel value="Nome destinatário" />
+							<p:inputText style="width: 400px;" />
+						</h:panelGrid>
+						
+						<h:panelGrid columns="1">
+							<p:outputLabel value="E-mail destinatário" />
+							<p:inputText style="width: 400px;" />
+						</h:panelGrid>
 
-						<p:outputLabel value="De" />
-						<p:inputText style="width: 300px;" />
+						<h:panelGrid columns="1">
+							<p:outputLabel value="De" />
+							<p:inputText style="width: 400px;" />
+						</h:panelGrid>
 
-						<p:outputLabel value="Assunto" />
-						<p:inputText style="width: 300px;" />
+						<h:panelGrid columns="1">
+							<p:outputLabel value="Assunto" />
+							<p:inputText style="width: 400px;" />
+						</h:panelGrid>
+						
+						<h:panelGrid columns="1">
+							<p:outputLabel value="Mensagem"/>
+							<p:editor id="editor" widgetVar="editorWidget" width="400" />
+						</h:panelGrid>
+						
+						<h:panelGrid columns="2">
+							<p:commandButton value="Enviar" icon="ui-icon-extlink" />
+							<p:commandButton value="Cancelar" icon="ui-icon-close"
+								oncomplete="PF('dialog_envio_email').hide();" />
+						</h:panelGrid>
 					</p:panelGrid>
 
-					<h:panelGrid columns="1">
-						<p:editor id="editor" widgetVar="editorWidget" width="400" />
-					</h:panelGrid>
 
-					<h:panelGrid columns="2">
-						<p:commandButton value="Enviar" icon="ui-icon-extlink" />
-						<p:commandButton value="Cancelar" icon="ui-icon-close"
-							oncomplete="PF('dialog_envio_email').hide();" />
-					</h:panelGrid>
 				</p:fieldset>
 			</h:form>
 		</p:dialog>
