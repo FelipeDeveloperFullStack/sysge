@@ -336,6 +336,18 @@ public class OrdemServicoController implements Serializable {
 		this.ordemServico = ordemServicoService.findById(ordemServico.getId());
 		pesquisarOS();
 	}
+	
+	public void removerServico(ServicoOrdemServico servicoOrdemServico){
+		servicoOrdemServicoService.removeByObject(servicoOrdemServicoService.save(servicoOrdemServico));
+		ordemServico.setTotalServico(ordemServico.getTotalServico().subtract(servicoOrdemServico.getSubTotal()));
+		ordemServico.setTotal(BigDecimal.ZERO);
+		ordemServico.setTotal(ordemServico.getTotalServico().add(ordemServico.getTotalProduto()));
+		this.listaServicos = ordemServicoService.procurarServicosOS(ordemServico.getId());
+	}
+	
+	public void removerProduto(ProdutoOrdemServico produtoOrdemServico){
+		this.listaProdutos = ordemServicoService.procurarProdutosOS(ordemServico.getId());
+	}
 
 	public StatusOS[] getStatusOs() {
 		return StatusOS.values();
