@@ -29,6 +29,7 @@ import br.com.sysge.model.type.Pago;
 import br.com.sysge.model.type.Situacao;
 import br.com.sysge.model.type.StatusOS;
 import br.com.sysge.model.type.TipoDesconto;
+import br.com.sysge.service.estoque.ProdutoService;
 import br.com.sysge.service.financ.CondicaoPagamentoService;
 import br.com.sysge.service.financ.ParcelasPagamentoOsService;
 import br.com.sysge.service.gestserv.OrdemServicoService;
@@ -44,6 +45,8 @@ import br.com.sysge.util.RequestContextUtil;
 public class OrdemServicoController implements Serializable {
 
 	private static final long serialVersionUID = 1267523434219231347L;
+	
+	private int currentTab = 0;
 
 	private OrdemServico ordemServico;
 	
@@ -99,6 +102,9 @@ public class OrdemServicoController implements Serializable {
 	
 	@Inject
 	private CondicaoPagamentoService condicaoPagamentoService;
+	
+	@Inject
+	private ProdutoService produtoService;
 	
 	private static final String PAGE_CLIENTE = "/pages_framework/p_cliente.xhtml";
 	private static final String PAGE_SERVICO = "/pages_framework/p_servicos.xhtml";
@@ -212,8 +218,11 @@ public class OrdemServicoController implements Serializable {
 		servicoOrdemServico.setServico(servico);
 		servicoOrdemServico.setSubTotal(servico.getValor());
 		servicoOrdemServico.setValor(servico.getValor());
+		servicoOrdemServico.setOrdemServico(ordemServico);
+		servicoOrdemServicoService.save(servicoOrdemServico);
+		this.listaServicos = ordemServicoService.procurarServicosOS(ordemServico.getId());
 		ordemServico.setTotal(ordemServico.getTotalServico().add(ordemServico.getTotalProduto()));
-		this.listaServicos.add(servicoOrdemServico);
+		ordemServicoService.salvar(ordemServico);
 		servico = new Servico();
 	}
 	
@@ -222,8 +231,15 @@ public class OrdemServicoController implements Serializable {
 		produtoOrdemServico.setProduto(produto);
 		produtoOrdemServico.setSubTotal(produto.getValorVenda());
 		produtoOrdemServico.setValor(produto.getValorVenda());
+		produtoOrdemServico.setOrdemServico(ordemServico);
+		produtoOrdemServicoService.save(produtoOrdemServico);
+		
+		/*produto.setQuantidadeEstoque(produto.getQuantidadeEstoque() - produtoOrdemServico.getQuantidade());
+		produtoService.salvar(produto);*/
+		
+		this.listaProdutos = ordemServicoService.procurarProdutosOS(ordemServico.getId());
 		ordemServico.setTotal(ordemServico.getTotalProduto().add(ordemServico.getTotalServico()));
-		this.listaProdutos.add(produtoOrdemServico);
+		ordemServicoService.salvar(ordemServico);
 		produto = new Produto();
 	}
 	
@@ -244,6 +260,7 @@ public class OrdemServicoController implements Serializable {
 	
 	public void calcularValorProduto(ProdutoOrdemServico produtoOrdemServico){
 		ordemServico.setTotalProduto(BigDecimal.ZERO);
+		
 		for(ProdutoOrdemServico po : listaProdutos){
 			if(po.getProduto().getId() == produtoOrdemServico.getProduto().getId()){
 				BigDecimal valorProduto = produtoOrdemServico.getProduto().getValorVenda().
@@ -266,6 +283,8 @@ public class OrdemServicoController implements Serializable {
 		this.parcelas = parcelasPagamentoOsService.procurarParcelasPorOS(ordemServico.getId());
 		RequestContextUtil.execute("PF('dialogEditarOrdemDeServico').show();");
 		ordensServicos = new ArrayList<OrdemServico>();
+		
+		setarTabIndex(0);
 	}
 	
 	public void novaOrdemServico(){
@@ -280,6 +299,8 @@ public class OrdemServicoController implements Serializable {
 		this.listaProdutos = new ArrayList<ProdutoOrdemServico>();
 		this.ordensServicosAbertas = new ArrayList<OrdemServico>();
 		this.parcelas = new ArrayList<ParcelasPagamentoOs>();
+		
+		setarTabIndex(0);
 	}
 	
 	public void salvar(){
@@ -308,6 +329,12 @@ public class OrdemServicoController implements Serializable {
 			parcelasPagamentoOsService.salvar(ordemServico, parcelas);
 			ordemServicoService.consistirServico(listaServicos, ordemServico);
 			ordemServicoService.consistirProduto(listaProdutos, ordemServico);
+			
+			for(ProdutoOrdemServico pos : listaProdutos){
+				pos.getProduto().setQuantidadeEstoque(pos.getProduto().getQuantidadeEstoque()- pos.getQuantidade());
+				produtoService.salvar(pos.getProduto());
+				produtoOrdemServicoService.save(pos);
+			}
 		}
 		
 		FacesUtil.mensagemInfo("Ordem de servico de nº "+ordemServico.getId() + " salvo com sucesso!");
@@ -343,10 +370,24 @@ public class OrdemServicoController implements Serializable {
 		ordemServico.setTotal(BigDecimal.ZERO);
 		ordemServico.setTotal(ordemServico.getTotalServico().add(ordemServico.getTotalProduto()));
 		this.listaServicos = ordemServicoService.procurarServicosOS(ordemServico.getId());
+		ordemServicoService.salvar(ordemServico);
 	}
 	
 	public void removerProduto(ProdutoOrdemServico produtoOrdemServico){
+		produtoOrdemServicoService.removeByObject(produtoOrdemServicoService.save(produtoOrdemServico));
+		
+		produtoOrdemServico.getProduto().setQuantidadeEstoque(produtoOrdemServico.getProduto().getQuantidadeEstoque() + produtoOrdemServico.getQuantidade());
+		produtoService.salvar(produtoOrdemServico.getProduto());
+		
+		ordemServico.setTotalProduto(ordemServico.getTotalProduto().subtract(produtoOrdemServico.getSubTotal()));
+		ordemServico.setTotal(BigDecimal.ZERO);
+		ordemServico.setTotal(ordemServico.getTotalProduto().add(ordemServico.getTotalServico()));
 		this.listaProdutos = ordemServicoService.procurarProdutosOS(ordemServico.getId());
+		ordemServicoService.salvar(ordemServico);
+	}
+	
+	public void setarTabIndex(int tabIndex) {
+	     this.setCurrentTab(tabIndex);
 	}
 
 	public StatusOS[] getStatusOs() {
@@ -440,7 +481,7 @@ public class OrdemServicoController implements Serializable {
 	}
 
 	public List<OrdemServico> getOrdensServicosAbertas() {
-		return ordemServicoService.findByStatusOs(StatusOS.ABERTO);
+		return ordemServicoService.findByStatusOs(StatusOS.ABERTO, StatusOS.EM_ANDAMENTO);
 	}
 
 	public void setOrdensServicosAbertas(List<OrdemServico> ordensServicosAbertas) {
@@ -480,6 +521,14 @@ public class OrdemServicoController implements Serializable {
 
 	public void setListaProdutos(List<ProdutoOrdemServico> listaProdutos) {
 		this.listaProdutos = listaProdutos;
+	}
+
+	public int getCurrentTab() {
+		return currentTab;
+	}
+
+	public void setCurrentTab(int currentTab) {
+		this.currentTab = currentTab;
 	}
 
 }

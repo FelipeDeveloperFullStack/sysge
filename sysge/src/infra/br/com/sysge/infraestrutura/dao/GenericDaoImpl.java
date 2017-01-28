@@ -226,6 +226,19 @@ public class GenericDaoImpl<E, I> implements GenericDao<E, I> {
 		return manager.createQuery(criteria).getResultList();
 		
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<E> findByStatusOs(StatusOS statusOS1, StatusOS statusOS2){
+		Query query = manager.createQuery
+				("SELECT os FROM "+entityClass.getSimpleName()+ " os "
+				+ "WHERE os.statusOS = :status1 OR os.statusOS = :status2");
+		query.setParameter("status1", statusOS1);
+		query.setParameter("status2", statusOS2);
+		return query.getResultList();
+	}
+	
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<E> findBySituationAndCategoria(Situacao situacao, Categoria categoria) {

@@ -75,7 +75,7 @@
 
 					<p:column headerText="Total" style="text-align:center;" width="50">
 						<p:outputLabel value="#{s.total}" style="color: blue;">
-							<f:convertNumber pattern="###,###.00" locale="pt_BR" />
+							<f:convertNumber pattern="###,###0.00" locale="pt_BR" />
 						</p:outputLabel>
 					</p:column>
 
@@ -123,7 +123,7 @@
 			header="Nova Ordem de Serviço" modal="true" appendTo="@(body)"
 			resizable="false" position="top" width="938" closable="false">
 			<h:form id="formNovaOrdemServico">
-				<p:tabView id="tabViewNovaOS">
+				<p:tabView id="tabViewNovaOS" activeIndex="#{ordemServicoController.currentTab}">
 					<p:tab title="Dados Básicos">
 					
 						<h:panelGrid columns="8">
@@ -400,7 +400,8 @@
 			header="Editar Ordem de Serviço" modal="true" appendTo="@(body)"
 			resizable="false" position="top" width="938" closable="false">
 			<h:form id="formEditarOrdemServico">
-				<p:tabView id="tabViewEditarOS">
+			
+				<p:tabView id="tabViewEditarOS" activeIndex="#{ordemServicoController.currentTab}">
 					<p:tab title="Dados Básicos">
 
 						<h:panelGrid columns="2">
@@ -662,7 +663,18 @@
 								</h:outputLabel>
 							</p:column>
 							<p:column width="30">
-								<p:commandButton icon="ui-icon-close" disabled="#{ordemServicoController.ordemServico.statusOS == 'CANCELADO'}"/>
+								<p:commandButton icon="ui-icon-close" disabled="#{ordemServicoController.ordemServico.statusOS == 'CANCELADO'}"
+												 actionListener="#{ordemServicoController.removerProduto(p)}"
+												 update="tableProduto :formEditarOrdemServico:tabViewEditarOS:panel_2_pagamento">
+								
+								 <p:confirm header="Confirmação" message="Deseja realmente excluir esse produto '#{p.produto.descricaoProduto}'" icon="ui-icon-alert" />
+								
+								</p:commandButton>				 
+							
+								<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+							        <p:commandButton value="Sim" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+							        <p:commandButton value="Não" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+							    </p:confirmDialog>
 							</p:column>
 							
 							<p:columnGroup type="footer">
@@ -708,7 +720,7 @@
 									<p:inputNumber symbol="R$ " decimalSeparator=","
 												   thousandSeparator="."
 												   value="#{ordemServicoController.ordemServico.total}" 
-												   id="txtValorTotalPagamento"/>
+												   id="txtValorTotalPagamento" readonly="true"/>
 								</h:panelGrid>
 								
 							</h:panelGrid>
@@ -809,7 +821,7 @@
 					<h:panelGrid columns="5">
 						<p:commandButton value="Salvar" icon="ui-icon-circle-check"
 							actionListener="#{ordemServicoController.salvar}"
-							update=":msgGlobal :formGeralServico:tableServico"
+							update=":msgGlobal :formGeralServico:tableServico :motivo_cancelamento"
 							disabled="#{ordemServicoController.ordemServico.statusOS == 'CANCELADO'}" />
 
 						<p:commandButton value="Cancelar" icon="ui-icon-closethick"
@@ -835,7 +847,7 @@
 			draggable="false" resizable="false" maximizable="false"
 			widgetVar="dialog_motivo_cancelamento" modal="true"
 			appendTo="@(body)">
-			<h:form>
+			<h:form id="motivo_cancelamento">
 
 				<h:panelGrid columns="1">
 					<h:outputLabel

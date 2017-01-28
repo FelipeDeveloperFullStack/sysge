@@ -36,7 +36,7 @@ public class ParcelasPagamentoOsService extends GenericDaoImpl<ParcelasPagamento
 	public List<ParcelasPagamentoOs> gerarParcelas(OrdemServico ordemServico, List<ParcelasPagamentoOs> parcelas, ParcelasPagamentoOs parcelasPagamentoOs){
 		if(ordemServico.getTotal() == BigDecimal.ZERO){
 			throw new RuntimeException("Não é possível gerar as parcelas, pois o valor total está igual a R$: 0,00");
-		}else{
+		}
 			parcelas = new ArrayList<ParcelasPagamentoOs>();
 			String condicaoPagamento = ordemServico.getCondicaoPagamento().getDescricao();
 			if(condicaoPagamento.equals(A_VISTA)){
@@ -52,7 +52,7 @@ public class ParcelasPagamentoOsService extends GenericDaoImpl<ParcelasPagamento
 			}else{
 				return percorrerListaCondicaoPagamento(condicaoPagamento, ordemServico, parcelas, parcelasPagamentoOs);
 			}
-		}
+		
 	}
 	
 	private List<ParcelasPagamentoOs> percorrerListaCondicaoPagamento(String condicaoPagamento, OrdemServico ordemServico, List<ParcelasPagamentoOs> parcelas, ParcelasPagamentoOs parcelasPagamentoOs){
