@@ -59,6 +59,7 @@ public class LoginController implements Serializable {
 	private DefaultMenuItem menuItemServico;
 	private DefaultMenuItem menuItemOrdemServico;
 	private DefaultMenuItem menuItemCliente;
+	private DefaultMenuItem menuItemFornecedor;
 	private DefaultMenuItem menuItemBackup;
 	private DefaultMenuItem menuItemFormaPagamento;
 	private DefaultMenuItem menuItemProduto;
@@ -98,6 +99,7 @@ public class LoginController implements Serializable {
 
 	// Global
 	private static final String PAGE_CLIENTE = "/pages/global/p_cliente.xhtml" + FACES_REDIRECT;
+	private static final String PAGE_FORNECEDOR = "/pages/global/p_fornecedor.xhtml" + FACES_REDIRECT;
 
 	// Icone
 	private static final String ICON_MENU = "ui-icon-newwin";
@@ -129,6 +131,7 @@ public class LoginController implements Serializable {
 		menuItemFuncionario = null;
 		menuItemServico = null;
 		menuItemCliente = null;
+		menuItemFornecedor = null;
 		menuItemOrdemServico = null;
 		menuItemFormaPagamento = null;
 		menuItemProduto = null;
@@ -262,6 +265,11 @@ public class LoginController implements Serializable {
 				menuItemCliente.setOutcome(PAGE_CLIENTE);
 				menuItemCliente.setIcon(ICON_MENU);
 			}
+			if (menu.getMenu().equals(MenuSistema.FORNECEDOR.getMenu())) {
+				menuItemFornecedor = new DefaultMenuItem(MenuSistema.FORNECEDOR.getMenu());
+				menuItemFornecedor.setOutcome(PAGE_FORNECEDOR);
+				menuItemFornecedor.setIcon(ICON_MENU);
+			}
 			/*if (menu.getMenu().equals(MenuSistema.CONFIGURACAO.getMenu())) {
 				menuConfiguracao = new DefaultSubMenu(MenuSistema.CONFIGURACAO.getMenu());
 			}*/
@@ -345,13 +353,17 @@ public class LoginController implements Serializable {
 		}
 			
 		
-		if (menuItemCliente != null) {
+		if (menuItemCliente != null || menuItemFornecedor != null) {
 			menuGlobal = new DefaultSubMenu(MenuSistema.GLOBAL.getMenu());
 			menuModel.addElement(menuGlobal);
 			subMenuCadastroGl = new DefaultSubMenu(MenuSistema.CADASTROS_GL.getMenu());
 			menuGlobal.addElement(subMenuCadastroGl);
-			subMenuCadastroGl.addElement(menuItemCliente);
-			
+			if(menuItemCliente != null){
+				subMenuCadastroGl.addElement(menuItemCliente);
+			}
+			if(menuItemFornecedor != null){
+				subMenuCadastroGl.addElement(menuItemFornecedor);
+			}
 		}
 		
 		if (menuItemUsuario != null || menuItemPerfilAcesso != null || menuItemBackup != null) {

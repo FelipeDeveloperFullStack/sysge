@@ -16,6 +16,9 @@ public class ProdutoService extends GenericDaoImpl<Produto, Long>{
 			if(produto.getDescricaoProduto().trim().isEmpty()){
 				throw new RuntimeException("A descrição do produto é obrigatório!");
 			}
+			if(produto.getFornecedor() == null){
+				throw new RuntimeException("O fornecedor é obrigatório!");
+			}
 			return super.save(consistirProduto(produto));
 		} catch (RuntimeException e) {
 			throw new RuntimeException(e.getMessage());
