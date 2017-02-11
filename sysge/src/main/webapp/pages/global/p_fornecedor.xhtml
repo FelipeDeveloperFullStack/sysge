@@ -166,17 +166,17 @@
 							</h:panelGrid>
 						</h:panelGrid>
 
-						<!-- <h:panelGrid columns="2">
+						<h:panelGrid columns="2">
 							<h:panelGrid columns="1">
-								<p:outputLabel value="Atividade" />
-								<p:selectOneMenu style="width: 100px;"
-									value="#{fornecedorController.fornecedor.atividade}">
-									<f:selectItems var="at"
-										value="#{fornecedorController.atividades}"
-										itemLabel="#{at.atividade}" itemValue="#{at}" />
+								<p:outputLabel value="Situação" />
+								<p:selectOneMenu
+									value="#{fornecedorController.fornecedor.situacao}">
+									<f:selectItems var="s"
+										value="#{fornecedorController.situacoes}"
+										itemLabel="#{s.situacao}" itemValue="#{s}" />
 								</p:selectOneMenu>
 							</h:panelGrid>
-						</h:panelGrid> -->
+						</h:panelGrid>
 					</p:tab>
 					<p:tab title="Dados complementares">
 						<h:panelGrid columns="2">
@@ -357,9 +357,9 @@
 							icon="ui-icon-check" action="#{fornecedorController.salvar}"
 							update=":msgGlobal :formGeralCliente:tableCliente" />
 						<p:commandButton value="Cancelar" icon="ui-icon-close"
-							oncomplete="PF('dialogEditarCliente').hide();" 
+							oncomplete="PF('dialogEditarCliente').hide();"
 							actionListener="#{fornecedorController.cancelar}"
-							update=":msgGlobal :formGeralCliente:tableCliente"/>
+							update=":msgGlobal :formGeralCliente:tableCliente" />
 					</h:panelGrid>
 				</h:panelGrid>
 				<p:blockUI block="panelBotoesCliente" trigger="btnSalvarCliente" />
@@ -636,7 +636,7 @@
 					<p:commandButton id="btnCarregarCNPJ" value="Carregar"
 						icon="ui-icon-refresh"
 						actionListener="#{fornecedorController.consultarCnpj}"
-						update=":msgGlobal :formNovoCliente" />
+						update=":msgGlobal :formNovoCliente :formEditarCliente" />
 					<p:commandButton value="Cancelar" icon="ui-icon-closethick"
 						oncomplete="PF('dialog_procurar_cnpj').hide();" />
 				</p:panelGrid>

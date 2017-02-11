@@ -157,6 +157,14 @@
 							<f:selectItems var="s" value="#{produtoController.situacoes}" itemLabel="#{s.situacao}" itemValue="#{s}"/>
 						</p:selectOneMenu>
 					</h:panelGrid>
+					
+					<h:panelGrid columns="1">
+						<p:outputLabel value="." style="color: white;"/>
+						<h:panelGrid columns="2">
+							<p:selectBooleanCheckbox value="#{produtoController.produto.mostrarEstoqueMinimoTelaInicial}"/>
+							<h:outputText value="Mostrar o estoque mínimo na tela inicial ?"/>
+						</h:panelGrid>
+					</h:panelGrid>
 				</h:panelGrid>
 						
 						<h:panelGrid id="panelBotoesEditarServico" columns="2">
@@ -226,6 +234,11 @@
 						<f:selectItems var="f" value="#{produtoController.fornecedores}" itemLabel="#{f.nomeFantasia}" itemValue="#{f}"/>
 					</p:selectOneMenu>
 					</h:panelGrid>
+				</h:panelGrid>
+				
+				<h:panelGrid columns="2">
+					<p:selectBooleanCheckbox value="#{produtoController.produto.mostrarEstoqueMinimoTelaInicial}"/>
+					<h:outputText value="Mostrar o estoque mínimo na tela inicial ?" />
 				</h:panelGrid>
 
 				<h:panelGrid id="panelBotoesNovoServico" columns="2">

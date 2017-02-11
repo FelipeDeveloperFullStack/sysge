@@ -69,6 +69,8 @@ public class FornecedorService extends GenericDaoImpl<Fornecedor, Long> {
 		if (fornecedor.getId() == null) {
 			fornecedor.setNomeFantasia(fornecedor.getNomeFantasia().toUpperCase());
 			fornecedor.setSituacao(Situacao.ATIVO);
+		}else{
+			fornecedor.setNomeFantasia(fornecedor.getNomeFantasia().toUpperCase());
 		}
 		return fornecedor;
 	}

@@ -751,7 +751,7 @@
 					<p:commandButton id="btnCarregarCNPJ" value="Carregar"
 						icon="ui-icon-refresh"
 						actionListener="#{clienteController.consultarCnpj}"
-						update=":msgGlobal :formNovoCliente" />
+						update=":msgGlobal :formNovoCliente :formEditarCliente" />
 					<p:commandButton value="Cancelar" icon="ui-icon-closethick"
 						oncomplete="PF('dialog_procurar_cnpj').hide();" />
 				</p:panelGrid>

@@ -51,7 +51,7 @@ public class ProdutoService extends GenericDaoImpl<Produto, Long>{
 	public List<Produto> obterProdutoQuantidadeMinimoEstoque(){
 		List<Produto> listaProdutos = new ArrayList<Produto>();
 		for(Produto p : super.findBySituation(Situacao.ATIVO)){
-			if(p.getQuantidadeEstoque() <= p.getQuantidadeEstoqueMinimo()){
+			if((p.getQuantidadeEstoque() <= p.getQuantidadeEstoqueMinimo()) && p.isMostrarEstoqueMinimoTelaInicial()){
 				listaProdutos.add(p);
 			}
 		}

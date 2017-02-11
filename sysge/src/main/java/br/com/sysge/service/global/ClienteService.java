@@ -114,6 +114,10 @@ public class ClienteService extends GenericDaoImpl<Cliente, Long> {
 			cliente.setNomeFantasia(cliente.getNomeFantasia().toUpperCase());
 			cliente.setNomeTemporario(cliente.getNomeTemporario().toUpperCase());
 			cliente.setSituacao(Situacao.ATIVO);
+		}else{
+			cliente.setNomeDaPessoaFisica(cliente.getNomeDaPessoaFisica().toUpperCase());
+			cliente.setNomeFantasia(cliente.getNomeFantasia().toUpperCase());
+			cliente.setNomeTemporario(cliente.getNomeTemporario().toUpperCase());
 		}
 		return cliente;
 	}

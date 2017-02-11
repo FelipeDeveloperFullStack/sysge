@@ -10,7 +10,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import br.com.sysge.infraestrutura.dao.GenericDomain;
-import br.com.sysge.model.global.Cliente;
+import br.com.sysge.model.global.Fornecedor;
 import br.com.sysge.model.type.Situacao;
 
 @Entity
@@ -32,10 +32,12 @@ public class Produto extends GenericDomain{
 	private long quantidadeEstoqueMinimo = 0L;
 	
 	@OneToOne(fetch = FetchType.EAGER)
-	private Cliente fornecedor;
+	private Fornecedor fornecedor;
 	
 	@Enumerated(EnumType.STRING)
 	private Situacao situacao;
+	
+	private boolean mostrarEstoqueMinimoTelaInicial;
 
 	public String getCodigoProduto() {
 		return codigoProduto;
@@ -85,14 +87,14 @@ public class Produto extends GenericDomain{
 		this.quantidadeEstoqueMinimo = quantidadeEstoqueMinimo;
 	}
 
-	public Cliente getFornecedor() {
+	public Fornecedor getFornecedor() {
 		if(fornecedor == null){
-			fornecedor = new Cliente();
+			fornecedor = new Fornecedor();
 		}
 		return fornecedor;
 	}
 
-	public void setFornecedor(Cliente fornecedor) {
+	public void setFornecedor(Fornecedor fornecedor) {
 		this.fornecedor = fornecedor;
 	}
 
@@ -102,6 +104,14 @@ public class Produto extends GenericDomain{
 
 	public void setSituacao(Situacao situacao) {
 		this.situacao = situacao;
+	}
+
+	public boolean isMostrarEstoqueMinimoTelaInicial() {
+		return mostrarEstoqueMinimoTelaInicial;
+	}
+
+	public void setMostrarEstoqueMinimoTelaInicial(boolean mostrarEstoqueMinimoTelaInicial) {
+		this.mostrarEstoqueMinimoTelaInicial = mostrarEstoqueMinimoTelaInicial;
 	}
 	
 	

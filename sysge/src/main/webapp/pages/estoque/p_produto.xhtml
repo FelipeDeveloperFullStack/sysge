@@ -4,100 +4,108 @@
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	xmlns:p="http://primefaces.org/ui">
-	
-	<h:head>
+
+<h:head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	</h:head>
-	
-	<ui:composition template="/template/template.xhtml">
-		<ui:define name="conteudo">
-			<h:form id="formGeralServico">
-				<p:panel header="Listagem de produtos">
-				
+</h:head>
+
+<ui:composition template="/template/template.xhtml">
+	<ui:define name="conteudo">
+		<h:form id="formGeralServico">
+			<p:panel header="Listagem de produtos">
+
 				<h:panelGrid columns="6" id="panelPesquisa">
-					<p:inputText id="txtServicoPesquisa" style="width: 300px;" value="#{produtoController.produto.descricaoProduto}"/>
+					<p:inputText id="txtServicoPesquisa" style="width: 300px;"
+						value="#{produtoController.produto.descricaoProduto}" />
 					<p:selectOneMenu value="#{produtoController.produto.situacao}">
-						<f:selectItems var="s" value="#{produtoController.situacoes}" itemLabel="#{s.situacao}" itemValue="#{s}"/>
+						<f:selectItems var="s" value="#{produtoController.situacoes}"
+							itemLabel="#{s.situacao}" itemValue="#{s}" />
 					</p:selectOneMenu>
-					<p:commandButton id="btnPesquisarServico" value="Pesquisar" icon="ui-icon-search" update="formGeralServico" 
-								     actionListener="#{produtoController.pesquisar}"/>
-					<p:commandButton value="Imprimir" icon="ui-icon-print"/>
-					<p:focus context="panelPesquisa"/>
+					<p:commandButton id="btnPesquisarServico" value="Pesquisar"
+						icon="ui-icon-search" update="formGeralServico"
+						actionListener="#{produtoController.pesquisar}" />
+					<p:commandButton value="Imprimir" icon="ui-icon-print" />
+					<p:focus context="panelPesquisa" />
 					<p:blockUI block="tableServico" trigger="btnPesquisarServico">
 						        Carregando! Aguarde...<br />
-							<p:graphicImage library="img" name="loading.gif" />
-					</p:blockUI>		   
+						<p:graphicImage library="img" name="loading.gif" />
+					</p:blockUI>
 				</h:panelGrid>
-				
+
 				<p:dataTable id="tableServico" var="p" paginator="true"
-					paginatorPosition="bottom"
-					value="#{produtoController.produtos}"
+					paginatorPosition="bottom" value="#{produtoController.produtos}"
 					emptyMessage="Nenhum registro encontrado!" rows="12"
 					paginatorTemplate="{CurrentPageReport} {FirstPageLink} 
 					{PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
 					rowStyleClass="#{p.quantidadeEstoque le p.quantidadeEstoqueMinimo ? 'cor_vemelho' : null}">
-								
+
 					<p:column headerText="ID" width="30" style="text-align:center;">
-						<p:outputLabel value="#{p.id}"/>
-					</p:column>	
-						
+						<p:outputLabel value="#{p.id}" />
+					</p:column>
+
 					<p:column headerText="Descrição">
-						<p:outputLabel value="#{p.descricaoProduto}"/>
-					</p:column>		
-								
-					<p:column headerText="R$ Custo" width="75" style="text-align:center;">
+						<p:outputLabel value="#{p.descricaoProduto}" />
+					</p:column>
+
+					<p:column headerText="R$ Custo" width="75"
+						style="text-align:center;">
 						<p:outputLabel value="#{p.valorCusto}" style="color: blue;">
 							<f:convertNumber pattern="###,###0.00" locale="pt_BR" />
 						</p:outputLabel>
-					</p:column>	
-					
-					<p:column headerText="R$ Venda" width="75" style="text-align:center;">
+					</p:column>
+
+					<p:column headerText="R$ Venda" width="75"
+						style="text-align:center;">
 						<p:outputLabel value="#{p.valorVenda}" style="color: blue;">
 							<f:convertNumber pattern="###,###0.00" locale="pt_BR" />
 						</p:outputLabel>
-					</p:column>	
-					
-					<p:column headerText="Estoque" width="48" style="text-align:center;" styleClass="texto_negrito">
-						<p:outputLabel value="#{p.quantidadeEstoque}"/>
 					</p:column>
-					
-					<p:column headerText="Situação" width="50" style="text-align:center;">
-						<p:outputLabel value="#{p.situacao.situacao}"/>
-					</p:column>	
-									
+
+					<p:column headerText="Estoque" width="48"
+						style="text-align:center;" styleClass="texto_negrito">
+						<p:outputLabel value="#{p.quantidadeEstoque}" />
+					</p:column>
+
+					<p:column headerText="Situação" width="50"
+						style="text-align:center;">
+						<p:outputLabel value="#{p.situacao.situacao}" />
+					</p:column>
+
 					<p:column width="40">
-						<p:commandButton id="btnEditar" icon="ui-icon-pencil" 
-										 oncomplete="PF('dialogEditarServico').show()"
-										 actionListener="#{produtoController.setarProduto(p)}"
-										 update=":msgGlobal :formEditarServico">
+						<p:commandButton id="btnEditar" icon="ui-icon-pencil"
+							oncomplete="PF('dialogEditarServico').show()"
+							actionListener="#{produtoController.setarProduto(p)}"
+							update=":msgGlobal :formEditarServico">
 						</p:commandButton>
-							<p:tooltip value="Cliquei aqui para editar!" for="btnEditar" position="left"/>
-					</p:column>	
-					
+						<p:tooltip value="Cliquei aqui para editar!" for="btnEditar"
+							position="left" />
+					</p:column>
+
 					<f:facet name="footer">
-						<p:commandButton value="Novo produto" actionListener="#{produtoController.novo}"
-										 icon="ui-icon-circle-plus" oncomplete="PF('dialogNovoServico').show();" 
-										 update=":msgGlobal :formNovoServico"/>	
-					</f:facet>	
-											
+						<p:commandButton value="Novo produto"
+							actionListener="#{produtoController.novo}"
+							icon="ui-icon-circle-plus"
+							oncomplete="PF('dialogNovoServico').show();"
+							update=":msgGlobal :formNovoServico" />
+					</f:facet>
+
 				</p:dataTable>
-				</p:panel>
-				
-				<p:blockUI block="tableServico" trigger="tableServico">
+			</p:panel>
+
+			<p:blockUI block="tableServico" trigger="tableServico">
 			        Carregando! Aguarde...<br />
-			        <p:graphicImage library="img" name="loading.gif"/>
-			    </p:blockUI>
-				
-				</h:form>
-				
-				<!-- Dialog editar produto -->
-				<p:dialog id="dialogEditarServicoAcesso" widgetVar="dialogEditarServico" 
-						  header="Editar Produto" modal="true" 
-						  appendTo="@(body)" resizable="false"
-						  position="top" closable="false">
-					<h:form id="formEditarServico">
-					
-						<h:panelGrid columns="2">
+				<p:graphicImage library="img" name="loading.gif" />
+			</p:blockUI>
+
+		</h:form>
+
+		<!-- Dialog editar produto -->
+		<p:dialog id="dialogEditarServicoAcesso"
+			widgetVar="dialogEditarServico" header="Editar Produto" modal="true"
+			appendTo="@(body)" resizable="false" position="top" closable="false">
+			<h:form id="formEditarServico">
+
+				<h:panelGrid columns="2">
 					<h:panelGrid columns="1">
 						<p:outputLabel value="Código do produto" />
 						<p:inputText value="#{produtoController.produto.codigoProduto}" />
@@ -105,75 +113,91 @@
 
 					<h:panelGrid columns="1">
 						<p:outputLabel value="Descrição do produto" />
-						<p:inputText style="width: 385px;" value="#{produtoController.produto.descricaoProduto}" />
+						<p:inputText style="width: 385px;"
+							value="#{produtoController.produto.descricaoProduto}" />
 					</h:panelGrid>
 				</h:panelGrid>
-				
+
 				<h:panelGrid columns="3">
 					<h:panelGrid columns="1">
 						<p:outputLabel value="Valor de venda" />
-						<p:inputNumber value="#{produtoController.produto.valorVenda}" symbol="R$ "
-										   decimalSeparator="," thousandSeparator="."/>
+						<p:inputNumber value="#{produtoController.produto.valorVenda}"
+							symbol="R$ " decimalSeparator="," thousandSeparator="." />
 					</h:panelGrid>
 
 					<h:panelGrid columns="1">
 						<p:outputLabel value="Estoque" />
-						<p:spinner min="0" value="#{produtoController.produto.quantidadeEstoque}"/>
+						<p:spinner min="0"
+							value="#{produtoController.produto.quantidadeEstoque}" />
 					</h:panelGrid>
-					
+
 					<h:panelGrid columns="1">
 						<p:outputLabel value="Estoque mínimo" />
-						<p:spinner min="0" value="#{produtoController.produto.quantidadeEstoqueMinimo}" />
+						<p:spinner min="0"
+							value="#{produtoController.produto.quantidadeEstoqueMinimo}" />
 					</h:panelGrid>
 				</h:panelGrid>
-				
+
 				<h:panelGrid columns="2">
 					<h:panelGrid columns="1">
 						<p:outputLabel value="Valor de custo" />
-						<p:inputNumber value="#{produtoController.produto.valorCusto}" symbol="R$ "
-										   decimalSeparator="," thousandSeparator="."/>
+						<p:inputNumber value="#{produtoController.produto.valorCusto}"
+							symbol="R$ " decimalSeparator="," thousandSeparator="." />
 					</h:panelGrid>
-					
+
 					<h:panelGrid columns="1">
 						<p:outputLabel value="Fornecedor" />
-						<p:selectOneMenu value="#{produtoController.produto.fornecedor}" converter="omnifaces.SelectItemsConverter" filter="true"
+						<p:selectOneMenu value="#{produtoController.produto.fornecedor}"
+							converter="omnifaces.SelectItemsConverter" filter="true"
 							filterMatchMode="startsWith">
-						<f:selectItems var="f" value="#{produtoController.fornecedores}" itemLabel="#{f.nomeFantasia}" itemValue="#{f}"/>
-					</p:selectOneMenu>
+							<f:selectItems var="f" value="#{produtoController.fornecedores}"
+								itemLabel="#{f.nomeFantasia}" itemValue="#{f}" />
+						</p:selectOneMenu>
 					</h:panelGrid>
 				</h:panelGrid>
-				
+
 				<h:panelGrid columns="2">
 					<h:panelGrid columns="1">
 						<p:outputLabel value="Situação" />
 						<p:selectOneMenu value="#{produtoController.produto.situacao}">
-							<f:selectItems var="s" value="#{produtoController.situacoes}" itemLabel="#{s.situacao}" itemValue="#{s}"/>
+							<f:selectItems var="s" value="#{produtoController.situacoes}"
+								itemLabel="#{s.situacao}" itemValue="#{s}" />
 						</p:selectOneMenu>
 					</h:panelGrid>
-				</h:panelGrid>
-						
-						<h:panelGrid id="panelBotoesEditarServico" columns="2">
-							<h:panelGrid columns="2">
-								<p:commandButton id="btnEditarServico" value="Salvar" icon="ui-icon-check" 
-												 actionListener="#{produtoController.salvar}"
-												 update=":msgGlobal :formEditarServico :formGeralServico:tableServico"/>
-								<p:commandButton id="btnEditarServicoCancelar" value="Cancelar" icon="ui-icon-close" 
-												 oncomplete="PF('dialogEditarServico').hide();"
-												 actionListener="#{produtoController.novaListaProduto}"
-												 update=":formGeralServico:tableServico"/>
-							</h:panelGrid>
+					
+					<h:panelGrid columns="1">
+						<p:outputLabel value="." style="color: white;"/>
+						<h:panelGrid columns="2">
+							<p:selectBooleanCheckbox value="#{produtoController.produto.mostrarEstoqueMinimoTelaInicial}"/>
+							<h:outputText value="Mostrar o estoque mínimo na tela inicial ?"/>
 						</h:panelGrid>
-						<p:blockUI block="panelBotoesEditarServico" trigger="btnEditarServico,btnEditarServicoCancelar"/>
-					</h:form>	
-				</p:dialog>
-			
-				
-				<!-- Dialog novo produto-->
-				<p:dialog widgetVar="dialogNovoServico" 
-						  header="Novo Produto" modal="true" 
-						  appendTo="@(body)" resizable="false"
-						  position="top" closable="false">
-					<h:form id="formNovoServico">
+					</h:panelGrid>
+
+				</h:panelGrid>
+
+				<h:panelGrid id="panelBotoesEditarServico" columns="2">
+					<h:panelGrid columns="2">
+						<p:commandButton id="btnEditarServico" value="Salvar"
+							icon="ui-icon-check" actionListener="#{produtoController.salvar}"
+							update=":msgGlobal :formEditarServico :formGeralServico:tableServico" />
+						<p:commandButton id="btnEditarServicoCancelar" value="Cancelar"
+							icon="ui-icon-close"
+							oncomplete="PF('dialogEditarServico').hide();"
+							actionListener="#{produtoController.novaListaProduto}"
+							update=":formGeralServico:tableServico" />
+					</h:panelGrid>
+				</h:panelGrid>
+				<p:blockUI block="panelBotoesEditarServico"
+					trigger="btnEditarServico,btnEditarServicoCancelar" />
+			</h:form>
+		</p:dialog>
+
+
+		<!-- Dialog novo produto-->
+		<p:dialog widgetVar="dialogNovoServico" header="Novo Produto"
+			modal="true" appendTo="@(body)" resizable="false" position="top"
+			closable="false">
+			<h:form id="formNovoServico">
 
 				<h:panelGrid columns="2">
 					<h:panelGrid columns="1">
@@ -183,58 +207,71 @@
 
 					<h:panelGrid columns="1">
 						<p:outputLabel value="Descrição do produto" />
-						<p:inputText style="width: 385px;" value="#{produtoController.produto.descricaoProduto}"/>
+						<p:inputText style="width: 385px;"
+							value="#{produtoController.produto.descricaoProduto}" />
 					</h:panelGrid>
 				</h:panelGrid>
-				
+
 				<h:panelGrid columns="3">
 					<h:panelGrid columns="1">
 						<p:outputLabel value="Valor de venda" />
-						<p:inputNumber value="#{produtoController.produto.valorVenda}" symbol="R$ "
-										   decimalSeparator="," thousandSeparator="."/>
+						<p:inputNumber value="#{produtoController.produto.valorVenda}"
+							symbol="R$ " decimalSeparator="," thousandSeparator="." />
 					</h:panelGrid>
 
 					<h:panelGrid columns="1">
 						<p:outputLabel value="Estoque" />
-						<p:spinner min="0" value="#{produtoController.produto.quantidadeEstoque}"/>
+						<p:spinner min="0"
+							value="#{produtoController.produto.quantidadeEstoque}" />
 					</h:panelGrid>
-					
+
 					<h:panelGrid columns="1">
 						<p:outputLabel value="Estoque mínimo" />
-						<p:spinner min="0" value="#{produtoController.produto.quantidadeEstoqueMinimo}"/>
-					</h:panelGrid>
-				</h:panelGrid>
-				
-				<h:panelGrid columns="2">
-					<h:panelGrid columns="1">
-						<p:outputLabel value="Valor de custo" />
-						<p:inputNumber value="#{produtoController.produto.valorCusto}" symbol="R$ "
-										   decimalSeparator="," thousandSeparator="."/>
-					</h:panelGrid>
-					
-					<h:panelGrid columns="1">
-						<p:outputLabel value="Fornecedor" />
-						<p:selectOneMenu value="#{produtoController.produto.fornecedor}" converter="omnifaces.SelectItemsConverter" filter="true"
-							filterMatchMode="startsWith">
-						<f:selectItems var="f" value="#{produtoController.fornecedores}" itemLabel="#{f.nomeFantasia}" itemValue="#{f}"/>
-					</p:selectOneMenu>
+						<p:spinner min="0"
+							value="#{produtoController.produto.quantidadeEstoqueMinimo}" />
 					</h:panelGrid>
 				</h:panelGrid>
 
+				<h:panelGrid columns="2">
+					<h:panelGrid columns="1">
+						<p:outputLabel value="Valor de custo" />
+						<p:inputNumber value="#{produtoController.produto.valorCusto}"
+							symbol="R$ " decimalSeparator="," thousandSeparator="." />
+					</h:panelGrid>
+
+					<h:panelGrid columns="1">
+						<p:outputLabel value="Fornecedor" />
+						<p:selectOneMenu value="#{produtoController.produto.fornecedor}"
+							converter="omnifaces.SelectItemsConverter" filter="true"
+							filterMatchMode="startsWith">
+							<f:selectItems var="f" value="#{produtoController.fornecedores}"
+								itemLabel="#{f.nomeFantasia}" itemValue="#{f}" />
+						</p:selectOneMenu>
+					</h:panelGrid>
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:selectBooleanCheckbox value="#{produtoController.produto.mostrarEstoqueMinimoTelaInicial}"/>
+					<h:outputText value="Mostrar o estoque mínimo na tela inicial ?" />
+				</h:panelGrid>
+
 				<h:panelGrid id="panelBotoesNovoServico" columns="2">
-							<h:panelGrid columns="2">
-								<p:commandButton id="btnSalvarNovoServico" value="Salvar" icon="ui-icon-check" 
-												 actionListener="#{produtoController.salvar}" 
-												 update=":msgGlobal :formGeralServico:tableServico"/>
-								<p:commandButton value="Cancelar" icon="ui-icon-close" oncomplete="PF('dialogNovoServico').hide();"
-												  actionListener="#{produtoController.novaListaProduto}" update=":formGeralServico:tableServico"/>
-							</h:panelGrid>
-						</h:panelGrid>
-						<p:blockUI block="panelBotoesNovoServico" trigger="btnSalvarNovoServico"/>
-					</h:form>	
-				</p:dialog>
-			
-		</ui:define>
-	</ui:composition>
-	
+					<h:panelGrid columns="2">
+						<p:commandButton id="btnSalvarNovoServico" value="Salvar"
+							icon="ui-icon-check" actionListener="#{produtoController.salvar}"
+							update=":msgGlobal :formGeralServico:tableServico" />
+						<p:commandButton value="Cancelar" icon="ui-icon-close"
+							oncomplete="PF('dialogNovoServico').hide();"
+							actionListener="#{produtoController.novaListaProduto}"
+							update=":formGeralServico:tableServico" />
+					</h:panelGrid>
+				</h:panelGrid>
+				<p:blockUI block="panelBotoesNovoServico"
+					trigger="btnSalvarNovoServico" />
+			</h:form>
+		</p:dialog>
+
+	</ui:define>
+</ui:composition>
+
 </html>

@@ -10,10 +10,10 @@ import javax.inject.Named;
 
 import br.com.sysge.model.estoque.Produto;
 import br.com.sysge.model.global.Cliente;
-import br.com.sysge.model.type.Categoria;
+import br.com.sysge.model.global.Fornecedor;
 import br.com.sysge.model.type.Situacao;
 import br.com.sysge.service.estoque.ProdutoService;
-import br.com.sysge.service.global.ClienteService;
+import br.com.sysge.service.global.FornecedorService;
 import br.com.sysge.util.FacesUtil;
 import br.com.sysge.util.RequestContextUtil;
 
@@ -37,7 +37,7 @@ public class ProdutoController implements Serializable{
 	private ProdutoService produtoService;
 	
 	@Inject
-	private ClienteService clienteService;
+	private FornecedorService fornecedorService;
 	
 	public Situacao[] getSituacoes(){
 		return Situacao.values();
@@ -97,9 +97,8 @@ public class ProdutoController implements Serializable{
 		this.produtos = produtos;
 	}
 
-	public List<Cliente> getFornecedores() {
-		//return clienteService.findBySituationAndCategoria(Situacao.ATIVO, Categoria.FORNECEDOR);
-		return null;
+	public List<Fornecedor> getFornecedores() {
+		return fornecedorService.findBySituation(Situacao.ATIVO);
 	}
 
 	public void setFornecedores(List<Cliente> fornecedores) {

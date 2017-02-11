@@ -117,7 +117,7 @@ public class OrdemServicoController implements Serializable {
 	
 	public void obterPageCliente(){
 		templateViewPage.openDialog(PAGE_CLIENTE, 
-				"idTitleCliente", 900L, 485L, true);
+				"idTitleCliente", 900L, 495L, true);
 	}
 	
 	public void fecharDialogCliente(Cliente cliente){
