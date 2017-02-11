@@ -194,13 +194,12 @@ public class GenericDaoImpl<E, I> implements GenericDao<E, I> {
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<E> findByParametersForSituation(Object value, TipoPessoa tipoPessoa, Categoria categoria, Situacao situation, 
+	public List<E> findByParametersForSituation(Object value, TipoPessoa tipoPessoa, Situacao situation, 
 			String attributeClass, String condition, String paramLikeLeft, String paramLikeRight) {
 		Query query = manager.createQuery(""
 				+ "SELECT e FROM "+entityClass.getSimpleName()+" e "
 				+ "WHERE e."+attributeClass+" "+condition+" '"+paramLikeLeft+""+value+""+paramLikeRight+"' "
 				+ "AND e.situacao = '"+situation+"' "
-				+ "AND e.categoria = '"+categoria+"' "
 				+ "AND e.tipoPessoa = '"+tipoPessoa+"'");
 		return query.getResultList();
 	}
@@ -241,11 +240,11 @@ public class GenericDaoImpl<E, I> implements GenericDao<E, I> {
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<E> findBySituationAndCategoria(Situacao situacao, Categoria categoria) {
+	public List<E> findBySituationAndTipoPessoa(Situacao situacao, TipoPessoa tipoPessoa) {
 		Query query = manager.createQuery(""
 				+ "SELECT sc FROM "+entityClass.getSimpleName()+ " sc "
 				+ "WHERE sc.situacao = '"+situacao  +"' "
-				+ "AND sc.categoria  = '"+categoria +"'");
+				+ "AND sc.tipoPessoa  = '"+tipoPessoa +"'");
 		return query.getResultList();
 		
 	}

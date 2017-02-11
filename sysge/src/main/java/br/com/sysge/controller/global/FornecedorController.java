@@ -33,6 +33,8 @@ public class FornecedorController implements Serializable {
 	
 	private List<Fornecedor> fornecedores;
 	
+	private int currentTab = 0;
+	
 	@Inject
 	private  FornecedorService fornecedorService;
 
@@ -43,6 +45,7 @@ public class FornecedorController implements Serializable {
 
 	public void novoFornecedor() {
 		this.fornecedor = new Fornecedor();
+		setarTabIndex(0);
 	}
 	
 	public void salvar() {
@@ -89,6 +92,7 @@ public class FornecedorController implements Serializable {
 	
 	public void setarFornecedor(Fornecedor fornecedor){
 		this.fornecedor = fornecedor;
+		setarTabIndex(0);
 	}
 	
 	private void fecharDialogs(){
@@ -98,6 +102,10 @@ public class FornecedorController implements Serializable {
 	
 	private void fecharDialodDeProcurarCnpj(){
 		RequestContextUtil.execute("PF('dialog_procurar_cnpj').hide();");
+	}
+	
+	public void setarTabIndex(int tabIndex) {
+	     this.setCurrentTab(tabIndex);
 	}
 
 	public Situacao[] getSituacoes() {
@@ -138,6 +146,14 @@ public class FornecedorController implements Serializable {
 
 	public void setFornecedores(List<Fornecedor> fornecedores) {
 		this.fornecedores = fornecedores;
+	}
+
+	public int getCurrentTab() {
+		return currentTab;
+	}
+
+	public void setCurrentTab(int currentTab) {
+		this.currentTab = currentTab;
 	}
 
 

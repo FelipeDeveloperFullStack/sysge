@@ -57,7 +57,7 @@
 						<h:commandLink>
 							<p:graphicImage library="img" name="Excel-icon32.png" width="24" />
 							<p:dataExporter type="xls" target="tableCliente"
-								fileName="Cadastros" />
+								fileName="Fornecedores" />
 						</h:commandLink>
 					</f:facet>
 
@@ -113,7 +113,7 @@
 			resizable="false" position="top" width="600" closable="false">
 			<h:form id="formEditarCliente">
 
-				<p:tabView>
+				<p:tabView activeIndex="#{fornecedorController.currentTab}">
 					<p:tab title="Dados básicos">
 
 						<h:panelGrid columns="2">
@@ -372,7 +372,7 @@
 			modal="true" appendTo="@(body)" resizable="false" position="top"
 			width="600" closable="false">
 			<h:form id="formNovoCliente">
-				<p:tabView>
+				<p:tabView activeIndex="#{fornecedorController.currentTab}">
 					<p:tab title="Dados básicos">
 
 						<h:panelGrid columns="2">

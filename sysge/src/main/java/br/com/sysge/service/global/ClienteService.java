@@ -56,15 +56,25 @@ public class ClienteService extends GenericDaoImpl<Cliente, Long> {
 	}
 
 	public List<Cliente> procurarCliente(Cliente cliente) {
-		if (cliente.getNomeTemporario().trim().isEmpty()) {
-			return super.findBySituationAndCategoriaAndTipoPessoa(cliente.getSituacao(), cliente.getCategoria(), cliente.getTipoPessoa());
+		if (cliente.getNomeTemporario().trim().isEmpty() && cliente.getCnpj().trim().isEmpty() && cliente.getCpf().trim().isEmpty()) {
+			return super.findBySituationAndTipoPessoa(cliente.getSituacao(), cliente.getTipoPessoa());
 		} else {
 			if(cliente.getTipoPessoa() == TipoPessoa.PESSOA_FISICA){
-				return super.findByParametersForSituation(cliente.getNomeDaPessoaFisica().toUpperCase(), cliente.getTipoPessoa(),
-						cliente.getCategoria(), cliente.getSituacao(), "nomeDaPessoaFisica", "LIKE", "%", "%");
+				if(!cliente.getNomeDaPessoaFisica().toUpperCase().trim().isEmpty()){
+					return super.findByParametersForSituation(cliente.getNomeDaPessoaFisica().toUpperCase(), cliente.getTipoPessoa(),
+							cliente.getSituacao(), "nomeDaPessoaFisica", "LIKE", "%", "%");
+				}else{
+					return super.findByParametersForSituation(cliente.getCpf(), cliente.getSituacao(),
+							"cpf", "=", "", "");
+				}
 			}else{
-				return super.findByParametersForSituation(cliente.getNomeFantasia().toUpperCase(), cliente.getTipoPessoa(),
-						cliente.getCategoria(), cliente.getSituacao(), "nomeFantasia", "LIKE", "%", "%");
+				if(!cliente.getNomeFantasia().toUpperCase().trim().isEmpty()){
+					return super.findByParametersForSituation(cliente.getNomeFantasia().toUpperCase(), cliente.getTipoPessoa(),
+							cliente.getSituacao(), "nomeFantasia", "LIKE", "%", "%");
+				}else{
+					return super.findByParametersForSituation(cliente.getCnpj(), cliente.getSituacao(),
+							"cnpj", "=", "", "");
+				}
 			}
 		}
 	}
@@ -81,6 +91,7 @@ public class ClienteService extends GenericDaoImpl<Cliente, Long> {
 			cliente.setComplemento(cnpjResource.getComplemento());
 			cliente.setEmail(cnpjResource.getEmail());
 			cliente.setNomeFantasia(cnpjResource.getFantasia());
+			cliente.setNomeTemporario(cnpjResource.getFantasia());
 			cliente.setLogradouro(cnpjResource.getLogradouro());
 			cliente.setCidade(cnpjResource.getMunicipio());
 			cliente.setRazaoSocial(cnpjResource.getNome());
@@ -99,7 +110,9 @@ public class ClienteService extends GenericDaoImpl<Cliente, Long> {
 
 	private Cliente consistirCliente(Cliente cliente) {
 		if (cliente.getId() == null) {
-			cliente.getNomeDaPessoaFisica().toUpperCase();
+			cliente.setNomeDaPessoaFisica(cliente.getNomeDaPessoaFisica().toUpperCase());
+			cliente.setNomeFantasia(cliente.getNomeFantasia().toUpperCase());
+			cliente.setNomeTemporario(cliente.getNomeTemporario().toUpperCase());
 			cliente.setSituacao(Situacao.ATIVO);
 		}
 		return cliente;

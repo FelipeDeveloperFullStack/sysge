@@ -34,6 +34,8 @@ public class ClienteController implements Serializable {
 
 	private Cliente cliente;
 	
+	private int currentTab = 0;
+	
 	private GarantiaServico garantiaServico;
 	
 	private Servico servico;
@@ -62,6 +64,7 @@ public class ClienteController implements Serializable {
 
 	public void novoCliente() {
 		this.cliente = new Cliente();
+		setarTabIndex(0);
 	}
 	
 	public void adicionarGarantia(){
@@ -80,7 +83,7 @@ public class ClienteController implements Serializable {
 			cliente.setNomeDaPessoaFisica(cliente.getNomeTemporario());
 			cliente.setNomeFantasia(cliente.getNomeTemporario());
 			cliente = clienteService.salvar(cliente);
-			//listarClientes(cliente);
+			this.clientes = new ArrayList<Cliente>();
 			FacesUtil.mensagemInfo("Cliente salvo com sucesso!");
 			fecharDialogs();
 		} catch (Exception e) {
@@ -89,7 +92,7 @@ public class ClienteController implements Serializable {
 	}
 	
 	public void cancelar(){
-		//listarClientes(cliente);
+		this.clientes = new ArrayList<Cliente>();
 	}
 	
 	/*private void listarClientes(Cliente cliente){
@@ -132,6 +135,7 @@ public class ClienteController implements Serializable {
 	
 	public void setarCliente(Cliente cliente){
 		this.cliente = clienteService.verificarTipoPessoa(cliente);
+		setarTabIndex(0);
 	}
 	
 	private void fecharDialogs(){
@@ -141,6 +145,10 @@ public class ClienteController implements Serializable {
 	
 	private void fecharDialodDeProcurarCnpj(){
 		RequestContextUtil.execute("PF('dialog_procurar_cnpj').hide();");
+	}
+	
+	public void setarTabIndex(int tabIndex) {
+	     this.setCurrentTab(tabIndex);
 	}
 
 	public Cliente getCliente() {
@@ -216,6 +224,14 @@ public class ClienteController implements Serializable {
 
 	public void setServico(Servico servico) {
 		this.servico = servico;
+	}
+
+	public int getCurrentTab() {
+		return currentTab;
+	}
+
+	public void setCurrentTab(int currentTab) {
+		this.currentTab = currentTab;
 	}
 
 	

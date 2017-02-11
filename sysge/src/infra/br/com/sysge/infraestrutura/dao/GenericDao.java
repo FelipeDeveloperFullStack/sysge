@@ -29,7 +29,7 @@ public interface GenericDao<E, I> extends Serializable {
 	List<E> findByParametersForSituation(Object value, Categoria categoria, Situacao situation, String attributeClass,
 			String condition, String paramLikeLeft, String paramLikeRight);
 
-	List<E> findByParametersForSituation(Object value, TipoPessoa tipoPessoa, Categoria categoria, Situacao situation,
+	List<E> findByParametersForSituation(Object value, TipoPessoa tipoPessoa, Situacao situation,
 			String attributeClass, String condition, String paramLikeLeft, String paramLikeRight);
 
 	List<E> findBySituation(Situacao situacao);
@@ -52,7 +52,7 @@ public interface GenericDao<E, I> extends Serializable {
 
 	List<E> findByDate(Date dataInicial, Date dataFinal, String atributoData);
 	
-	List<E> findBySituationAndCategoria(Situacao situacao, Categoria categoria);
+	List<E> findBySituationAndTipoPessoa(Situacao situacao, TipoPessoa tipoPessoa);
 	
 	List<E> findBySituationAndCategoriaAndTipoPessoa(Situacao situacao, Categoria categoria, TipoPessoa tipoPessoa);
 

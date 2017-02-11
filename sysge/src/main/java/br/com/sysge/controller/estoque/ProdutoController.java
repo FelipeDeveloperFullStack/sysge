@@ -98,7 +98,8 @@ public class ProdutoController implements Serializable{
 	}
 
 	public List<Cliente> getFornecedores() {
-		return clienteService.findBySituationAndCategoria(Situacao.ATIVO, Categoria.FORNECEDOR);
+		//return clienteService.findBySituationAndCategoria(Situacao.ATIVO, Categoria.FORNECEDOR);
+		return null;
 	}
 
 	public void setFornecedores(List<Cliente> fornecedores) {
