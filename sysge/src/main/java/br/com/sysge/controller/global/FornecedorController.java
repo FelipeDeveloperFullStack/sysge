@@ -1,6 +1,7 @@
 package br.com.sysge.controller.global;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,25 +48,16 @@ public class FornecedorController implements Serializable {
 	public void salvar() {
 		try {
 			fornecedor = fornecedorService.salvar(fornecedor);
-			//listarFornecedores(fornecedor);
 			FacesUtil.mensagemInfo("Fornecedor salvo com sucesso!");
 			fecharDialogs();
+			this.fornecedores = new ArrayList<Fornecedor>();
 		} catch (Exception e) {
 			FacesUtil.mensagemErro(e.getMessage());
 		}
 	}
 	
 	public void cancelar(){
-		listarFornecedores(fornecedor);
-	}
-	
-	private void listarFornecedores(Fornecedor fornecedor){
-		try {
-			fornecedores = fornecedorService.findBySituationAndCategoriaAndTipoPessoa
-					(fornecedor.getSituacao(), null, null);
-		} catch (Exception e) {
-			FacesUtil.mensagemErro(e.getMessage());
-		}
+		this.fornecedores = new ArrayList<Fornecedor>();
 	}
 	
 	public void consultarCnpj(){

@@ -22,7 +22,7 @@ public class PerfilAcessoService extends GenericDaoImpl<PerfilAcesso, Long>{
 			if(perfilAcesso.getPerfilAcesso().trim().isEmpty()){
 				return super.findBySituation(perfilAcesso.getSituacao());
 			}else{
-				return super.findByParametersForSituation(perfilAcesso.getPerfilAcesso(), 
+				return super.findByParametersForSituation(perfilAcesso.getPerfilAcesso().toUpperCase(), 
 						perfilAcesso.getSituacao(), "perfilAcesso", "LIKE", "%", "%"); 
 			}
 		} catch (RuntimeException e) {
@@ -45,6 +45,7 @@ public class PerfilAcessoService extends GenericDaoImpl<PerfilAcesso, Long>{
 	
 	private PerfilAcesso consistirPerfilAcesso(PerfilAcesso perfil){
 		if(perfil.getId() == null){
+			perfil.getPerfilAcesso().toUpperCase();
 			perfil.setSituacao(Situacao.ATIVO);
 		}
 		return perfil;

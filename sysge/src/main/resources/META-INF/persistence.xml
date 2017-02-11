@@ -34,7 +34,7 @@
 		
 		<properties>
 		
-			<!-- <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/sysge" />
+			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/sysge" />
 			<property name="javax.persistence.jdbc.user" value="root" />
 			<property name="javax.persistence.jdbc.password" value="fmds1701" />
 			<property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
@@ -42,17 +42,7 @@
 			<property name="hibernate.format_sql" value="true" />
 			<property name="hibernate.show_sql" value="true" />
 			<property name="hibernate.hbm2ddl.auto" value="update" />
-			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5Dialect" />  -->
-			
-			<property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/sysge" />
-			<property name="javax.persistence.jdbc.user" value="postgres" />
-			<property name="javax.persistence.jdbc.password" value="fmds1701" />
-			<property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver" />
-			
-			<property name="hibernate.format_sql" value="true" />
-			<property name="hibernate.show_sql" value="true" />
-			<property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
-			<property name="hibernate.hbm2ddl.auto" value="update" />
+			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5Dialect" /> 
 			
 			<!-- POOL C3P0 --> 	
 		    <property name="hibernate.connection.provider" value="org.hibernate.connection.C3P0ConnectionProvider" />
@@ -61,7 +51,6 @@
 			<property name="hibernate.c3p0.timeout" value="300" />
 			<property name="hibernate.c3p0.max_statements" value="50" />
 			<property name="hibernate.c3p0.idle_test_period" value="3000" /> 
-			
 			
 		</properties>
 

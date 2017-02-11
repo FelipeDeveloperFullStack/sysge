@@ -27,6 +27,7 @@ public class ProdutoService extends GenericDaoImpl<Produto, Long>{
 	
 	private Produto consistirProduto(Produto produto){
 		if(produto.getId() == null){
+			produto.getDescricaoProduto().toUpperCase();
 			produto.setSituacao(Situacao.ATIVO);
 		}
 		return produto;
@@ -37,7 +38,7 @@ public class ProdutoService extends GenericDaoImpl<Produto, Long>{
 			if(produto.getDescricaoProduto().trim().isEmpty()){
 				return super.findBySituation(produto.getSituacao());
 			}else{
-				return super.findByParametersForSituation(produto.getDescricaoProduto(), 
+				return super.findByParametersForSituation(produto.getDescricaoProduto().toUpperCase(), 
 						produto.getSituacao(), "descricaoProduto", "LIKE", "%", "%"); 
 			}
 		} catch (RuntimeException e) {

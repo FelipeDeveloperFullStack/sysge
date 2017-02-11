@@ -26,11 +26,14 @@ public class FornecedorService extends GenericDaoImpl<Fornecedor, Long> {
 	}
 
 	public List<Fornecedor> procurarFornecedor(Fornecedor fornecedor) {
-		if (fornecedor.getNomeFantasia().trim().isEmpty()) {
-			return super.findBySituationAndCategoriaAndTipoPessoa(fornecedor.getSituacao(), null, null);
+		if (fornecedor.getNomeFantasia().trim().isEmpty() && fornecedor.getCnpj().trim().isEmpty()) {
+			return super.findBySituation(fornecedor.getSituacao());
+		} else if (!fornecedor.getNomeFantasia().trim().isEmpty()) {
+			return super.findByParametersForSituation(fornecedor.getNomeFantasia().toUpperCase(), fornecedor.getSituacao(),
+					"nomeFantasia", "LIKE", "%", "%");
 		} else {
-			return super.findByParametersForSituation(fornecedor.getNomeFantasia(), null,
-						null, fornecedor.getSituacao(), "nomeFantasia", "LIKE", "%", "%");
+			return super.findByParametersForSituation(fornecedor.getCnpj(), fornecedor.getSituacao(),
+					"cnpj", "=", "", "");
 		}
 	}
 
@@ -64,6 +67,7 @@ public class FornecedorService extends GenericDaoImpl<Fornecedor, Long> {
 
 	private Fornecedor consistirFornecedor(Fornecedor fornecedor) {
 		if (fornecedor.getId() == null) {
+			fornecedor.getNomeFantasia().toUpperCase();
 			fornecedor.setSituacao(Situacao.ATIVO);
 		}
 		return fornecedor;

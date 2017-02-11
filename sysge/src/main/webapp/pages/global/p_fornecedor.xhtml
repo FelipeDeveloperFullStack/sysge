@@ -18,21 +18,22 @@
 					<h:panelGrid columns="1">
 						<p:outputLabel value="Nome fantasia" />
 						<p:inputText style="width: 300px;"
-							value="#{clienteController.cliente.nomeTemporario}" />
+							value="#{fornecedorController.fornecedor.nomeFantasia}" />
 					</h:panelGrid>
-					<p:tooltip value="Digite o nome ou nome fantasia."
-						position="bottom" />
+					<p:tooltip value="Digite o nome fantasia." position="bottom" />
 					<p:focus context="panelPesquisa" />
 
 					<h:panelGrid columns="1">
 						<p:outputLabel value="CNPJ" />
-						<p:inputMask mask="99.999.999/9999-99" style="width: 150px;" />
+						<p:inputMask mask="99.999.999/9999-99" style="width: 150px;"
+							value="#{fornecedorController.fornecedor.cnpj}" />
 					</h:panelGrid>
 
 					<h:panelGrid columns="1">
 						<p:outputLabel value="Situação" />
-						<p:selectOneMenu value="#{clienteController.cliente.situacao}">
-							<f:selectItems var="s" value="#{clienteController.situacoes}"
+						<p:selectOneMenu
+							value="#{fornecedorController.fornecedor.situacao}">
+							<f:selectItems var="s" value="#{fornecedorController.situacoes}"
 								itemLabel="#{s.situacao}" itemValue="#{s}" />
 						</p:selectOneMenu>
 					</h:panelGrid>
@@ -40,12 +41,14 @@
 					<h:panelGrid columns="1">
 						<p:outputLabel value="." style="color: white;" />
 						<p:commandButton icon="ui-icon-search" update="tableCliente"
-							actionListener="#{clienteController.pesquisar}" value="Pesquisar" />
+							actionListener="#{fornecedorController.pesquisar}"
+							value="Pesquisar" />
 					</h:panelGrid>
 				</h:panelGrid>
 
 				<p:dataTable id="tableCliente" var="c" paginator="true"
-					paginatorPosition="bottom" value="#{clienteController.clientes}"
+					paginatorPosition="bottom"
+					value="#{fornecedorController.fornecedores}"
 					emptyMessage="Nenhum registro encontrado!" rows="8"
 					paginatorTemplate="{CurrentPageReport} {FirstPageLink} 
 					{PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {Exporters}">
@@ -63,7 +66,7 @@
 					</p:column>
 
 					<p:column headerText="Nome fantasia">
-						<p:outputLabel value="#{c.nomeFantasia}#{c.nomeDaPessoaFisica}" />
+						<p:outputLabel value="#{c.nomeFantasia}" />
 					</p:column>
 
 					<p:column headerText="Telefone Fixo" width="100"
@@ -80,7 +83,7 @@
 						<p:commandButton id="btnEditar" icon="ui-icon-pencil"
 							oncomplete="PF('dialogEditarCliente').show()"
 							update=":msgGlobal tableCliente :formEditarCliente"
-							actionListener="#{clienteController.setarCliente(c)}">
+							actionListener="#{fornecedorController.setarFornecedor(c)}">
 						</p:commandButton>
 						<p:tooltip value="Cliquei aqui para editar!" for="btnEditar"
 							position="left" />
@@ -88,7 +91,7 @@
 
 					<f:facet name="footer">
 						<p:commandButton value="Novo fornecedor"
-							actionListener="#{clienteController.novoCliente}"
+							actionListener="#{fornecedorController.novoFornecedor}"
 							icon="ui-icon-circle-plus"
 							oncomplete="PF('dialogNovoCliente').show();"
 							update=":msgGlobal :formNovoCliente" />
@@ -107,111 +110,137 @@
 		<!-- Dialog editar fornecedor -->
 		<p:dialog id="dialogEditarCliente" widgetVar="dialogEditarCliente"
 			header="Editar fornecedor" modal="true" appendTo="@(body)"
-			resizable="false" position="top" width="750" closable="false">
+			resizable="false" position="top" width="600" closable="false">
 			<h:form id="formEditarCliente">
+
 				<p:tabView>
 					<p:tab title="Dados básicos">
-						<p:panelGrid columns="2">
-							<p:outputLabel value="Tipo" />
-							<p:selectOneMenu id="soTipoPessoa"
-								value="#{clienteController.cliente.tipoPessoa}">
-								<f:selectItem itemLabel="Selecione" />
-								<f:selectItems var="tp" value="#{clienteController.tipoPessoa}"
-									itemLabel="#{tp.tipoPessoa}" itemValue="#{tp}" />
-								<p:ajax event="change" update="formEditarCliente"
-									process="soTipoPessoa" />
-							</p:selectOneMenu>
-							<p:outputLabel value="." style="color: white;" />
-							<p:commandButton icon="ui-icon-search" value="Preencher via CNPJ"
-								oncomplete="PF('dialog_procurar_cnpj').show();"
-								update=":formProcurarCnpj" />
-							<p:outputLabel value="Nome fantasia" />
-							<p:inputText style="width: 500px;"
-								value="#{clienteController.cliente.nomeTemporario}" />
-							<p:outputLabel value="Nome"
-								rendered="#{clienteController.cliente.tipoPessoa == 'PESSOA_FISICA'}" />
-							<p:inputText style="width: 500px;"
-								rendered="#{clienteController.cliente.tipoPessoa == 'PESSOA_FISICA'}"
-								value="#{clienteController.cliente.nomeTemporario}" />
-							<p:outputLabel value="Telefone" />
-							<p:inputMask style="width: 500px;"
-								value="#{clienteController.cliente.telefone}"
-								mask="(99) 9999-9999" />
-							<p:outputLabel value="Celular" />
-							<p:inputMask style="width: 500px;"
-								value="#{clienteController.cliente.celular}"
-								mask="(99) 99999-9999" />
-							<p:outputLabel value="E-mail" />
-							<p:inputText style="width: 500px;"
-								value="#{clienteController.cliente.email}" />
-							<p:outputLabel value="Site" />
-							<p:inputText style="width: 500px; color: blue;"
-								value="#{clienteController.cliente.site}" />
-							<p:outputLabel value="Atividade" />
-							<p:selectOneMenu style="width: 100px;"
-								value="#{clienteController.cliente.atividade}">
-								<f:selectItems var="at" value="#{clienteController.atividades}"
-									itemLabel="#{at.atividade}" itemValue="#{at}" />
-							</p:selectOneMenu>
-							<p:outputLabel value="Categoria" />
-							<p:selectOneMenu style="width: 125px;"
-								value="#{clienteController.cliente.categoria}">
-								<f:selectItems var="c" value="#{clienteController.categorias}"
-									itemLabel="#{c.categoria}" itemValue="#{c}" />
-							</p:selectOneMenu>
-							<p:outputLabel value="Situação" />
-							<p:selectOneMenu style="width: 125px;"
-								value="#{clienteController.cliente.situacao}">
-								<f:selectItems var="s" value="#{clienteController.situacoes}"
-									itemLabel="#{s.situacao}" itemValue="#{s}" />
-							</p:selectOneMenu>
-						</p:panelGrid>
+
+						<h:panelGrid columns="2">
+							<h:panelGrid columns="1">
+								<p:outputLabel value="." style="color: white;" />
+								<p:commandButton icon="ui-icon-search"
+									value="Preencher via CNPJ"
+									oncomplete="PF('dialog_procurar_cnpj').show();"
+									update=":formProcurarCnpj" />
+							</h:panelGrid>
+						</h:panelGrid>
+
+						<h:panelGrid columns="2">
+							<h:panelGrid columns="1">
+								<p:outputLabel value="Nome fantasia" />
+								<p:inputText style="width: 500px;"
+									value="#{fornecedorController.fornecedor.nomeFantasia}" />
+							</h:panelGrid>
+						</h:panelGrid>
+
+						<h:panelGrid columns="2">
+							<h:panelGrid columns="1">
+								<p:outputLabel value="Telefone" />
+								<p:inputMask style="width: 244px;"
+									value="#{fornecedorController.fornecedor.telefone}"
+									mask="(99) 9999-9999" />
+							</h:panelGrid>
+
+							<h:panelGrid columns="1">
+								<p:outputLabel value="Celular" />
+								<p:inputMask style="width: 244px;"
+									value="#{fornecedorController.fornecedor.celular}"
+									mask="(99) 99999-9999" />
+							</h:panelGrid>
+						</h:panelGrid>
+
+						<h:panelGrid columns="2">
+							<h:panelGrid columns="1">
+								<p:outputLabel value="E-mail" />
+								<p:inputText style="width: 500px;"
+									value="#{fornecedorController.fornecedor.email}" />
+							</h:panelGrid>
+						</h:panelGrid>
+
+						<h:panelGrid columns="2">
+							<h:panelGrid columns="1">
+								<p:outputLabel value="Site" />
+								<p:inputText style="width: 500px; color: blue;"
+									value="#{fornecedorController.fornecedor.site}" />
+							</h:panelGrid>
+						</h:panelGrid>
+
+						<!-- <h:panelGrid columns="2">
+							<h:panelGrid columns="1">
+								<p:outputLabel value="Atividade" />
+								<p:selectOneMenu style="width: 100px;"
+									value="#{fornecedorController.fornecedor.atividade}">
+									<f:selectItems var="at"
+										value="#{fornecedorController.atividades}"
+										itemLabel="#{at.atividade}" itemValue="#{at}" />
+								</p:selectOneMenu>
+							</h:panelGrid>
+						</h:panelGrid> -->
 					</p:tab>
 					<p:tab title="Dados complementares">
-						<p:panelGrid columns="2">
-							<p:outputLabel value="CNPJ" />
-							<p:inputMask mask="99.999.999/9999-99" style="width: 500px;"
-								value="#{clienteController.cliente.cnpj}" />
-							<p:outputLabel value="Razão social" />
-							<p:inputText style="width: 500px;"
-								value="#{clienteController.cliente.razaoSocial}" />
-							<!-- <p:outputLabel value="Tipo contribuinte"
-								 />
-							<p:selectOneMenu
-								value="#{clienteController.cliente.tipoContribuinte}"
-								style="width: 200px;"
-								>
-								<f:selectItems var="tc"
-									value="#{clienteController.tipoContribuintes}"
-									itemLabel="#{tc.tipoContribuinte}" itemValue="#{tc}"
-									style="width: 200px;" />
-							</p:selectOneMenu> -->
-							<p:outputLabel value="Tipo de empresa" />
-							<p:inputText value="#{clienteController.cliente.tipoEmpresa}"
-								style="width: 500px;" />
-							<p:outputLabel value="Insc. Estadual" />
-							<p:inputText style="width: 500px;"
-								value="#{clienteController.cliente.inscEstadual}" />
-							<p:outputLabel value="Insc. Municipal" />
-							<p:inputText style="width: 500px;"
-								value="#{clienteController.cliente.inscMunicipal}" />
-							<p:outputLabel value="Telefone Alternativo" />
-							<p:inputText style="width: 500px;"
-								value="#{clienteController.cliente.telefoneAlternativo}" />
-							<p:outputLabel value="Observação" />
-							<p:inputTextarea style="width: 500px;"
-								value="#{clienteController.cliente.observacao}" />
-							<p:outputLabel value="Horário de Funcionamento" />
-							<p:inputTextarea style="width: 500px;"
-								value="#{clienteController.cliente.horarioFuncionamento}" />
-							<!-- <p:outputLabel value="Logo" />
+						<h:panelGrid columns="2">
+							<h:panelGrid columns="1">
+								<p:outputLabel value="Razão social" />
+								<p:inputText style="width: 500px;"
+									value="#{fornecedorController.fornecedor.razaoSocial}" />
+							</h:panelGrid>
+						</h:panelGrid>
+
+						<h:panelGrid columns="2">
+							<h:panelGrid columns="1">
+								<p:outputLabel value="CNPJ" />
+								<p:inputMask mask="99.999.999/9999-99" style="width: 500px;"
+									value="#{fornecedorController.fornecedor.cnpj}" />
+							</h:panelGrid>
+						</h:panelGrid>
+
+						<h:panelGrid columns="3">
+							<h:panelGrid columns="1">
+								<p:outputLabel value="Tipo de empresa" />
+								<p:inputText
+									value="#{fornecedorController.fornecedor.tipoEmpresa}"
+									style="width: 140px;" />
+							</h:panelGrid>
+
+							<h:panelGrid columns="1">
+								<p:outputLabel value="Insc. Estadual" />
+								<p:inputText
+									value="#{fornecedorController.fornecedor.inscEstadual}" />
+							</h:panelGrid>
+
+							<h:panelGrid columns="1">
+								<p:outputLabel value="Insc. Municipal" />
+								<p:inputText
+									value="#{fornecedorController.fornecedor.inscMunicipal}" />
+							</h:panelGrid>
+						</h:panelGrid>
+
+						<h:panelGrid columns="2">
+							<h:panelGrid columns="1">
+								<p:outputLabel value="Horário de Funcionamento" />
+								<p:inputTextarea style="width: 500px;"
+									value="#{fornecedorController.fornecedor.horarioFuncionamento}" />
+							</h:panelGrid>
+						</h:panelGrid>
+
+						<h:panelGrid columns="2">
+							<h:panelGrid columns="1">
+								<p:outputLabel value="Observação" />
+								<p:inputTextarea style="width: 500px;"
+									value="#{fornecedorController.fornecedor.observacao}" />
+							</h:panelGrid>
+						</h:panelGrid>
+
+
+						<!-- <p:outputLabel value="Logo" />
 							<p:fieldset>
 								<p:fileUpload mode="advanced" dragDropSupport="false"
 									sizeLimit="100000" fileLimit="3"
 									allowTypes="/(\.|\/)(gif|jpe?g|png)$/" cancelLabel="Cancelar"
 									label="Procurar" />
 							</p:fieldset> -->
-						</p:panelGrid>
+
 					</p:tab>
 					<p:tab title="Endereço" id="tabEndereco">
 						<h:panelGrid columns="3">
@@ -219,14 +248,14 @@
 							<h:panelGrid columns="1">
 								<p:outputLabel value="Cep" />
 								<p:inputMask mask="99999-999"
-									value="#{clienteController.cliente.cep}" />
+									value="#{fornecedorController.fornecedor.cep}" />
 							</h:panelGrid>
 
 							<h:panelGrid columns="1">
 								<h:outputLabel value="." style="color: white;" />
 								<p:commandButton id="button1" icon="ui-icon-circle-zoomout"
 									update=":msgGlobal panelEndereco1 panelEndereco2 panelEndereco3"
-									actionListener="#{clienteController.consultarCep}" />
+									actionListener="#{fornecedorController.consultarCep}" />
 								<p:tooltip for="button1"
 									value="Cliquei para consultar o CEP automaticamente nos correios!"
 									position="top" />
@@ -243,13 +272,13 @@
 							<h:panelGrid columns="1">
 								<p:outputLabel value="Logradouro" />
 								<p:inputText style="width: 270px;"
-									value="#{clienteController.cliente.logradouro}" />
+									value="#{fornecedorController.fornecedor.logradouro}" />
 							</h:panelGrid>
 
 							<h:panelGrid columns="1">
 								<p:outputLabel value="Número" />
 								<p:inputText style="width: 250px;"
-									value="#{clienteController.cliente.numero}" />
+									value="#{fornecedorController.fornecedor.numero}" />
 							</h:panelGrid>
 
 						</h:panelGrid>
@@ -257,12 +286,12 @@
 							<h:panelGrid columns="1">
 								<p:outputLabel value="Complemento" />
 								<p:inputText style="width: 270px;"
-									value="#{clienteController.cliente.complemento}" />
+									value="#{fornecedorController.fornecedor.complemento}" />
 							</h:panelGrid>
 							<h:panelGrid columns="1">
 								<p:outputLabel value="Bairro" />
 								<p:inputText style="width: 250px;"
-									value="#{clienteController.cliente.bairro}" />
+									value="#{fornecedorController.fornecedor.bairro}" />
 							</h:panelGrid>
 						</h:panelGrid>
 						<h:panelGrid columns="3" id="panelEndereco3">
@@ -270,16 +299,16 @@
 							<h:panelGrid columns="1">
 								<p:outputLabel value="Cidade" />
 								<p:inputText style="width: 270px;"
-									value="#{clienteController.cliente.cidade}" />
+									value="#{fornecedorController.fornecedor.cidade}" />
 							</h:panelGrid>
 
 							<h:panelGrid columns="1">
 								<p:outputLabel value="UF" />
 								<p:selectOneMenu filter="true" filterMatchMode="startsWith"
 									converter="omnifaces.SelectItemsConverter"
-									value="#{clienteController.cliente.unidadeFederativa}">
+									value="#{fornecedorController.fornecedor.unidadeFederativa}">
 									<f:selectItems var="uf"
-										value="#{clienteController.unidadesFederativas}"
+										value="#{fornecedorController.unidadesFederativas}"
 										itemLabel="#{uf.unidadeFederativa}" itemValue="#{uf}" />
 								</p:selectOneMenu>
 							</h:panelGrid>
@@ -297,106 +326,40 @@
 						</p:blockUI>
 					</p:tab>
 					<p:tab title="Redes Sociais">
-						<p:panelGrid columns="1">
-							<p:panelGrid columns="1">
+						<h:panelGrid columns="1">
+							<h:panelGrid columns="1">
 								<p:outputLabel value="Facebook" />
 								<p:inputText style="width: 500px;"
-									value="#{clienteController.cliente.facebook}" />
-							</p:panelGrid>
-							<p:panelGrid columns="1">
+									value="#{fornecedorController.fornecedor.facebook}" />
+							</h:panelGrid>
+							<h:panelGrid columns="1">
 								<p:outputLabel value="Twitter" />
 								<p:inputText style="width: 500px;"
-									value="#{clienteController.cliente.twitter}" />
-							</p:panelGrid>
-							<p:panelGrid columns="1">
+									value="#{fornecedorController.fornecedor.twitter}" />
+							</h:panelGrid>
+							<h:panelGrid columns="1">
 								<p:outputLabel value="Linkdin" />
 								<p:inputText style="width: 500px;"
-									value="#{clienteController.cliente.linkdin}" />
-							</p:panelGrid>
-							<p:panelGrid columns="1">
+									value="#{fornecedorController.fornecedor.linkdin}" />
+							</h:panelGrid>
+							<h:panelGrid columns="1">
 								<p:outputLabel value="YouTube" />
 								<p:inputText style="width: 500px;"
-									value="#{clienteController.cliente.youtube}" />
-							</p:panelGrid>
-						</p:panelGrid>
-					</p:tab>
-
-					<p:tab title="Garantia Serviço" id="tabGarantia">
-
-						<h:panelGrid columns="2">
-							<h:panelGrid columns="1">
-								<p:outputLabel value="Buscar serviço" />
-								<p:selectOneMenu value="#{clienteController.servico}"
-									filter="true" filterMatchMode="startsWith"
-									converter="omnifaces.SelectItemsConverter">
-									<f:selectItems var="s" value="#{clienteController.servicos}"
-										itemLabel="#{s.nome}" itemValue="#{s}" />
-								</p:selectOneMenu>
+									value="#{fornecedorController.fornecedor.youtube}" />
 							</h:panelGrid>
 						</h:panelGrid>
-
-						<h:panelGrid columns="3">
-
-							<h:panelGrid columns="1">
-								<p:outputLabel value="Data Inicial" />
-								<p:calendar pattern="dd/MM/yyyy"
-									value="#{clienteController.garantiaServico.dataInicial}" />
-							</h:panelGrid>
-
-							<h:panelGrid columns="1">
-								<p:outputLabel value="Data Final" />
-								<p:calendar pattern="dd/MM/yyyy"
-									value="#{clienteController.garantiaServico.dataFinal}" />
-							</h:panelGrid>
-
-							<h:panelGrid columns="1">
-								<p:outputLabel value="." style="color: white;" />
-								<p:commandButton icon="ui-icon-plusthick" value="Adicionar"
-									actionListener="#{clienteController.adicionarGarantia}"
-									update=":msgGlobal tableGarantia" />
-							</h:panelGrid>
-
-						</h:panelGrid>
-
-						<p:dataTable id="tableGarantia"
-							emptyMessage="Nenhum serviço encontrado!"
-							value="#{clienteController.garantiaServicos}" var="p">
-							<p:column headerText="Serviço" width="200">
-								<p:outputLabel value="#{p.servico.nome}" />
-							</p:column>
-							<p:column headerText="Data Inicial" width="70">
-								<p:outputLabel value="#{p.dataInicial}">
-									<f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR"
-										timeZone="GMT-2" type="both" />
-								</p:outputLabel>
-							</p:column>
-							<p:column headerText="Data Final" width="70">
-								<p:outputLabel value="#{p.dataFinal}">
-									<f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR"
-										timeZone="GMT-2" type="both" />
-								</p:outputLabel>
-							</p:column>
-							<p:column headerText="Qdte dias restantes" width="100">
-								<p:outputLabel value="#{p.quantidadeDiasRestante}" />
-							</p:column>
-							<p:column width="37">
-								<p:commandButton icon="ui-icon-close"
-									actionListener="#{clienteController.removerGarantia(p)}"
-									update=":msgGlobal tableGarantia" />
-							</p:column>
-						</p:dataTable>
 					</p:tab>
 				</p:tabView>
+
 				<h:panelGrid id="panelBotoesCliente" columns="2">
 					<h:panelGrid columns="2">
 						<p:commandButton id="btnSalvarCliente" value="Salvar"
-							icon="ui-icon-check" action="#{clienteController.salvar}"
-							update=":msgGlobal :formGeralCliente:tableCliente"
-							disabled="#{clienteController.cliente.tipoPessoa == null}" />
-						<p:commandButton value="Cancelar" icon="ui-icon-close"
-							oncomplete="PF('dialogEditarCliente').hide();"
-							actionListener="#{clienteController.cancelar}"
+							icon="ui-icon-check" action="#{fornecedorController.salvar}"
 							update=":msgGlobal :formGeralCliente:tableCliente" />
+						<p:commandButton value="Cancelar" icon="ui-icon-close"
+							oncomplete="PF('dialogEditarCliente').hide();" 
+							actionListener="#{fornecedorController.cancelar}"
+							update=":msgGlobal :formGeralCliente:tableCliente"/>
 					</h:panelGrid>
 				</h:panelGrid>
 				<p:blockUI block="panelBotoesCliente" trigger="btnSalvarCliente" />
@@ -462,16 +425,17 @@
 							</h:panelGrid>
 						</h:panelGrid>
 
-						<h:panelGrid columns="2">
+						<!-- <h:panelGrid columns="2">
 							<h:panelGrid columns="1">
 								<p:outputLabel value="Atividade" />
 								<p:selectOneMenu style="width: 100px;"
 									value="#{fornecedorController.fornecedor.atividade}">
-									<f:selectItems var="at" value="#{fornecedorController.atividades}"
+									<f:selectItems var="at"
+										value="#{fornecedorController.atividades}"
 										itemLabel="#{at.atividade}" itemValue="#{at}" />
 								</p:selectOneMenu>
 							</h:panelGrid>
-						</h:panelGrid>
+						</h:panelGrid> -->
 					</p:tab>
 					<p:tab title="Dados complementares">
 						<h:panelGrid columns="2">
@@ -481,7 +445,7 @@
 									value="#{fornecedorController.fornecedor.razaoSocial}" />
 							</h:panelGrid>
 						</h:panelGrid>
-						
+
 						<h:panelGrid columns="2">
 							<h:panelGrid columns="1">
 								<p:outputLabel value="CNPJ" />
@@ -493,18 +457,20 @@
 						<h:panelGrid columns="3">
 							<h:panelGrid columns="1">
 								<p:outputLabel value="Tipo de empresa" />
-								<p:inputText value="#{fornecedorController.fornecedor.tipoEmpresa}" style="width: 140px;"/>
+								<p:inputText
+									value="#{fornecedorController.fornecedor.tipoEmpresa}"
+									style="width: 140px;" />
 							</h:panelGrid>
-							
+
 							<h:panelGrid columns="1">
 								<p:outputLabel value="Insc. Estadual" />
-								<p:inputText 
+								<p:inputText
 									value="#{fornecedorController.fornecedor.inscEstadual}" />
 							</h:panelGrid>
-							
+
 							<h:panelGrid columns="1">
 								<p:outputLabel value="Insc. Municipal" />
-								<p:inputText 
+								<p:inputText
 									value="#{fornecedorController.fornecedor.inscMunicipal}" />
 							</h:panelGrid>
 						</h:panelGrid>
@@ -516,7 +482,7 @@
 									value="#{fornecedorController.fornecedor.horarioFuncionamento}" />
 							</h:panelGrid>
 						</h:panelGrid>
-						
+
 						<h:panelGrid columns="2">
 							<h:panelGrid columns="1">
 								<p:outputLabel value="Observação" />
@@ -525,7 +491,7 @@
 							</h:panelGrid>
 						</h:panelGrid>
 
-						
+
 						<!-- <p:outputLabel value="Logo" />
 							<p:fieldset>
 								<p:fileUpload mode="advanced" dragDropSupport="false"

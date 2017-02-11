@@ -60,10 +60,10 @@ public class ClienteService extends GenericDaoImpl<Cliente, Long> {
 			return super.findBySituationAndCategoriaAndTipoPessoa(cliente.getSituacao(), cliente.getCategoria(), cliente.getTipoPessoa());
 		} else {
 			if(cliente.getTipoPessoa() == TipoPessoa.PESSOA_FISICA){
-				return super.findByParametersForSituation(cliente.getNomeDaPessoaFisica(), cliente.getTipoPessoa(),
+				return super.findByParametersForSituation(cliente.getNomeDaPessoaFisica().toUpperCase(), cliente.getTipoPessoa(),
 						cliente.getCategoria(), cliente.getSituacao(), "nomeDaPessoaFisica", "LIKE", "%", "%");
 			}else{
-				return super.findByParametersForSituation(cliente.getNomeFantasia(), cliente.getTipoPessoa(),
+				return super.findByParametersForSituation(cliente.getNomeFantasia().toUpperCase(), cliente.getTipoPessoa(),
 						cliente.getCategoria(), cliente.getSituacao(), "nomeFantasia", "LIKE", "%", "%");
 			}
 		}
@@ -99,6 +99,7 @@ public class ClienteService extends GenericDaoImpl<Cliente, Long> {
 
 	private Cliente consistirCliente(Cliente cliente) {
 		if (cliente.getId() == null) {
+			cliente.getNomeDaPessoaFisica().toUpperCase();
 			cliente.setSituacao(Situacao.ATIVO);
 		}
 		return cliente;

@@ -25,6 +25,7 @@ public class FuncionarioService extends GenericDaoImpl<Funcionario, Long>{
 	
 	private Funcionario consistirFuncionario(Funcionario funcionario){
 		if(funcionario.getId() == null){
+			funcionario.getNome().toUpperCase();
 			funcionario.setSituacao(Situacao.ATIVO);
 		}
 		return funcionario;
@@ -35,7 +36,7 @@ public class FuncionarioService extends GenericDaoImpl<Funcionario, Long>{
 			if(funcionario.getNome().equals("*")){
 				return super.findBySituation(funcionario.getSituacao());
 			}else{
-				return super.findByParametersForSituation(funcionario.getNome(), 
+				return super.findByParametersForSituation(funcionario.getNome().toUpperCase(), 
 						funcionario.getSituacao(), "nome", "LIKE", "%", "%");
 			}
 		}

@@ -80,8 +80,8 @@ public class ClienteController implements Serializable {
 			cliente.setNomeDaPessoaFisica(cliente.getNomeTemporario());
 			cliente.setNomeFantasia(cliente.getNomeTemporario());
 			cliente = clienteService.salvar(cliente);
-			listarClientes(cliente);
-			FacesUtil.mensagemInfo("Dados salvo com sucesso!");
+			//listarClientes(cliente);
+			FacesUtil.mensagemInfo("Cliente salvo com sucesso!");
 			fecharDialogs();
 		} catch (Exception e) {
 			FacesUtil.mensagemErro(e.getMessage());
@@ -89,17 +89,17 @@ public class ClienteController implements Serializable {
 	}
 	
 	public void cancelar(){
-		listarClientes(cliente);
+		//listarClientes(cliente);
 	}
 	
-	private void listarClientes(Cliente cliente){
+	/*private void listarClientes(Cliente cliente){
 		try {
 			clientes = clienteService.findBySituationAndCategoriaAndTipoPessoa
 					(cliente.getSituacao(), cliente.getCategoria(), cliente.getTipoPessoa());
 		} catch (Exception e) {
 			FacesUtil.mensagemErro(e.getMessage());
 		}
-	}
+	}*/
 	
 	public void consultarCnpj(){
 		try {
