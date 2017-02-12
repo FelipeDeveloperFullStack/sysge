@@ -40,16 +40,27 @@ public class BackupService extends GenericDaoImpl<BackupHistorico, Long>{
 	}
 	
 	public BackupHistorico fazerBackup() throws IOException {
-		for(ConfiguracaoBackup configuracaoBackup : configuracaoBackupService.findAll()){
-			if(configuracaoBackup.isAutomatico()){
-				//agendarBackup(configuracaoBackup.getTempoBackupAutomatico());
-				//FacesUtil.mensagemInfo("Backup agendado para todos os dias as "+configuracaoBackup.getTempoBackupAutomatico());
-				FacesUtil.mensagemInfo("Backup agendado para todos os dias as "+configuracaoBackup.getTempoBackupAutomatico());
-			}else{
-				return processarBackup();
+		List<ConfiguracaoBackup> configuracaoBackups = configuracaoBackupService.findAll();
+		if(configuracaoBackups.isEmpty()){
+			throw new RuntimeException("Não é possível fazer o backup, não existe nenhum configuração cadastrada!"); 
+		}else{
+			for(ConfiguracaoBackup configuracaoBackup : configuracaoBackups){
+				if(configuracaoBackup.getCaminhoArquivoMysqlDump().trim().isEmpty()){
+					throw new RuntimeException("O caminho do arquivo 'mysqldump' não foi definida nas configurações! Não é possivel fazer o backup!");
+				}
+				if(configuracaoBackup.getDiretorio().trim().isEmpty()){
+					throw new RuntimeException("O diretório não foi definido nas configurações, não é possível fazer o backup!");
+				}
+				if(configuracaoBackup.isAutomatico()){
+					//agendarBackup(configuracaoBackup.getTempoBackupAutomatico());
+					//FacesUtil.mensagemInfo("Backup agendado para todos os dias as "+configuracaoBackup.getTempoBackupAutomatico());
+					FacesUtil.mensagemInfo("Backup agendado para todos os dias as "+configuracaoBackup.getTempoBackupAutomatico());
+				}else{
+					return processarBackup();
+				}
 			}
+			return new BackupHistorico();
 		}
-		return new BackupHistorico();
 		
 	}
 	
@@ -85,14 +96,20 @@ private void setarBackupHistorico(ConfiguracaoBackup config , BackupHistorico ba
 						+ "--password=fmds1701 "
 						+ "--user=root "
 						+ "--databases sysge "
-						+ "-R");
+						+ "-v "
+						+ "--port=3306 "
+						+ "--protocol=tcp "
+						+ "--force "
+						+ "--allow-keywords "
+						+ "--compress "
+						+ "-R ");
 					  //+ "--result-file="+backup+" "
 					
 					irs = new InputStreamReader(p.getInputStream());
 		            br = new BufferedReader(irs);
 
 		            String line;
-		            while( (line=br.readLine()) != null ) {
+		            while( (line = br.readLine()) != null ) {
 		                fw.write(line + "\n");
 		            }
 		            

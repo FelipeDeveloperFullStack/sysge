@@ -121,7 +121,7 @@ public class BackupController implements Serializable{
 	
 	public void salvar(){
 		try {
-			configuracaoBackupService.save(configuracaoBackup);
+			configuracaoBackupService.salvar(configuracaoBackup);
 			FacesUtil.mensagemInfo("Configuração salva com sucesso!");
 		} catch (RuntimeException e) {
 			FacesUtil.mensagemErro(e.getMessage());
@@ -130,11 +130,13 @@ public class BackupController implements Serializable{
 	
 	public void fazerBackup(){
 		try {
-			;
 			backupService.fazerBackup();
 			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
 			FacesUtil.mensagemInfo("Backup realizado com sucesso as "+ sdf.format(DateUtil.asDate(LocalDateTime.now())));
-		} catch (IOException e) {
+		} catch (RuntimeException e) {
+			FacesUtil.mensagemErro(e.getMessage());
+			e.printStackTrace();
+		}catch (IOException e) {
 			FacesUtil.mensagemErro(e.getMessage());
 			e.printStackTrace();
 		}
