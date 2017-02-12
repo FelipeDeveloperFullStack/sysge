@@ -42,7 +42,7 @@ public class PanelMenuService extends GenericDaoImpl<PanelMenu, Long>{
 		} catch (Exception e) {
 			throw new RuntimeException(e); 
 		}
-		return null;
+		return setarMenuPerfilAcesso(new ArrayList<PanelMenu>());
 	}
 	public List<PanelMenu> setarMenuTarget(PerfilAcesso perfilAcesso){
 		if(perfilAcesso.getId() != null){

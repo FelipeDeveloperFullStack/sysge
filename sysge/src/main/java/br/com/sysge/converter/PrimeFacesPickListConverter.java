@@ -1,6 +1,7 @@
 package br.com.sysge.converter;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.enterprise.inject.spi.CDI;
@@ -13,6 +14,7 @@ import org.primefaces.component.picklist.PickList;
 import org.primefaces.model.DualListModel;
 
 import br.com.sysge.model.sys.PanelMenu;
+import br.com.sysge.model.type.MenuPerfilAcesso;
 import br.com.sysge.service.sys.PanelMenuService;
 
 
@@ -32,6 +34,9 @@ public class PrimeFacesPickListConverter implements Converter {
 			if(arg1 instanceof PickList){
 				Object dualList = ((PickList) arg1).getValue();
 				DualListModel<PanelMenu> dl = (DualListModel<PanelMenu>) dualList;
+				if(dl.getSource() == null){
+					dl.setSource(setarMenuPerfilAcesso(new ArrayList<PanelMenu>()));
+				}
 				for(Object o : dl.getSource()){
 					if(value.contains(((PanelMenu)o).getMenu())){
 						return ((PanelMenu)o);
@@ -69,6 +74,15 @@ public class PrimeFacesPickListConverter implements Converter {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+	
+	private List<PanelMenu> setarMenuPerfilAcesso(List<PanelMenu> menus){
+		for(MenuPerfilAcesso m : MenuPerfilAcesso.values()){
+			PanelMenu menu = new PanelMenu();
+			menu.setMenu(m.getMenu());
+			menus.add(menu);
+		}
+		return menus;
 	}
 
 	@Override

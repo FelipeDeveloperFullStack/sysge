@@ -1,7 +1,8 @@
 package br.com.sysge.model.type;
 
 public enum Atividade {
-
+	
+	OUTROS("Outros"),
 	ADVOCACIA("Advocacia"),
 	AGENCIA_DE_PUBLICIDADE("Agência de publicidade"),
 	AGENCIA_DE_VIAGENS("Agência de viagens"),
