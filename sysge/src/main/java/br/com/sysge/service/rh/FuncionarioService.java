@@ -1,6 +1,5 @@
 package br.com.sysge.service.rh;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import br.com.sysge.infraestrutura.dao.GenericDaoImpl;
@@ -25,22 +24,21 @@ public class FuncionarioService extends GenericDaoImpl<Funcionario, Long>{
 	
 	private Funcionario consistirFuncionario(Funcionario funcionario){
 		if(funcionario.getId() == null){
-			funcionario.getNome().toUpperCase();
+			funcionario.setNome(funcionario.getNome().toUpperCase());
 			funcionario.setSituacao(Situacao.ATIVO);
+		}else{
+			funcionario.setNome(funcionario.getNome().toUpperCase());
 		}
 		return funcionario;
 	}
 	
 	public List<Funcionario> pesquisarFuncionario(Funcionario funcionario){
-		if(funcionario.getNome() != null){
-			if(funcionario.getNome().equals("*")){
+			if(funcionario.getNome().trim().isEmpty()){
 				return super.findBySituation(funcionario.getSituacao());
 			}else{
 				return super.findByParametersForSituation(funcionario.getNome().toUpperCase(), 
 						funcionario.getSituacao(), "nome", "LIKE", "%", "%");
 			}
-		}
-		return new ArrayList<Funcionario>();
 	}
 	
 	public boolean verificarSeFuncionarioEDiferenteDeNull(Funcionario funcionario){

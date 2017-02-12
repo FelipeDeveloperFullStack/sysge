@@ -41,24 +41,14 @@
 					<f:facet name="left">
 						<h:form>
 							<p:themeSwitcher id="advanced" style="width:165px" effect="fade"
-								var="t">
+								value="#{guessPreferences.theme}">
 								<f:selectItem itemLabel="Escolha um tema" itemValue="" />
-								<f:selectItems
-									value="[afterdark, afternoon, afterwork, aristo, black-tie, blitzer, 
-					              bluesky, bootstrap, casablanca, cupertino, cruze, dark-hive, delta, dot-luv, eggplant,
-					              excite-bike, flick, glass-x, home, hot-sneaks, humanity, le-frog, midnight, mint-choc,
-					              omega, overcast, pepper-grinder, redmond, rocket, sam, smoothness, south-street, start,
-								  sunny, swanky-purse, trontastic, ui-darkness, ui-lightness, vader]"
-									var="theme" itemLabel="" itemValue="" />
-
+								<f:selectItems value="#{themeBean.themes}"/>
 								<p:column>
 									<h:outputText styleClass="ui-theme ui-theme-"
 										style="display-block" />
 								</p:column>
-
-								<p:column>
-
-								</p:column>
+								<p:ajax listener="#{themeBean.saveTheme}"/>
 							</p:themeSwitcher>
 						</h:form>
 					</f:facet>

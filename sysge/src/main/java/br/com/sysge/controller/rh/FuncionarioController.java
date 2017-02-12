@@ -69,9 +69,19 @@ public class FuncionarioController implements Serializable{
 			funcionarioService.salvar(funcionario);
 			fecharDialogs();
 			FacesUtil.mensagemInfo("Funcionário salvo com sucesso!");
+			this.funcionarios = new ArrayList<Funcionario>();
 		} catch (RuntimeException e) {
 			FacesUtil.mensagemErro(e.getMessage());
 		}
+	}
+	
+	public void pesquisar(){
+		this.funcionarios = new ArrayList<Funcionario>();
+		this.funcionarios = funcionarioService.pesquisarFuncionario(funcionario);
+	}
+	
+	public void cancelar(){
+		this.funcionarios = new ArrayList<Funcionario>();
 	}
 	
 	private void fecharDialogs(){
@@ -100,7 +110,7 @@ public class FuncionarioController implements Serializable{
 	}
 
 	public List<Funcionario> getFuncionarios() {
-		return funcionarioService.findAll();
+		return funcionarios;
 	}
 
 	public void setFuncionarios(List<Funcionario> funcionarios) {

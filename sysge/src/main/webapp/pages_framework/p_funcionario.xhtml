@@ -24,7 +24,8 @@
 					<f:selectItems var="s" value="#{funcionarioController.situacoes}"
 						itemLabel="#{s.situacao}" itemValue="#{s}" />
 				</p:selectOneMenu>
-				<p:commandButton id="btnPesquisarFun" value="Pesquisar" update="tablePerfilfuncionario" />
+				<p:commandButton id="btnPesquisarFun" value="Pesquisar" update="tablePerfilfuncionario" 
+								 actionListener="#{funcionarioController.pesquisar}"/>
 				<p:tooltip
 					value="Digite um funcionário ou informe * para pesquisar todos!"
 					for="txtFuncionarioPesquisa" position="bottom" />
@@ -374,7 +375,9 @@
 						action="#{funcionarioController.salvar}"
 						update=":msgGlobal :formGeralFuncionario:tablePerfilfuncionario" />
 					<p:commandButton value="Cancelar" icon="ui-icon-close"
-						oncomplete="PF('dialogEditarFuncionario').hide();" />
+						oncomplete="PF('dialogEditarFuncionario').hide();" 
+						actionListener="#{funcionarioController.cancelar}"
+							update=":formGeralFuncionario:tablePerfilfuncionario"/>
 				</h:panelGrid>
 			</h:panelGrid>
 		</h:form>
