@@ -240,6 +240,14 @@ public class OrdemServicoController implements Serializable {
 		this.listaProdutos = ordemServicoService.procurarProdutosOS(ordemServico.getId());
 		ordemServico.setTotal(ordemServico.getTotalProduto().add(ordemServico.getTotalServico()));
 		ordemServicoService.salvar(ordemServico);
+		
+		for(ProdutoOrdemServico pos : listaProdutos){
+			if(produto.getId() == pos.getProduto().getId()){
+				pos.getProduto().setQuantidadeEstoque(pos.getProduto().getQuantidadeEstoque()- pos.getQuantidade());
+				produtoService.salvar(pos.getProduto());
+				produtoOrdemServicoService.save(pos);
+			}
+		}
 		produto = new Produto();
 	}
 	
@@ -259,6 +267,7 @@ public class OrdemServicoController implements Serializable {
 	}
 	
 	public void calcularValorProduto(ProdutoOrdemServico produtoOrdemServico){
+
 		ordemServico.setTotalProduto(BigDecimal.ZERO);
 		
 		for(ProdutoOrdemServico po : listaProdutos){
@@ -269,8 +278,15 @@ public class OrdemServicoController implements Serializable {
 				po.setSubTotal(valorProduto);
 			}
 			ordemServico.setTotal((ordemServico.getTotalServico().add(ordemServico.getTotalProduto())).add(po.getSubTotal()));
-			
 			ordemServico.setTotalProduto(ordemServico.getTotalProduto().add(po.getSubTotal()));
+			
+			for(ProdutoOrdemServico pos : listaProdutos){
+				if(produtoOrdemServico.getProduto().getId() == pos.getProduto().getId()){
+					pos.getProduto().setQuantidadeEstoque(pos.getProduto().getQuantidadeEstoque()- pos.getQuantidade());
+					produtoService.salvar(pos.getProduto());
+					produtoOrdemServicoService.save(pos);
+				}
+			}
 		}
 	}
 	
@@ -329,12 +345,6 @@ public class OrdemServicoController implements Serializable {
 			parcelasPagamentoOsService.salvar(ordemServico, parcelas);
 			ordemServicoService.consistirServico(listaServicos, ordemServico);
 			ordemServicoService.consistirProduto(listaProdutos, ordemServico);
-			
-			for(ProdutoOrdemServico pos : listaProdutos){
-				pos.getProduto().setQuantidadeEstoque(pos.getProduto().getQuantidadeEstoque()- pos.getQuantidade());
-				produtoService.salvar(pos.getProduto());
-				produtoOrdemServicoService.save(pos);
-			}
 		}
 		
 		FacesUtil.mensagemInfo("Ordem de servico de nº "+ordemServico.getId() + " salvo com sucesso!");
@@ -356,6 +366,12 @@ public class OrdemServicoController implements Serializable {
 		RequestContextUtil.execute("PF('dialogNovaOrdemDeServico').hide();");
 		RequestContextUtil.execute("PF('dialogEditarOrdemDeServico').hide();");
 		ordensServicos = new ArrayList<OrdemServico>();
+		
+		/*for(ProdutoOrdemServico pos : listaProdutos){
+			pos.getProduto().setQuantidadeEstoque(pos.getProduto().getQuantidadeEstoque()- pos.getQuantidade());
+			produtoService.salvar(pos.getProduto());
+			produtoOrdemServicoService.save(pos);
+		}*/
 	}
 	
 	public void fecharDialogMotivoCancelamento(){

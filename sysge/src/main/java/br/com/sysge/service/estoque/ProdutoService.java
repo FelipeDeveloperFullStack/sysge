@@ -27,8 +27,10 @@ public class ProdutoService extends GenericDaoImpl<Produto, Long>{
 	
 	private Produto consistirProduto(Produto produto){
 		if(produto.getId() == null){
-			produto.getDescricaoProduto().toUpperCase();
+			produto.setDescricaoProduto(produto.getDescricaoProduto().toUpperCase());
 			produto.setSituacao(Situacao.ATIVO);
+		}else{
+			produto.setDescricaoProduto(produto.getDescricaoProduto().toUpperCase());
 		}
 		return produto;
 	}
