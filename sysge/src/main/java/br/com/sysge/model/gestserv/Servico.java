@@ -25,9 +25,6 @@ public class Servico extends GenericDomain {
 	@DecimalMin(value = "0", message = "O valor mínimo é zero!")
 	private BigDecimal valor;
 
-	@Column(name = "serv_descricao")
-	private String descricao;
-
 	@Enumerated(EnumType.STRING)
 	@Column(name = "serv_situacao")
 	private Situacao situacao;
@@ -51,14 +48,6 @@ public class Servico extends GenericDomain {
 		this.valor = valor;
 	}
 
-	public String getDescricao() {
-		return descricao;
-	}
-
-	public void setDescricao(String descricao) {
-		this.descricao = descricao;
-	}
-
 	public Situacao getSituacao() {
 		return situacao;
 	}
@@ -66,18 +55,5 @@ public class Servico extends GenericDomain {
 	public void setSituacao(Situacao situacao) {
 		this.situacao = situacao;
 	}
-
-	/*public List<ServicoOrdemServico> getOrdemServicos() {
-		if(ordemServicos == null){
-			ordemServicos = new ArrayList<ServicoOrdemServico>();
-		}
-		return ordemServicos;
-	}
-
-	public void setOrdemServicos(List<ServicoOrdemServico> ordemServicos) {
-		this.ordemServicos = ordemServicos;
-	}*/
-
-	
 
 }

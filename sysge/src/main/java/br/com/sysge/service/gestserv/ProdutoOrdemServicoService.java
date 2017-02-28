@@ -12,7 +12,7 @@ public class ProdutoOrdemServicoService extends GenericDaoImpl<ProdutoOrdemServi
 	
 	public boolean verificarSeExisteProdutoNaTabela(List<ProdutoOrdemServico> listaProdutos, Produto produto) {
 		for (ProdutoOrdemServico s : listaProdutos) {
-			if (s.getProduto().getId() == produto.getId()) {
+			if (s.getProduto().getDescricaoProduto().trim().equals(produto.getDescricaoProduto().trim())) {
 				return true;
 			}
 		}

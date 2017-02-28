@@ -79,6 +79,8 @@ public class OrdemServicoController implements Serializable {
 	
 	private List<ProdutoOrdemServico> listaProdutos;
 	
+	private List<ProdutoOrdemServico> listaProdutosTemporário;
+	
 	@Inject
 	private FuncionarioService funcionarioService;
 	
@@ -215,39 +217,48 @@ public class OrdemServicoController implements Serializable {
 	
 	public void adicionarServico(){
 		ServicoOrdemServico servicoOrdemServico = new ServicoOrdemServico();
+		//servico.setId(null);
 		servicoOrdemServico.setServico(servico);
 		servicoOrdemServico.setSubTotal(servico.getValor());
 		servicoOrdemServico.setValor(servico.getValor());
 		servicoOrdemServico.setOrdemServico(ordemServico);
-		servicoOrdemServicoService.save(servicoOrdemServico);
-		this.listaServicos = ordemServicoService.procurarServicosOS(ordemServico.getId());
+		
+		//servicoOrdemServicoService.save(servicoOrdemServico);
+		
+		listaServicos.add(servicoOrdemServico);
+		
+		//this.listaServicos = ordemServicoService.procurarServicosOS(ordemServico.getId());
 		ordemServico.setTotal(ordemServico.getTotalServico().add(ordemServico.getTotalProduto()));
-		ordemServicoService.salvar(ordemServico);
+		
+		//ordemServicoService.salvar(ordemServico);
 		servico = new Servico();
 	}
 	
 	public void adicionarProduto(){
 		ProdutoOrdemServico produtoOrdemServico = new ProdutoOrdemServico();
+		//produto.setId(null);
 		produtoOrdemServico.setProduto(produto);
 		produtoOrdemServico.setSubTotal(produto.getValorVenda());
 		produtoOrdemServico.setValor(produto.getValorVenda());
 		produtoOrdemServico.setOrdemServico(ordemServico);
-		produtoOrdemServicoService.save(produtoOrdemServico);
 		
-		/*produto.setQuantidadeEstoque(produto.getQuantidadeEstoque() - produtoOrdemServico.getQuantidade());
-		produtoService.salvar(produto);*/
+		listaProdutos.add(produtoOrdemServico);
 		
-		this.listaProdutos = ordemServicoService.procurarProdutosOS(ordemServico.getId());
+		/*produtoOrdemServicoService.save(produtoOrdemServico);*/
+		
+		/*this.listaProdutos = ordemServicoService.procurarProdutosOS(ordemServico.getId());*/
 		ordemServico.setTotal(ordemServico.getTotalProduto().add(ordemServico.getTotalServico()));
-		ordemServicoService.salvar(ordemServico);
 		
-		for(ProdutoOrdemServico pos : listaProdutos){
+		/*ordemServicoService.salvar(ordemServico);*/
+		
+		/*for(ProdutoOrdemServico pos : listaProdutos){
 			if(produto.getId() == pos.getProduto().getId()){
 				pos.getProduto().setQuantidadeEstoque(pos.getProduto().getQuantidadeEstoque()- pos.getQuantidade());
 				produtoService.salvar(pos.getProduto());
 				produtoOrdemServicoService.save(pos);
 			}
-		}
+		}*/
+		
 		produto = new Produto();
 	}
 	
@@ -280,13 +291,13 @@ public class OrdemServicoController implements Serializable {
 			ordemServico.setTotal((ordemServico.getTotalServico().add(ordemServico.getTotalProduto())).add(po.getSubTotal()));
 			ordemServico.setTotalProduto(ordemServico.getTotalProduto().add(po.getSubTotal()));
 			
-			for(ProdutoOrdemServico pos : listaProdutos){
+			/*for(ProdutoOrdemServico pos : listaProdutos){
 				if(produtoOrdemServico.getProduto().getId() == pos.getProduto().getId()){
 					pos.getProduto().setQuantidadeEstoque(pos.getProduto().getQuantidadeEstoque()- pos.getQuantidade());
 					produtoService.salvar(pos.getProduto());
 					produtoOrdemServicoService.save(pos);
 				}
-			}
+			}*/
 		}
 	}
 	
@@ -315,6 +326,7 @@ public class OrdemServicoController implements Serializable {
 		this.listaProdutos = new ArrayList<ProdutoOrdemServico>();
 		this.ordensServicosAbertas = new ArrayList<OrdemServico>();
 		this.parcelas = new ArrayList<ParcelasPagamentoOs>();
+		this.listaProdutosTemporário = new ArrayList<ProdutoOrdemServico>();
 		
 		setarTabIndex(0);
 	}
@@ -343,11 +355,48 @@ public class OrdemServicoController implements Serializable {
 		}else{
 			ordemServico = ordemServicoService.salvar(ordemServico);
 			parcelasPagamentoOsService.salvar(ordemServico, parcelas);
-			ordemServicoService.consistirServico(listaServicos, ordemServico);
-			ordemServicoService.consistirProduto(listaProdutos, ordemServico);
+			
+			List<ProdutoOrdemServico> listaProdutoOS = produtoOrdemServicoService.findByListProperty(ordemServico.getId(), "ordemServico.id");
+			
+			for(ProdutoOrdemServico pos : listaProdutos){
+				if(listaProdutoOS.isEmpty()){
+					pos.getProduto().setQuantidadeEstoque(pos.getProduto().getQuantidadeEstoque() - pos.getQuantidade());
+					produtoService.salvar(pos.getProduto());
+				}else{
+					for(ProdutoOrdemServico ps : listaProdutoOS){
+						List<ProdutoOrdemServico> prodBd = produtoOrdemServicoService.findByListProperty(pos.getProduto().getId(), "produto.id");
+						if(prodBd.isEmpty()){
+							subtrairQuantidadeEstoqueProduto(pos, ps);
+						}else{
+							if(ps.getQuantidade() != pos.getQuantidade()){
+								subtrairQuantidadeEstoqueProduto(pos, ps);
+							}
+						}
+						
+					}
+				}
+				produtoOrdemServicoService.save(pos);
+			}
+			for(ServicoOrdemServico sos : listaServicos){
+				servicoOrdemServicoService.save(sos);
+			}
+			
+			/*ordemServicoService.consistirServico(listaServicos, ordemServico);
+			ordemServicoService.consistirProduto(listaProdutos, ordemServico);*/
 		}
 		
 		FacesUtil.mensagemInfo("Ordem de servico de nº "+ordemServico.getId() + " salvo com sucesso!");
+	}
+	
+	private void subtrairQuantidadeEstoqueProduto(ProdutoOrdemServico pos, ProdutoOrdemServico ps){
+		if(pos.getQuantidade() > ps.getQuantidade()){
+			pos.getProduto().setQuantidadeEstoque(pos.getProduto().getQuantidadeEstoque() - pos.getQuantidade());
+			produtoService.salvar(pos.getProduto());
+		}else{
+			pos.setQuantidade(pos.getQuantidade() - 1);
+			pos.getProduto().setQuantidadeEstoque(pos.getProduto().getQuantidadeEstoque() - pos.getQuantidade());
+			produtoService.salvar(pos.getProduto());
+		}
 	}
 	
 	public void salvarMotivoCancelamento(){
@@ -380,17 +429,39 @@ public class OrdemServicoController implements Serializable {
 		pesquisarOS();
 	}
 	
+	/**
+	 * @param servicoOrdemServico
+	 */
 	public void removerServico(ServicoOrdemServico servicoOrdemServico){
-		servicoOrdemServicoService.removeByObject(servicoOrdemServicoService.save(servicoOrdemServico));
+		/*servicoOrdemServicoService.removeByObject(servicoOrdemServicoService.save(servicoOrdemServico));
 		ordemServico.setTotalServico(ordemServico.getTotalServico().subtract(servicoOrdemServico.getSubTotal()));
 		ordemServico.setTotal(BigDecimal.ZERO);
 		ordemServico.setTotal(ordemServico.getTotalServico().add(ordemServico.getTotalProduto()));
 		this.listaServicos = ordemServicoService.procurarServicosOS(ordemServico.getId());
-		ordemServicoService.salvar(ordemServico);
+		ordemServicoService.salvar(ordemServico);*/
+		
+		if(servicoOrdemServico.getId() == null){
+			for(int i = 0; i < this.listaServicos.size(); i++){
+				if(this.listaServicos.get(i).getServico().getNome().equals(servicoOrdemServico.getServico().getNome())){
+					this.listaServicos.remove(i);
+					ordemServico.setTotalServico(ordemServico.getTotalServico().subtract(servicoOrdemServico.getSubTotal()));
+					ordemServico.setTotal(BigDecimal.ZERO);
+					ordemServico.setTotal(ordemServico.getTotalServico().add(ordemServico.getTotalProduto()));
+				}
+			}
+		}else{
+			servicoOrdemServicoService.remove(servicoOrdemServico.getId());
+			this.listaServicos = ordemServicoService.procurarServicosOS(ordemServico.getId());
+			
+			ordemServico.setTotalServico(ordemServico.getTotalServico().subtract(servicoOrdemServico.getSubTotal()));
+			ordemServico.setTotal(BigDecimal.ZERO);
+			ordemServico.setTotal(ordemServico.getTotalServico().add(ordemServico.getTotalProduto()));
+			ordemServicoService.salvar(ordemServico);
+		}
 	}
 	
 	public void removerProduto(ProdutoOrdemServico produtoOrdemServico){
-		produtoOrdemServicoService.removeByObject(produtoOrdemServicoService.save(produtoOrdemServico));
+		/*produtoOrdemServicoService.removeByObject(produtoOrdemServicoService.save(produtoOrdemServico));
 		
 		produtoOrdemServico.getProduto().setQuantidadeEstoque(produtoOrdemServico.getProduto().getQuantidadeEstoque() + produtoOrdemServico.getQuantidade());
 		produtoService.salvar(produtoOrdemServico.getProduto());
@@ -399,7 +470,29 @@ public class OrdemServicoController implements Serializable {
 		ordemServico.setTotal(BigDecimal.ZERO);
 		ordemServico.setTotal(ordemServico.getTotalProduto().add(ordemServico.getTotalServico()));
 		this.listaProdutos = ordemServicoService.procurarProdutosOS(ordemServico.getId());
-		ordemServicoService.salvar(ordemServico);
+		ordemServicoService.salvar(ordemServico);*/
+		
+		if(produtoOrdemServico.getId() == null){
+			for(int i = 0; i < listaProdutos.size(); i++){
+				if(this.listaProdutos.get(i).getProduto().getDescricaoProduto().trim().equals(produtoOrdemServico.getProduto().getDescricaoProduto().trim())){
+					this.listaProdutos.remove(i);
+					ordemServico.setTotalProduto(ordemServico.getTotalProduto().subtract(produtoOrdemServico.getSubTotal()));
+					ordemServico.setTotal(BigDecimal.ZERO);
+					ordemServico.setTotal(ordemServico.getTotalProduto().add(ordemServico.getTotalServico()));
+				}
+			}
+		}else{
+			produtoOrdemServicoService.remove(produtoOrdemServico.getId());
+			this.listaProdutos = ordemServicoService.procurarProdutosOS(ordemServico.getId());
+			
+			produtoOrdemServico.getProduto().setQuantidadeEstoque(produtoOrdemServico.getProduto().getQuantidadeEstoque() + produtoOrdemServico.getQuantidade());
+			produtoService.salvar(produtoOrdemServico.getProduto());
+			
+			ordemServico.setTotalProduto(ordemServico.getTotalProduto().subtract(produtoOrdemServico.getSubTotal()));
+			ordemServico.setTotal(BigDecimal.ZERO);
+			ordemServico.setTotal(ordemServico.getTotalProduto().add(ordemServico.getTotalServico()));
+			ordemServicoService.salvar(ordemServico);
+		}
 	}
 	
 	public void setarTabIndex(int tabIndex) {
@@ -545,6 +638,14 @@ public class OrdemServicoController implements Serializable {
 
 	public void setCurrentTab(int currentTab) {
 		this.currentTab = currentTab;
+	}
+
+	public List<ProdutoOrdemServico> getListaProdutosTemporário() {
+		return listaProdutosTemporário;
+	}
+
+	public void setListaProdutosTemporário(List<ProdutoOrdemServico> listaProdutosTemporário) {
+		this.listaProdutosTemporário = listaProdutosTemporário;
 	}
 
 }

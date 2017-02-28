@@ -12,7 +12,7 @@ public class ServicoOrdemServicoService extends GenericDaoImpl<ServicoOrdemServi
 
 	public boolean verificarSeExisteServicoNaTabela(List<ServicoOrdemServico> listaServicos, Servico servico) {
 		for (ServicoOrdemServico s : listaServicos) {
-			if (s.getServico().getId() == servico.getId()) {
+			if (s.getServico().getNome().trim().equals(servico.getNome().trim())) {
 				return true;
 			}
 		}

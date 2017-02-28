@@ -565,9 +565,7 @@
 							id="tableServico" var="s"
 							value="#{ordemServicoController.listaServicos}" paginator="true"
 							paginatorPosition="bottom" rows="7">
-							<p:column headerText="ID" width="35">
-								<h:outputLabel value="#{s.servico.id}" />
-							</p:column>
+							
 							<p:column headerText="Nome">
 								<h:outputLabel value="#{s.servico.nome}" />
 							</p:column>
@@ -607,7 +605,7 @@
 
 							<p:columnGroup type="footer">
 								<p:row>
-									<p:column colspan="4" style="text-align:right" footerText="Total:" />
+									<p:column colspan="3" style="text-align:right" footerText="Total:" />
 									<p:column footerText="R$: #{ordemServicoController.ordemServico.totalServico}" style="text-align:left" />
 								</p:row>
 							</p:columnGroup>
@@ -639,9 +637,6 @@
 							paginatorPosition="bottom" rows="7"
 							disabledSelection="#{ordemServicoController.ordemServico.statusOS == 'CANCELADO'}">
 							
-							<p:column headerText="ID" width="35" style="text-align:center;">
-								<h:outputLabel value="#{p.produto.id}" />
-							</p:column>
 							<p:column headerText="Descrição">
 								<h:outputLabel value="#{p.produto.descricaoProduto}" />
 							</p:column>
@@ -679,7 +674,7 @@
 							
 							<p:columnGroup type="footer">
 								<p:row>
-									<p:column colspan="4" style="text-align:right" footerText="Total:" />
+									<p:column colspan="3" style="text-align:right" footerText="Total:" />
 									<p:column footerText="R$: #{ordemServicoController.ordemServico.totalProduto}" style="text-align:left" />
 								</p:row>
 							</p:columnGroup>
