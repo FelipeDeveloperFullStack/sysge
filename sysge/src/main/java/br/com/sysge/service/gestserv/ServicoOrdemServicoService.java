@@ -18,5 +18,23 @@ public class ServicoOrdemServicoService extends GenericDaoImpl<ServicoOrdemServi
 		}
 		return false;
 	}
+	
+	public boolean verificarSeExisteIdNull(List<ServicoOrdemServico> listaServicos){
+		for(int i = 0; i < listaServicos.size(); i++){
+			if(listaServicos.get(i).getId() == null){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public List<ServicoOrdemServico> removerServicoOSPeloID(List<ServicoOrdemServico> listaServicos, ServicoOrdemServico servicoOrdemServico){
+		for(int i = 0; i < listaServicos.size(); i++){
+			if(listaServicos.get(i).getServico().getNome().equals(servicoOrdemServico.getServico().getNome())){
+				super.remove(servicoOrdemServico.getId());
+			}
+		}
+		return listaServicos;
+	}
 
 }

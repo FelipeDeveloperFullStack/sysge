@@ -127,7 +127,7 @@
 					<p:outputLabel value="Descrição (Opcional)" />
 					<p:inputTextarea rows="8" cols="45" counter="display"
 						maxlength="200" counterTemplate="{0} caracteres restantes."
-						autoResize="false" value="#{servicoController.servico.descricao}" />
+						autoResize="false" value="#{servicoController.servico.nome}" />
 					<h:outputText id="display" />
 				</h:panelGrid>
 			</h:panelGrid>
@@ -172,7 +172,7 @@
 					<p:inputTextarea rows="8" cols="45" counter="display"
 						maxlength="200" counterTemplate="{0} caracteres restantes."
 						autoResize="false" placeholder="(Opcional)"
-						value="#{servicoController.servico.descricao}" />
+						value="#{servicoController.servico.nome}" />
 					<h:outputText id="display" />
 				</h:panelGrid>
 			</h:panelGrid>

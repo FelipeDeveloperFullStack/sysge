@@ -47,8 +47,12 @@ public class OrdemServicoController implements Serializable {
 	private static final long serialVersionUID = 1267523434219231347L;
 	
 	private int currentTab = 0;
+	
+	private ProdutoOrdemServico produtoOrdemServico;
 
 	private OrdemServico ordemServico;
+	
+	private Long quantidadeAdicionada = 0L;
 	
 	private ParcelasPagamentoOs parcelasPagamentoOs;
 	
@@ -277,28 +281,33 @@ public class OrdemServicoController implements Serializable {
 		}
 	}
 	
-	public void calcularValorProduto(ProdutoOrdemServico produtoOrdemServico){
+	public void setarProduto(ProdutoOrdemServico produtoOrdemServico){
+		this.produtoOrdemServico = produtoOrdemServico;
+	}
+	
+	public void calcularValorProduto(){
 
-		ordemServico.setTotalProduto(BigDecimal.ZERO);
-		
-		for(ProdutoOrdemServico po : listaProdutos){
-			if(po.getProduto().getId() == produtoOrdemServico.getProduto().getId()){
-				BigDecimal valorProduto = produtoOrdemServico.getProduto().getValorVenda().
-									      multiply(BigDecimal.valueOf(produtoOrdemServico.getQuantidade()));
-				po.setValor(produtoOrdemServico.getValor());
-				po.setSubTotal(valorProduto);
-			}
-			ordemServico.setTotal((ordemServico.getTotalServico().add(ordemServico.getTotalProduto())).add(po.getSubTotal()));
-			ordemServico.setTotalProduto(ordemServico.getTotalProduto().add(po.getSubTotal()));
+		if(quantidadeAdicionada == 0L){
+			FacesUtil.mensagemWarn("A quantidade é obrigatório!");
+		}else{
+			ordemServico.setTotalProduto(BigDecimal.ZERO);
+			produtoOrdemServico.setQuantidade(produtoOrdemServico.getQuantidade() + quantidadeAdicionada);
 			
-			/*for(ProdutoOrdemServico pos : listaProdutos){
-				if(produtoOrdemServico.getProduto().getId() == pos.getProduto().getId()){
-					pos.getProduto().setQuantidadeEstoque(pos.getProduto().getQuantidadeEstoque()- pos.getQuantidade());
-					produtoService.salvar(pos.getProduto());
-					produtoOrdemServicoService.save(pos);
+			for(ProdutoOrdemServico po : listaProdutos){
+				if(po.getProduto().getId() == produtoOrdemServico.getProduto().getId()){
+					BigDecimal valorProduto = produtoOrdemServico.getProduto().getValorVenda().
+							multiply(BigDecimal.valueOf(produtoOrdemServico.getQuantidade()));
+					po.setValor(produtoOrdemServico.getValor());
+					po.setSubTotal(valorProduto);
 				}
-			}*/
+				ordemServico.setTotal((ordemServico.getTotalServico().add(ordemServico.getTotalProduto())).add(po.getSubTotal()));
+				ordemServico.setTotalProduto(ordemServico.getTotalProduto().add(po.getSubTotal()));
+				
+			}
+			RequestContextUtil.execute("PF('dialog_quantidade_estoque_produto').hide();");
+			quantidadeAdicionada = 0L;
 		}
+		
 	}
 	
 	public void setarOrdemServico(OrdemServico ordemServico){
@@ -317,6 +326,7 @@ public class OrdemServicoController implements Serializable {
 	public void novaOrdemServico(){
 		this.ordemServico = new OrdemServico();
 		this.servico = new Servico();
+		this.produtoOrdemServico = new ProdutoOrdemServico();
 		this.ordensServicos = new ArrayList<OrdemServico>();
 		this.servicos = new ArrayList<Servico>();
 		this.produtos = new ArrayList<Produto>();
@@ -450,8 +460,12 @@ public class OrdemServicoController implements Serializable {
 				}
 			}
 		}else{
-			servicoOrdemServicoService.remove(servicoOrdemServico.getId());
-			this.listaServicos = ordemServicoService.procurarServicosOS(ordemServico.getId());
+			
+			this.listaServicos = servicoOrdemServicoService.removerServicoOSPeloID(listaServicos, servicoOrdemServico);	
+			
+			if(!servicoOrdemServicoService.verificarSeExisteIdNull(listaServicos)){
+				this.listaServicos = ordemServicoService.procurarServicosOS(ordemServico.getId());
+			}
 			
 			ordemServico.setTotalServico(ordemServico.getTotalServico().subtract(servicoOrdemServico.getSubTotal()));
 			ordemServico.setTotal(BigDecimal.ZERO);
@@ -646,6 +660,22 @@ public class OrdemServicoController implements Serializable {
 
 	public void setListaProdutosTemporário(List<ProdutoOrdemServico> listaProdutosTemporário) {
 		this.listaProdutosTemporário = listaProdutosTemporário;
+	}
+
+	public ProdutoOrdemServico getProdutoOrdemServico() {
+		return produtoOrdemServico == null ? new ProdutoOrdemServico() : this.produtoOrdemServico;
+	}
+
+	public void setProdutoOrdemServico(ProdutoOrdemServico produtoOrdemServico) {
+		this.produtoOrdemServico = produtoOrdemServico;
+	}
+
+	public Long getQuantidadeAdicionada() {
+		return quantidadeAdicionada;
+	}
+
+	public void setQuantidadeAdicionada(Long quantidadeAdicionada) {
+		this.quantidadeAdicionada = quantidadeAdicionada;
 	}
 
 }

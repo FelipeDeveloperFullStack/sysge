@@ -23,7 +23,7 @@ public class ProdutoOrdemServico extends GenericDomain{
 	@OneToOne(fetch  =FetchType.EAGER)
 	private OrdemServico ordemServico;
 	
-	private Long quantidade = 1L;
+	private Long quantidade = 0L;
 	
 	private BigDecimal valor = BigDecimal.ZERO;
 	
