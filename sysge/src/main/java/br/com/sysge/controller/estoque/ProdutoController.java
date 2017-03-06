@@ -52,6 +52,18 @@ public class ProdutoController implements Serializable{
 		this.produto = new Produto();
 		this.produtos = new ArrayList<Produto>();
 		this.fornecedores = new ArrayList<Cliente>();
+		
+		verificarSeExisteFornecedorAtivoCadastrado();
+	}
+	
+	private void verificarSeExisteFornecedorAtivoCadastrado(){
+		if(produtoService.verificarSeExisteFornecedorAtivo()){
+			FacesUtil.mensagemWarn("Não existe nenhum fornecedor 'Ativo' cadastrado, "
+									+ " para cadastrar um produto é preciso selecionar um fornecedor"
+									+ " 'ativo', verifique e tente novamente!");
+		}else{
+			RequestContextUtil.execute("PF('dialogNovoServico').show();");
+		}
 	}
 	
 	public void salvar(){
@@ -65,13 +77,17 @@ public class ProdutoController implements Serializable{
 		}
 	}
 	
+	
+	
 	public void fecharDialogs(){
 		RequestContextUtil.execute("PF('dialogNovoServico').hide();");
 		RequestContextUtil.execute("PF('dialogEditarServico').hide();");
 	}
 	
 	public void novaListaProduto(){
-		novo();
+		this.produto = new Produto();
+		this.produtos = new ArrayList<Produto>();
+		this.fornecedores = new ArrayList<Cliente>();
 	}
 	
 	public void setarProduto(Produto produto){

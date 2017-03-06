@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title></title>
+	<h:outputStylesheet library="css" name="template.css" />
+	<h:outputStylesheet library="css" name="allstyle.css" />
+</h:head>
+<h:body>
+
+	<p:growl id="msgGlobal" life="5000" />
+
+	<p:dialog id="dialogLogin" showEffect="clip" appendTo="@(body)"
+		modal="true" visible="true" closable="false" resizable="false"
+		draggable="false" header="Cadastros iniciais" position="top">
+		<h:form id="formDialog">
+
+			<h:panelGrid columns="1">
+				<p:outputLabel
+					value="Olá! Esse processo é realizado apenas uma vez, pois ainda não existe nenhum usuário"
+					styleClass="texto_negrito" />
+				<p:outputLabel value="cadastro no sistema."
+					styleClass="texto_negrito" />
+				<p:outputLabel
+					value="OBS: Para a sua segurança informe uma senha contendo números, letras e caractéres."
+					styleClass="texto_negrito" />
+			</h:panelGrid>
+
+			<p:wizard nextLabel="Próximo" backLabel="Voltar">
+				<p:tab title="Funcionário">
+					<p:panel header="Dados cadastrais">
+						<p:messages autoUpdate="true" closable="true" />
+
+						<p:tabView cache="false"
+							activeIndex="#{funcionarioController.currentTab}">
+							<p:tab title="Dados Gerais" id="tab0">
+								<h:panelGrid columns="2">
+
+									<h:panelGrid columns="1">
+										<p:outputLabel value="Nome do funcionário" />
+										<p:inputText value="#{loginController.funcionario.nome}"
+											style="width: 350px;" 
+											required="true"
+											requiredMessage="O nome do funcionário é obrigatório!"/>
+									</h:panelGrid>
+
+									<h:panelGrid columns="1">
+										<p:outputLabel value="Data de nascimento" />
+										<p:calendar pattern="dd/MM/yyyy" mask="true"
+											value="#{loginController.funcionario.dataNascimento}" 
+											required="true"
+											requiredMessage="A data de nascimento é obrigatório!"/>
+									</h:panelGrid>
+
+								</h:panelGrid>
+								<h:panelGrid columns="2">
+
+									<h:panelGrid columns="1">
+										<p:outputLabel value="E-mail" />
+										<p:inputText value="#{loginController.funcionario.email}"
+											style="width: 270px;" 
+											required="true"
+											requiredMessage="O e-mail é obrigatório!"/>
+									</h:panelGrid>
+
+									<h:panelGrid columns="1">
+										<p:outputLabel value="Cargo" />
+										<p:inputText value="#{loginController.funcionario.funcao}"
+											style="width: 250px;" 
+											required="true"
+											requiredMessage="O cargo do funcionário é obrigatório!"/>
+									</h:panelGrid>
+
+								</h:panelGrid>
+								<h:panelGrid columns="3">
+
+									<h:panelGrid columns="1">
+										<p:outputLabel value="Telefone fixo" />
+										<p:inputMask mask="(99) 9999-9999"
+											value="#{loginController.funcionario.telefoneFixo}" 
+											/>
+									</h:panelGrid>
+
+									<h:panelGrid columns="1">
+										<p:outputLabel value="Telefone celular" />
+										<p:inputMask mask="(99) 99999-9999"
+											value="#{loginController.funcionario.telefoneCelular}" 
+											required="true"
+											requiredMessage="O número do celular é obrigatório!"/>
+									</h:panelGrid>
+
+									<h:panelGrid columns="1">
+										<p:outputLabel value="Sexo" />
+										<p:selectOneMenu value="#{loginController.funcionario.sexo}"
+											converter="omnifaces.SelectItemsConverter" required="true" requiredMessage="O sexo do funcionário é obrigatório!">
+											<f:selectItems var="s" value="#{loginController.sexos}"
+												itemLabel="#{s.sexo}" itemValue="#{s}" />
+										</p:selectOneMenu>
+									</h:panelGrid>
+
+								</h:panelGrid>
+							</p:tab>
+							<p:tab title="Endereço" id="tabEndereco">
+								<h:panelGrid columns="2">
+
+									<h:panelGrid columns="1">
+										<p:outputLabel value="Cep" />
+										<p:inputMask mask="99999-999"
+											value="#{loginController.funcionario.cep}" />
+									</h:panelGrid>
+
+									<h:panelGrid columns="1">
+										<h:outputLabel value="." style="color: white;" />
+										<p:commandButton id="button1" icon="ui-icon-circle-zoomout"
+											actionListener="#{loginController.procurarCep}"
+											update=":msgGlobal panelEndereco1 panelEndereco2" />
+										<p:tooltip for="button1"
+											value="Cliquei para consultar o CEP automaticamente nos correios!"
+											position="top" />
+									</h:panelGrid>
+
+								</h:panelGrid>
+								<h:panelGrid columns="2" id="panelEndereco1">
+
+									<h:panelGrid columns="1">
+										<p:outputLabel value="Endereço" />
+										<p:inputText value="#{loginController.funcionario.endereco}"
+											style="width: 270px;" />
+									</h:panelGrid>
+
+									<h:panelGrid columns="1">
+										<p:outputLabel value="Bairro" />
+										<p:inputText value="#{loginController.funcionario.bairro}"
+											style="width: 250px;" />
+									</h:panelGrid>
+
+								</h:panelGrid>
+								<h:panelGrid columns="3" id="panelEndereco2">
+
+									<h:panelGrid columns="1">
+										<p:outputLabel value="Cidade" />
+										<p:inputText value="#{loginController.funcionario.cidade}"
+											style="width: 270px;" />
+									</h:panelGrid>
+
+									<h:panelGrid columns="1">
+										<p:outputLabel value="UF" />
+										<p:selectOneMenu value="#{loginController.funcionario.uf}"
+											filter="true" filterMatchMode="startsWith"
+											converter="omnifaces.SelectItemsConverter">
+											<f:selectItems var="uf"
+												value="#{loginController.unidadesFederativa}"
+												itemLabel="#{uf.unidadeFederativa}" itemValue="#{uf}" />
+										</p:selectOneMenu>
+									</h:panelGrid>
+
+									<h:panelGrid columns="1">
+										<p:outputLabel value="Código IBGE" />
+										<p:inputText value="#{loginController.funcionario.codigoIBGE}"
+											style="width: 100px;" />
+									</h:panelGrid>
+
+								</h:panelGrid>
+
+								<p:blockUI block="tabEndereco" trigger="button1">
+								        Carregando! Aguarde...<br />
+									<p:graphicImage library="img" name="loading.gif" />
+								</p:blockUI>
+
+							</p:tab>
+						</p:tabView>
+					</p:panel>
+				</p:tab>
+
+				<p:tab title="Usuário">
+					<p:panel header="Dados cadastrais">
+						<p:messages />
+						<p:tabView id="tabViewNovoUsuario">
+							<p:tab title="Dados Gerais" id="tabNovoUsuario">
+
+								<h:panelGrid columns="2">
+
+									<h:panelGrid columns="1">
+										<p:outputLabel value="Nome de usuário" />
+										<p:inputText value="#{loginController.usuario.nomeUsuario}" 
+													 required="true"
+													 requiredMessage="O nome de usuário é obrigatório!"/>
+									</h:panelGrid>
+
+									<h:panelGrid columns="1">
+										<p:outputLabel value="Senha de acesso" />
+										<p:password value="#{loginController.usuario.senhaUsuario}" 
+													required="true"
+													requiredMessage="A senha de acesso é obrigatório!"/>
+									</h:panelGrid>
+
+								</h:panelGrid>
+
+							</p:tab>
+						</p:tabView>
+					</p:panel>
+				</p:tab>
+
+				<p:tab id="confirm" title="Confirmação">
+					<p:panel header="Confirmação">
+						<p:commandButton value="Salvar e Entrar no sistema"
+							action="#{loginController.salvarDadosIniciais}"
+							update=":msgGlobal" icon="ui-icon-check"/>	
+					</p:panel>
+				</p:tab>
+			</p:wizard>
+		</h:form>
+	</p:dialog>
+</h:body>
+</html>

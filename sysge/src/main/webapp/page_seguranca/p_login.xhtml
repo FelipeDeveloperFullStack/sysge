@@ -13,9 +13,11 @@
 <h:body>
 
 	<p:growl id="msgGlobal" life="5000" />
+	
+	<f:event listener="#{loginController.verificarSeExisteUsuarioCadastrado}" type="preRenderView"/>
 
 	<p:dialog id="dialogLogin" showEffect="clip" appendTo="@(body)"
-		modal="true" visible="false" closable="false" resizable="false"
+		modal="true" visible="true" closable="false" resizable="false"
 		draggable="false" header="Sistema de gerenciamento de O.S - Login">
 		<h:form id="formDialog">
 			<p:panelGrid id="panel1" columns="2">
@@ -45,45 +47,21 @@
 		</h:form>
 	</p:dialog>
 
-	<p:dialog id="dialogCadastroInicial" showEffect="clip"
-		appendTo="@(body)" modal="true" visible="true" closable="false"
-		resizable="false" draggable="false" header="Cadastro inicial">
-
-		<h:form>
-
-			<p:wizard>
-				<p:tab id="personal" title="Funcionário">
-					<p:panel header="Dados Cadastrais">
-						<p:messages />
-						<h:panelGrid columns="2">
-							<h:panelGrid columns="1">
-								
-							</h:panelGrid>
-						</h:panelGrid>
-					</p:panel>
-				</p:tab>
-
-				<p:tab id="address" title="Address">
-					<p:panel header="Address Details">
-						<p:messages />
-					</p:panel>
-				</p:tab>
-
-				<p:tab id="contact" title="Contact">
-					<p:panel header="Contact Information">
-						<p:messages />
-					</p:panel>
-				</p:tab>
-
-				<p:tab id="confirm" title="Confirmação">
-					<p:panel header="Confirmação">
-						<p:commandButton value="Submit"
-							process="@this" />
-					</p:panel>
-				</p:tab>
-			</p:wizard>
-		</h:form>
-
-	</p:dialog>
+	<p:dialog appendTo="@(body)" modal="true" 
+			  closable="false" resizable="false" draggable="false" 
+			  header="Atenção" widgetVar="dialog_info">
+			  
+			  <h:form>
+				  <h:panelGrid columns="1">
+				  		<p:outputLabel value="Não existe nenhum usuário cadastrado no sistema!"/>
+				  </h:panelGrid>
+				  
+				  <h:panelGrid>
+				  		<p:commandButton value="Cadastrar usuário inicial" icon="ui-icon-plusthick" 
+				  						 action="#{loginController.redirecionarParaTelaCadastroInicialUsuario}"/>
+				  </h:panelGrid>
+			  </h:form>
+		
+		</p:dialog>
 </h:body>
 </html>

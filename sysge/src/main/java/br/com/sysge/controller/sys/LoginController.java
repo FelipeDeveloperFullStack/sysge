@@ -3,8 +3,11 @@ package br.com.sysge.controller.sys;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
@@ -13,6 +16,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpSession;
 
+import org.primefaces.model.DualListModel;
 import org.primefaces.model.menu.DefaultMenuItem;
 import org.primefaces.model.menu.DefaultMenuModel;
 import org.primefaces.model.menu.DefaultSubMenu;
@@ -20,13 +24,21 @@ import org.primefaces.model.menu.MenuModel;
 
 import br.com.sysge.model.conf.PerfilAcesso;
 import br.com.sysge.model.conf.Usuario;
+import br.com.sysge.model.rh.Funcionario;
 import br.com.sysge.model.sys.PanelMenu;
 import br.com.sysge.model.type.MenuSistema;
+import br.com.sysge.model.type.Sexo;
 import br.com.sysge.model.type.Situacao;
+import br.com.sysge.model.type.TipoAcesso;
+import br.com.sysge.model.type.UnidadeFederativa;
+import br.com.sysge.service.conf.PerfilAcessoService;
 import br.com.sysge.service.conf.UsuarioService;
+import br.com.sysge.service.rh.FuncionarioService;
 import br.com.sysge.service.sys.PanelMenuService;
+import br.com.sysge.service.sys.WebServiceCEPService;
 import br.com.sysge.util.DateUtil;
 import br.com.sysge.util.FacesUtil;
+import br.com.sysge.util.RequestContextUtil;
 
 @Named
 @SessionScoped
@@ -35,6 +47,13 @@ public class LoginController implements Serializable {
 	private static final long serialVersionUID = -6030501658030781045L;
 
 	private Usuario usuario;
+	
+	private Funcionario funcionario;
+	
+	private PerfilAcesso perfilAcesso;
+	
+	private Usuario usuarioInicial;
+	
 	private MenuModel menuModel;
 	private LocalDateTime dataUltimoAcesso = null;
 
@@ -63,18 +82,27 @@ public class LoginController implements Serializable {
 	private DefaultMenuItem menuItemBackup;
 	private DefaultMenuItem menuItemFormaPagamento;
 	private DefaultMenuItem menuItemProduto;
+	
+	private DualListModel<PanelMenu> menus;
 
 	@Inject
 	private PanelMenuService panelMenuService;
 
 	@Inject
 	private UsuarioService usuarioService;
-
+	
+	@Inject
+	private PerfilAcessoService perfilAcessoService;
+	
+	@Inject
+	private FuncionarioService funcionarioService;
+	
 	// Faces redirect
 	private static final String FACES_REDIRECT = "?faces-redirect=true";
 
 	// Login
 	private static final String PAGE_LOGIN = "/page_seguranca/p_login.xhtml";
+	private static final String PAGE_CADASTRO_INICIAL = "/page_seguranca/p_cadastro_inicial.xhtml";
 
 	// Sistema
 	private static final String PAGE_DASHBOARD = "/pages/sys/p_dashboard.xhtml" + FACES_REDIRECT;
@@ -107,6 +135,8 @@ public class LoginController implements Serializable {
 	@PostConstruct
 	public void init() {
 		this.usuario = new Usuario();
+		this.funcionario = new Funcionario();
+		this.perfilAcesso = new PerfilAcesso();
 	}
 
 	private void setarNullMenus() {
@@ -160,12 +190,7 @@ public class LoginController implements Serializable {
 		for (Usuario u : usuarios) {
 			if (u.getNomeUsuario().equalsIgnoreCase(usuario.getNomeUsuario())
 					&& u.getSenhaUsuario().equalsIgnoreCase(usuario.getSenhaUsuario())) {
-				if (u.getUltimoAcesso() == null) {
-					ZoneId fusoHorarioSaoPaulo = ZoneId.of("America/Sao_Paulo");
-					dataUltimoAcesso = LocalDateTime.now(fusoHorarioSaoPaulo);
-					u.setUltimoAcesso(DateUtil.asDate(dataUltimoAcesso));
-					usuarioService.salvar(u);
-				}
+				setarDataUltimoAcessoInicialUsuario(u);
 				usuario = u;
 				setarNullMenus();
 				createPanelMenu(usuario.getPerfilAcesso());
@@ -176,6 +201,15 @@ public class LoginController implements Serializable {
 		FacesUtil.mensagemWarn(
 				"Nenhum usuário " + usuario.getNomeUsuario() + " encontrado,verifique e tente novamente! ");
 		return PAGE_LOGIN;
+	}
+	
+	private void setarDataUltimoAcessoInicialUsuario(Usuario u){
+		if (u.getUltimoAcesso() == null) {
+			ZoneId fusoHorarioSaoPaulo = ZoneId.of("America/Sao_Paulo");
+			dataUltimoAcesso = LocalDateTime.now(fusoHorarioSaoPaulo);
+			u.setUltimoAcesso(DateUtil.asDate(dataUltimoAcesso));
+			usuarioService.salvar(u);
+		}
 	}
 
 	private void iniciarSessaoUsuario(Usuario usuario) {
@@ -381,6 +415,17 @@ public class LoginController implements Serializable {
 		}
 		
 	}
+	
+	public void verificarSeExisteUsuarioCadastrado(){
+		List<Usuario> usuarios = usuarioService.findAll();
+		if (usuarios.isEmpty()) {
+			RequestContextUtil.execute("PF('dialog_info').show();");
+		}
+	}
+	
+	public String redirecionarParaTelaCadastroInicialUsuario(){
+		return PAGE_CADASTRO_INICIAL + FACES_REDIRECT;
+	}
 
 	public Usuario getUsuario() {
 		if (usuario == null) {
@@ -397,4 +442,99 @@ public class LoginController implements Serializable {
 		return menuModel;
 	}
 
+	
+	public Funcionario getFuncionario() {
+		return funcionario == null ? new Funcionario() : this.funcionario;
+	}
+
+	public void setFuncionario(Funcionario funcionario) {
+		this.funcionario = funcionario;
+	}
+
+	public PerfilAcesso getPerfilAcesso() {
+		return perfilAcesso == null ? new PerfilAcesso() : this.perfilAcesso;
+	}
+
+	public void setPerfilAcesso(PerfilAcesso perfilAcesso) {
+		this.perfilAcesso = perfilAcesso;
+	}
+
+	public Usuario getUsuarioInicial() {
+		return usuarioInicial == null ? new Usuario() : this.usuario;
+	}
+
+	public void setUsuarioInicial(Usuario usuarioInicial) {
+		this.usuarioInicial = usuarioInicial;
+	}
+	
+	public UnidadeFederativa[] getUnidadesFederativa(){
+		return UnidadeFederativa.values();
+	}
+	
+	public Sexo[] getSexos(){
+		return Sexo.values();
+	}
+	
+	public Situacao[] getSituacoes(){
+		return Situacao.values();
+	}
+	
+	public void procurarCep(){
+		try {
+			Map<Object, Object> mapCep = new HashMap<Object, Object>();
+			mapCep.putAll(WebServiceCEPService.procurarCEP(funcionario.getCep()));
+			this.funcionario.setEndereco(mapCep.get(5).toString() + " " + mapCep.get(1).toString());
+			this.funcionario.setCidade(mapCep.get(2).toString());
+			this.funcionario.setUf(UnidadeFederativa.valueOf(mapCep.get(3).toString()));
+			this.funcionario.setBairro(mapCep.get(4).toString());
+		} catch (Exception e) {
+			FacesUtil.mensagemErro(e.getMessage());
+		}
+	}
+	
+	public List<PerfilAcesso> getPerfisAcesso() {
+		return perfilAcessoService.findByParametersForSituation
+				(TipoAcesso.ACESSO_TOTAL, Situacao.ATIVO, "tipoAcesso", "=", "", "");
+	}
+	
+	public String salvarDadosIniciais(){
+		try {
+			funcionarioService.verificarSeExisteFuncionarioCadastradoComMesmaDescricao(funcionario);
+			
+			funcionario = funcionarioService.salvar(funcionario);
+			
+			perfilAcesso.setAdmin("ADMIN");
+			perfilAcesso.setPerfilAcesso("Administrador");
+			perfilAcesso.setTipoAcesso(TipoAcesso.ACESSO_TOTAL);
+			perfilAcesso = perfilAcessoService.salvar(perfilAcesso);
+			
+			menus = new DualListModel<PanelMenu>(new ArrayList<PanelMenu>(), panelMenuService.setarMenuPerfilAcesso(new ArrayList<PanelMenu>()));
+			
+			panelMenuService.salvarNovoMenuTarget(menus, perfilAcesso);
+			
+			usuario.setFuncionario(funcionario);
+			usuario.setPerfilAcesso(perfilAcesso);
+			usuario = usuarioService.salvar(usuario);
+			
+			setarNullMenus();
+			createPanelMenu(usuario.getPerfilAcesso());
+			
+			return logarSistema(usuario);
+		} catch (RuntimeException e) {
+			FacesUtil.mensagemErro(e.getMessage());
+		}
+		return null;
+	}
+	
+	public List<Funcionario> getFuncionarios(){
+		return funcionarioService.findBySituation(Situacao.ATIVO);
+	}
+	
+	public String logarSistema(Usuario usuario){
+		setarDataUltimoAcessoInicialUsuario(usuario);
+		iniciarSessaoUsuario(usuario);
+		return PAGE_DASHBOARD + FACES_REDIRECT;
+	}
+
+	
 }

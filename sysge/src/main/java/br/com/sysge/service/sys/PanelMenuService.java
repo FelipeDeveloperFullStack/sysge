@@ -143,7 +143,7 @@ public class PanelMenuService extends GenericDaoImpl<PanelMenu, Long>{
 		}
 	}
 	
-	private void salvarNovoMenuTarget(DualListModel<PanelMenu> menus, PerfilAcesso perfilAcesso){
+	public void salvarNovoMenuTarget(DualListModel<PanelMenu> menus, PerfilAcesso perfilAcesso){
 		for(PanelMenu menu : menus.getTarget()){
 			PanelMenu pm = new PanelMenu();
 			pm.setMenu(menu.getMenu());
@@ -175,7 +175,7 @@ public class PanelMenuService extends GenericDaoImpl<PanelMenu, Long>{
 		 return menus;
 	}*/
 	
-	private List<PanelMenu> setarMenuPerfilAcesso(List<PanelMenu> menus){
+	public List<PanelMenu> setarMenuPerfilAcesso(List<PanelMenu> menus){
 		for(MenuPerfilAcesso m : MenuPerfilAcesso.values()){
 			PanelMenu menu = new PanelMenu();
 			menu.setMenu(m.getMenu());

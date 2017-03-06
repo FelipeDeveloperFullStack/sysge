@@ -43,8 +43,10 @@ public class UsuarioController implements Serializable{
 	
 	@Inject
 	private UsuarioService usuarioService;
+	
 	@Inject
 	private FuncionarioService funcionarioService;
+	
 	@Inject
 	private PerfilAcessoService perfilAcessoService;
 	

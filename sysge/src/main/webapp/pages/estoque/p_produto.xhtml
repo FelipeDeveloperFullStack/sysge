@@ -85,7 +85,6 @@
 						<p:commandButton value="Novo produto"
 							actionListener="#{produtoController.novo}"
 							icon="ui-icon-circle-plus"
-							oncomplete="PF('dialogNovoServico').show();"
 							update=":msgGlobal :formNovoServico" />
 					</f:facet>
 
@@ -259,7 +258,8 @@
 					<h:panelGrid columns="2">
 						<p:commandButton id="btnSalvarNovoServico" value="Salvar"
 							icon="ui-icon-check" actionListener="#{produtoController.salvar}"
-							update=":msgGlobal :formGeralServico:tableServico" />
+							update=":msgGlobal :formGeralServico:tableServico" 
+							/>
 						<p:commandButton value="Cancelar" icon="ui-icon-close"
 							oncomplete="PF('dialogNovoServico').hide();"
 							actionListener="#{produtoController.novaListaProduto}"
