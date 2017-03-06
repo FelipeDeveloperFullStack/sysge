@@ -974,11 +974,13 @@
 				<h:panelGrid columns="2">
 					<p:commandButton value="Salvar"
 						actionListener="#{ordemServicoController.salvarMotivoCancelamento}"
-						update=":msgGlobal" />
+						update=":msgGlobal" 
+						icon="ui-icon-check"/>
 					<p:commandButton value="Cancelar"
 						oncomplete="PF('dialog_motivo_cancelamento').hide();"
 						update=":formGeralServico"
-						actionListener="#{ordemServicoController.fecharDialogMotivoCancelamento}" />
+						actionListener="#{ordemServicoController.fecharDialogMotivoCancelamento}" 
+						icon="ui-icon-closethick"/>
 				</h:panelGrid>
 			</h:form>
 		</p:dialog>
@@ -995,6 +997,7 @@
 					<!-- <p:commandButton value="Enviar por email"
 						icon="ui-icon-mail-closed"
 						oncomplete="PF('dialog_envio_email').show();" /> -->
+					<p:commandButton value="Cancelar" oncomplete="PF('dialog_opcoes').hide();" icon="ui-icon-closethick"/>	
 				</p:fieldset>
 			</h:form>
 		</p:dialog>
