@@ -305,7 +305,7 @@ public class OrdemServicoController implements Serializable {
 				
 			}
 			RequestContextUtil.execute("PF('dialog_quantidade_estoque_produto').hide();");
-			quantidadeAdicionada = 0L;
+			//quantidadeAdicionada = 0L;
 		}
 		
 	}
@@ -396,15 +396,16 @@ public class OrdemServicoController implements Serializable {
 		}
 		
 		FacesUtil.mensagemInfo("Ordem de servico de nº "+ordemServico.getId() + " salvo com sucesso!");
+		this.quantidadeAdicionada = 0L;
 	}
 	
 	private void subtrairQuantidadeEstoqueProduto(ProdutoOrdemServico pos, ProdutoOrdemServico ps){
 		if(pos.getQuantidade() > ps.getQuantidade()){
-			pos.getProduto().setQuantidadeEstoque(pos.getProduto().getQuantidadeEstoque() - pos.getQuantidade());
+			pos.getProduto().setQuantidadeEstoque(pos.getProduto().getQuantidadeEstoque() - this.quantidadeAdicionada);
 			produtoService.salvar(pos.getProduto());
 		}else{
 			pos.setQuantidade(pos.getQuantidade() - 1);
-			pos.getProduto().setQuantidadeEstoque(pos.getProduto().getQuantidadeEstoque() - pos.getQuantidade());
+			pos.getProduto().setQuantidadeEstoque(pos.getProduto().getQuantidadeEstoque() - this.quantidadeAdicionada);
 			produtoService.salvar(pos.getProduto());
 		}
 	}
