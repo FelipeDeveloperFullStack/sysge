@@ -443,13 +443,6 @@ public class OrdemServicoController implements Serializable {
 	 * @param servicoOrdemServico
 	 */
 	public void removerServico(ServicoOrdemServico servicoOrdemServico){
-		/*servicoOrdemServicoService.removeByObject(servicoOrdemServicoService.save(servicoOrdemServico));
-		ordemServico.setTotalServico(ordemServico.getTotalServico().subtract(servicoOrdemServico.getSubTotal()));
-		ordemServico.setTotal(BigDecimal.ZERO);
-		ordemServico.setTotal(ordemServico.getTotalServico().add(ordemServico.getTotalProduto()));
-		this.listaServicos = ordemServicoService.procurarServicosOS(ordemServico.getId());
-		ordemServicoService.salvar(ordemServico);*/
-		
 		if(servicoOrdemServico.getId() == null){
 			for(int i = 0; i < this.listaServicos.size(); i++){
 				if(this.listaServicos.get(i).getServico().getNome().equals(servicoOrdemServico.getServico().getNome())){
@@ -475,16 +468,6 @@ public class OrdemServicoController implements Serializable {
 	}
 	
 	public void removerProduto(ProdutoOrdemServico produtoOrdemServico){
-		/*produtoOrdemServicoService.removeByObject(produtoOrdemServicoService.save(produtoOrdemServico));
-		
-		produtoOrdemServico.getProduto().setQuantidadeEstoque(produtoOrdemServico.getProduto().getQuantidadeEstoque() + produtoOrdemServico.getQuantidade());
-		produtoService.salvar(produtoOrdemServico.getProduto());
-		
-		ordemServico.setTotalProduto(ordemServico.getTotalProduto().subtract(produtoOrdemServico.getSubTotal()));
-		ordemServico.setTotal(BigDecimal.ZERO);
-		ordemServico.setTotal(ordemServico.getTotalProduto().add(ordemServico.getTotalServico()));
-		this.listaProdutos = ordemServicoService.procurarProdutosOS(ordemServico.getId());
-		ordemServicoService.salvar(ordemServico);*/
 		
 		if(produtoOrdemServico.getId() == null){
 			for(int i = 0; i < listaProdutos.size(); i++){
@@ -496,8 +479,13 @@ public class OrdemServicoController implements Serializable {
 				}
 			}
 		}else{
-			produtoOrdemServicoService.remove(produtoOrdemServico.getId());
-			this.listaProdutos = ordemServicoService.procurarProdutosOS(ordemServico.getId());
+			
+			for(int i = 0; i < listaProdutos.size(); i++){
+				if(this.listaProdutos.get(i).getProduto().getDescricaoProduto().trim().equals(produtoOrdemServico.getProduto().getDescricaoProduto().trim())){
+					produtoOrdemServicoService.remove(produtoOrdemServico.getId());
+					this.listaProdutos.remove(i);
+				}
+			}	
 			
 			produtoOrdemServico.getProduto().setQuantidadeEstoque(produtoOrdemServico.getProduto().getQuantidadeEstoque() + produtoOrdemServico.getQuantidade());
 			produtoService.salvar(produtoOrdemServico.getProduto());

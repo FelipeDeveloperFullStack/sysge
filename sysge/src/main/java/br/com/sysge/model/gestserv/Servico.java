@@ -20,17 +20,16 @@ public class Servico extends GenericDomain {
 
 	@Column(name = "serv_nome")
 	private String nome;
-
+	
 	@Column(name = "serv_valor")
 	@DecimalMin(value = "0", message = "O valor mínimo é zero!")
 	private BigDecimal valor;
+	
+	private String descricao;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "serv_situacao")
 	private Situacao situacao;
-
-	/*@OneToMany(mappedBy = "servico", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	private List<ServicoOrdemServico> ordemServicos;*/
 
 	public String getNome() {
 		return nome;
@@ -55,5 +54,15 @@ public class Servico extends GenericDomain {
 	public void setSituacao(Situacao situacao) {
 		this.situacao = situacao;
 	}
+
+	public String getDescricao() {
+		return descricao;
+	}
+
+	public void setDescricao(String descricao) {
+		this.descricao = descricao;
+	}
+	
+	
 
 }

@@ -18,77 +18,77 @@
 
 	<h:form id="formGeralServico">
 
-			<h:panelGrid columns="6" id="panelPesquisa">
-				<p:inputText id="txtServicoPesquisa" style="width: 300px;"
-					value="#{servicoController.servico.nome}" />
-				<p:selectOneMenu value="#{servicoController.servico.situacao}">
-					<f:selectItems var="s" value="#{servicoController.situacoes}"
-						itemLabel="#{s.situacao}" itemValue="#{s}" />
-				</p:selectOneMenu>
-				<p:commandButton id="btnPesquisarServico" value="Pesquisar" icon="ui-icon-search"
-					update="formGeralServico" actionListener="#{servicoController.pesquisar}"/>
-				<p:tooltip
-					value="Digite o nome do serviço ou informe * para pesquisar todos!"
-					for="txtServicoPesquisa" position="bottom" />
-				<p:focus context="panelPesquisa" />
-				<p:blockUI block="tableServico" trigger="btnPesquisarServico">
+		<h:panelGrid columns="6" id="panelPesquisa">
+			<p:inputText id="txtServicoPesquisa" style="width: 300px;"
+				value="#{servicoController.servico.nome}" />
+			<p:selectOneMenu value="#{servicoController.servico.situacao}">
+				<f:selectItems var="s" value="#{servicoController.situacoes}"
+					itemLabel="#{s.situacao}" itemValue="#{s}" />
+			</p:selectOneMenu>
+			<p:commandButton id="btnPesquisarServico" value="Pesquisar"
+				icon="ui-icon-search" update="formGeralServico"
+				actionListener="#{servicoController.pesquisar}" />
+			<p:tooltip
+				value="Digite o nome do serviço ou informe * para pesquisar todos!"
+				for="txtServicoPesquisa" position="bottom" />
+			<p:focus context="panelPesquisa" />
+			<p:blockUI block="tableServico" trigger="btnPesquisarServico">
 						        Carregando! Aguarde...<br />
-							<p:graphicImage library="img" name="loading.gif" />
-					</p:blockUI>
-			</h:panelGrid>
+				<p:graphicImage library="img" name="loading.gif" />
+			</p:blockUI>
+		</h:panelGrid>
 
-			<p:dataTable id="tableServico" var="s" paginator="true"
-				paginatorPosition="bottom" value="#{servicoController.servicos}"
-				emptyMessage="Nenhum registro encontrado!" rows="8"
-				paginatorTemplate="{CurrentPageReport} {FirstPageLink} 
+		<p:dataTable id="tableServico" var="s" paginator="true"
+			paginatorPosition="bottom" value="#{servicoController.servicos}"
+			emptyMessage="Nenhum registro encontrado!" rows="8"
+			paginatorTemplate="{CurrentPageReport} {FirstPageLink} 
 					{PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
 
-				<p:column headerText="ID" width="30" style="text-align:center;">
-					<p:outputLabel value="#{s.id}" />
-				</p:column>
+			<p:column headerText="ID" width="30" style="text-align:center;">
+				<p:outputLabel value="#{s.id}" />
+			</p:column>
 
-				<p:column headerText="Nome do serviço">
-					<p:outputLabel value="#{s.nome}" />
-				</p:column>
+			<p:column headerText="Nome do serviço">
+				<p:outputLabel value="#{s.nome}" />
+			</p:column>
 
-				<p:column headerText="Valor" width="75" style="text-align:center;">
-					<p:outputLabel value="#{s.valor}" style="color: blue;">
-						<f:convertNumber pattern="###,###0.00" locale="pt_BR" />
-					</p:outputLabel>
-				</p:column>
+			<p:column headerText="Valor" width="75" style="text-align:center;">
+				<p:outputLabel value="#{s.valor}" style="color: blue;">
+					<f:convertNumber pattern="###,###0.00" locale="pt_BR" />
+				</p:outputLabel>
+			</p:column>
 
-				<p:column headerText="Situação" width="50" style="text-align:center;">
-					<p:outputLabel value="#{s.situacao.situacao}" />
-				</p:column>
-				
-				<p:column width="40">
-					<p:commandButton id="btnSelecao" icon="ui-icon-circle-check"
-						actionListener="#{ordemServicoController.fecharDialogServico(s)}"
-						update="@none" process="@this" />
-					<p:tooltip for="btnSelecao"
-						value="Cliquei aqui para selecionar o serviço!"
-						position="left" />
-				</p:column>
+			<p:column headerText="Situação" width="50" style="text-align:center;">
+				<p:outputLabel value="#{s.situacao.situacao}" />
+			</p:column>
 
-				<p:column width="40">
-					<p:commandButton id="btnEditar" icon="ui-icon-pencil"
-						oncomplete="PF('dialogEditarServico').show()"
-						actionListener="#{servicoController.setarServico(s)}"
-						update=":msgGlobal :formEditarServico">
-					</p:commandButton>
-					<p:tooltip value="Cliquei aqui para editar!" for="btnEditar"
-						position="left" />
-				</p:column>
+			<p:column width="40">
+				<p:commandButton id="btnSelecao" icon="ui-icon-circle-check"
+					actionListener="#{ordemServicoController.fecharDialogServico(s)}"
+					update="@none" process="@this" />
+				<p:tooltip for="btnSelecao"
+					value="Cliquei aqui para selecionar o serviço!" position="left" />
+			</p:column>
 
-				<f:facet name="footer">
-					<p:commandButton value="Novo serviço"
-						actionListener="#{servicoController.novo}"
-						icon="ui-icon-circle-plus"
-						oncomplete="PF('dialogNovoServico').show();"
-						update=":msgGlobal :formNovoServico" />
-				</f:facet>
+			<p:column width="40">
+				<p:commandButton id="btnEditar" icon="ui-icon-pencil"
+					oncomplete="PF('dialogEditarServico').show()"
+					actionListener="#{servicoController.setarServico(s)}"
+					update=":msgGlobal :formEditarServico">
+				</p:commandButton>
+				<p:tooltip value="Cliquei aqui para editar!" for="btnEditar"
+					position="left" />
+			</p:column>
 
-			</p:dataTable>
+			<f:facet name="footer">
+				<p:commandButton value="Novo serviço"
+					actionListener="#{servicoController.novo}"
+					icon="ui-icon-circle-plus"
+					oncomplete="PF('dialogNovoServico').show();"
+					update=":msgGlobal :formNovoServico" />
+			</f:facet>
+
+		</p:dataTable>
 
 		<p:blockUI block="tableServico" trigger="tableServico">
 			        Carregando! Aguarde...<br />
@@ -139,7 +139,9 @@
 						update=":msgGlobal :formEditarServico :formGeralServico:tableServico" />
 					<p:commandButton id="btnEditarServicoCancelar" value="Cancelar"
 						icon="ui-icon-close"
-						oncomplete="PF('dialogEditarServico').hide();" />
+						oncomplete="PF('dialogEditarServico').hide();"
+						actionListener="#{servicoController.novaListaServicos}"
+						update=":formGeralServico:tableServico" />
 				</h:panelGrid>
 			</h:panelGrid>
 			<p:blockUI block="panelBotoesEditarServico"
