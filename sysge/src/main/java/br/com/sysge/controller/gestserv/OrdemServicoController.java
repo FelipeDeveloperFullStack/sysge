@@ -390,13 +390,11 @@ public class OrdemServicoController implements Serializable {
 			for(ServicoOrdemServico sos : listaServicos){
 				servicoOrdemServicoService.save(sos);
 			}
-			
 			/*ordemServicoService.consistirServico(listaServicos, ordemServico);
 			ordemServicoService.consistirProduto(listaProdutos, ordemServico);*/
 		}
 		
 		FacesUtil.mensagemInfo("Ordem de servico de nº "+ordemServico.getId() + " salvo com sucesso!");
-		this.quantidadeAdicionada = 0L;
 	}
 	
 	private void subtrairQuantidadeEstoqueProduto(ProdutoOrdemServico pos, ProdutoOrdemServico ps){
@@ -408,6 +406,7 @@ public class OrdemServicoController implements Serializable {
 			pos.getProduto().setQuantidadeEstoque(pos.getProduto().getQuantidadeEstoque() - this.quantidadeAdicionada);
 			produtoService.salvar(pos.getProduto());
 		}
+		this.quantidadeAdicionada = 0L;
 	}
 	
 	public void salvarMotivoCancelamento(){
