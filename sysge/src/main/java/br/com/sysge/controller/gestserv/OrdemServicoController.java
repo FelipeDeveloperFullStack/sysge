@@ -306,7 +306,6 @@ public class OrdemServicoController implements Serializable {
 				
 			}
 			RequestContextUtil.execute("PF('dialog_quantidade_estoque_produto').hide();");
-			//quantidadeAdicionada = 0L;
 		}
 		
 	}
@@ -371,17 +370,14 @@ public class OrdemServicoController implements Serializable {
 			
 			for(ProdutoOrdemServico listProduto : listaProdutos){
 				List<ProdutoOrdemServico> prodBd = produtoOrdemServicoService.findByListProperty(listProduto.getProduto().getId(), "produto.id");
-				/*if(prodBd.isEmpty()){
-					salvarProduto(listProduto);
-				}*/
 				if(listaProdutoOS.isEmpty()){
-					salvarProduto(listProduto);
+					subtrairQuantidadeEstoqueProduto(listProduto);
 				}else{
-					for(ProdutoOrdemServico ps : listaProdutoOS){
-						if(ps.getProduto().getId() == listProduto.getProduto().getId()){
-							if(prodBd.isEmpty()){
-								subtrairQuantidadeEstoqueProduto(listProduto, ps);
-							}else{
+					if(prodBd.isEmpty()){
+						subtrairQuantidadeEstoqueProduto(listProduto);
+					}else{
+						for(ProdutoOrdemServico ps : listaProdutoOS){
+							if(ps.getProduto().getId() == listProduto.getProduto().getId()){
 								if(ps.getQuantidade() != listProduto.getQuantidade()){
 									subtrairQuantidadeEstoqueProduto(listProduto, ps);
 								}
@@ -394,21 +390,25 @@ public class OrdemServicoController implements Serializable {
 			for(ServicoOrdemServico sos : listaServicos){
 				servicoOrdemServicoService.save(sos);
 			}
-			/*ordemServicoService.consistirServico(listaServicos, ordemServico);
-			ordemServicoService.consistirProduto(listaProdutos, ordemServico);*/
 		}
 		
 		FacesUtil.mensagemInfo("Ordem de servico de nº "+ordemServico.getId() + " salvo com sucesso!");
 	}
 	
-	private void salvarProduto(ProdutoOrdemServico listProduto){
-		listProduto.getProduto().setQuantidadeEstoque(listProduto.getProduto().getQuantidadeEstoque() - listProduto.getQuantidade());
+	private void subtrairQuantidadeEstoqueProduto(ProdutoOrdemServico listProduto){
+		if(listProduto.getId() == null){
+			listProduto.getProduto().setQuantidadeEstoque
+						(listProduto.getProduto().getQuantidadeEstoque() - listProduto.getQuantidade());
+		}else{
+			listProduto.getProduto().setQuantidadeEstoque
+					    (listProduto.getProduto().getQuantidadeEstoque() - this.quantidadeAdicionada);
+		}
 		produtoService.salvar(listProduto.getProduto());
 	}
 	
 	private void subtrairQuantidadeEstoqueProduto(ProdutoOrdemServico listProduto, ProdutoOrdemServico ps){
 		if(listProduto.getQuantidade() > ps.getQuantidade()){
-			salvarProduto(listProduto);
+			subtrairQuantidadeEstoqueProduto(listProduto);
 		}
 		this.quantidadeAdicionada = 0L;
 	}
@@ -430,11 +430,6 @@ public class OrdemServicoController implements Serializable {
 		RequestContextUtil.execute("PF('dialogEditarOrdemDeServico').hide();");
 		ordensServicos = new ArrayList<OrdemServico>();
 		
-		/*for(ProdutoOrdemServico pos : listaProdutos){
-			pos.getProduto().setQuantidadeEstoque(pos.getProduto().getQuantidadeEstoque()- pos.getQuantidade());
-			produtoService.salvar(pos.getProduto());
-			produtoOrdemServicoService.save(pos);
-		}*/
 	}
 	
 	public void fecharDialogMotivoCancelamento(){
@@ -443,9 +438,6 @@ public class OrdemServicoController implements Serializable {
 		pesquisarOS();
 	}
 	
-	/**
-	 * @param servicoOrdemServico
-	 */
 	public void removerServico(ServicoOrdemServico servicoOrdemServico){
 		if(servicoOrdemServico.getId() == null){
 			for(int i = 0; i < this.listaServicos.size(); i++){
