@@ -283,6 +283,7 @@ public class OrdemServicoController implements Serializable {
 	
 	public void setarProduto(ProdutoOrdemServico produtoOrdemServico){
 		this.produtoOrdemServico = produtoOrdemServico;
+		this.quantidadeAdicionada = 0L;
 	}
 	
 	public void calcularValorProduto(){
@@ -368,24 +369,27 @@ public class OrdemServicoController implements Serializable {
 			
 			List<ProdutoOrdemServico> listaProdutoOS = produtoOrdemServicoService.findByListProperty(ordemServico.getId(), "ordemServico.id");
 			
-			for(ProdutoOrdemServico pos : listaProdutos){
+			for(ProdutoOrdemServico listProduto : listaProdutos){
+				List<ProdutoOrdemServico> prodBd = produtoOrdemServicoService.findByListProperty(listProduto.getProduto().getId(), "produto.id");
+				/*if(prodBd.isEmpty()){
+					salvarProduto(listProduto);
+				}*/
 				if(listaProdutoOS.isEmpty()){
-					pos.getProduto().setQuantidadeEstoque(pos.getProduto().getQuantidadeEstoque() - pos.getQuantidade());
-					produtoService.salvar(pos.getProduto());
+					salvarProduto(listProduto);
 				}else{
 					for(ProdutoOrdemServico ps : listaProdutoOS){
-						List<ProdutoOrdemServico> prodBd = produtoOrdemServicoService.findByListProperty(pos.getProduto().getId(), "produto.id");
-						if(prodBd.isEmpty()){
-							subtrairQuantidadeEstoqueProduto(pos, ps);
-						}else{
-							if(ps.getQuantidade() != pos.getQuantidade()){
-								subtrairQuantidadeEstoqueProduto(pos, ps);
+						if(ps.getProduto().getId() == listProduto.getProduto().getId()){
+							if(prodBd.isEmpty()){
+								subtrairQuantidadeEstoqueProduto(listProduto, ps);
+							}else{
+								if(ps.getQuantidade() != listProduto.getQuantidade()){
+									subtrairQuantidadeEstoqueProduto(listProduto, ps);
+								}
 							}
 						}
-						
 					}
 				}
-				produtoOrdemServicoService.save(pos);
+				produtoOrdemServicoService.save(listProduto);
 			}
 			for(ServicoOrdemServico sos : listaServicos){
 				servicoOrdemServicoService.save(sos);
@@ -397,14 +401,14 @@ public class OrdemServicoController implements Serializable {
 		FacesUtil.mensagemInfo("Ordem de servico de nº "+ordemServico.getId() + " salvo com sucesso!");
 	}
 	
-	private void subtrairQuantidadeEstoqueProduto(ProdutoOrdemServico pos, ProdutoOrdemServico ps){
-		if(pos.getQuantidade() > ps.getQuantidade()){
-			pos.getProduto().setQuantidadeEstoque(pos.getProduto().getQuantidadeEstoque() - this.quantidadeAdicionada);
-			produtoService.salvar(pos.getProduto());
-		}else{
-			pos.setQuantidade(pos.getQuantidade() - 1);
-			pos.getProduto().setQuantidadeEstoque(pos.getProduto().getQuantidadeEstoque() - this.quantidadeAdicionada);
-			produtoService.salvar(pos.getProduto());
+	private void salvarProduto(ProdutoOrdemServico listProduto){
+		listProduto.getProduto().setQuantidadeEstoque(listProduto.getProduto().getQuantidadeEstoque() - listProduto.getQuantidade());
+		produtoService.salvar(listProduto.getProduto());
+	}
+	
+	private void subtrairQuantidadeEstoqueProduto(ProdutoOrdemServico listProduto, ProdutoOrdemServico ps){
+		if(listProduto.getQuantidade() > ps.getQuantidade()){
+			salvarProduto(listProduto);
 		}
 		this.quantidadeAdicionada = 0L;
 	}
